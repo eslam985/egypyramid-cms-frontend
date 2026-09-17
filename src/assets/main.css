@@ -1,0 +1,799 @@
+/* ==========================================================================
+   globals.css — Tailwind v4 Design System (Dark-first / Gold Accent)
+   ملف واحد يشتغل في أي مشروع فيه Tailwind v4
+   التفعيل: class="dark" على <html>  أو  data-theme="dark" على <body>
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. Import + Dark Variant
+   -------------------------------------------------------------------------- */
+@import "tailwindcss";
+
+/* بيدعم الطريقتين: الكلاس .dark والـ attribute data-theme="dark" */
+@variant dark (&:where(.dark, .dark *, [data-theme="dark"], [data-theme="dark"] *));
+
+/* --------------------------------------------------------------------------
+   2. Reset & Normalize
+   -------------------------------------------------------------------------- */
+*,
+*::before,
+*::after {
+    min-width: 0;
+}
+
+html {
+    -webkit-text-size-adjust: 100%;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    scroll-behavior: smooth;
+    scroll-padding-top: 5rem;
+    color-scheme: light;
+    tab-size: 4;
+}
+
+html.dark,
+body[data-theme="dark"] {
+    color-scheme: dark;
+}
+
+body {
+    font-family: var(--font-sans);
+    line-height: 1.6;
+    background-color: var(--background);
+    color: var(--foreground);
+    overflow-x: hidden;
+    min-height: 100dvh;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+main {
+    display: block;
+}
+
+a {
+    text-decoration: none;
+}
+
+img,
+video,
+svg,
+canvas {
+    display: block;
+    height: auto;
+    border-style: none;
+}
+
+button,
+input,
+select,
+textarea {
+    font-family: inherit;
+    font-size: 100%;
+    line-height: 1.15;
+
+}
+
+input {
+    outline: none;
+
+}
+
+button {
+    text-transform: none;
+    border: none;
+}
+
+button,
+[type="button"],
+[type="submit"],
+[type="reset"] {
+    -webkit-appearance: button;
+    appearance: button;
+    cursor: pointer;
+}
+
+button::-moz-focus-inner,
+[type="button"]::-moz-focus-inner,
+[type="submit"]::-moz-focus-inner {
+    border-style: none;
+    padding: 0;
+}
+
+::-webkit-file-upload-button {
+    -webkit-appearance: button;
+    font: inherit;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    text-wrap: balance;
+    color: var(--title-color);
+}
+
+p,
+li {
+    text-wrap: pretty;
+}
+
+ul[role="list"],
+ol[role="list"] {
+    list-style: none;
+}
+
+::selection {
+    background-color: var(--accent);
+    color: var(--on-accent);
+}
+
+/* دعم RTL / العربية */
+[dir="rtl"],
+[lang="ar"] {
+    font-family: var(--font-arabic);
+}
+
+[dir="rtl"] {
+    text-align: right;
+}
+
+/* --------------------------------------------------------------------------
+   3. Variables & Theming (Light افتراضي)
+   -------------------------------------------------------------------------- */
+:root {
+    /* ===== الخطوط ===== */
+    --font-system: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+        Roboto, "Helvetica Neue", Arial, sans-serif;
+    --font-arabic: "Cairo", "Tajawal", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    --font-sans: var(--font-arabic), var(--font-system);
+    --font-display: var(--font-sans);
+    --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+    /* ===== الخلفيات ===== */
+    --background: #f8fafc;
+    --background-alt: #f1f5f9;
+    --card-bg: #ffffff;
+    --card-hover: #f8fafc;
+    --widget-bg: #ffffffd9;
+    --footer-bg: #0f172a;
+
+    /* ===== الأكسنت الذهبي ===== */
+    --accent: #d9a441;
+    --accent-dark: #b9862c;
+    --accent-light: #fada9d;
+    --on-accent: #0f172a;
+
+    /* ===== النصوص ===== */
+    --foreground: #334155;
+    --text-primary: #0f172a;
+    --title-color: #1e293b;
+    --sub-color: #64748b;
+    --muted-color: #94a3b8;
+    --text-on-dark: #f8fafc;
+
+    /* ===== الروابط ===== */
+    --link: #b9862c;
+    --link-hover: #8c6417;
+
+    /* ===== الحدود والظلال ===== */
+    --border-color: #e2e8f0;
+    --border-strong: #cbd5e1;
+    --overlay: rgb(15 23 42 / 0.45);
+    --shadow-color: rgb(0 0 0 / 0.06);
+    --shadow-accent: rgb(217 164 65 / 0.18);
+
+    /* ===== السايدبار ===== */
+    --sidebar-bg: #ffffff;
+    --sidebar-fg: #475569;
+    --sidebar-hover: #f1f5f9;
+    --sidebar-border: #e2e8f0;
+
+    /* ===== المقالات / المحتوى ===== */
+    --post-bg: #ffffff;
+    --post-border: #e2e8f0;
+    --post-title: #0f172a;
+    --post-meta: #64748b;
+    --post-body: #334155;
+    --blockquote-bg: #fdf6e7;
+    --blockquote-border: #d9a441;
+    --tag-bg: #fdf6e7;
+    --tag-border: #f0d9a8;
+    --code-bg: #f1f5f9;
+
+    /* ===== ألوان الحالة ===== */
+    --success: #16a34a;
+    --warning: #d97706;
+    --danger: #dc2626;
+    --info: #2563eb;
+}
+
+/* ===== الوضع الداكن (الأساسي في مشروعك) ===== */
+/* 16222e  0b1120*/
+.dark,
+body[data-theme="dark"] {
+    /* 1. الخلفية الأساسية (الطبقة الأدكن) */
+    --background: #001329;
+    /* Slate 900 - خلفية عميقة */
+    --background-alt: #0b1120;
+    /* خلفية أكثر دكنة للأقسام الفرعية */
+    --footer-bg: #090a0c;
+
+    /* 2. الشريط الجانبي (متمبز عن الخلفية) */
+    --sidebar-bg: #0E172B;
+    /* أغمق قليلاً من الكروت ليعطي ثبات */
+    --sidebar-fg: #94a3b8;
+    /* ممتاز - Slate 400 */
+    --sidebar-hover: #1e293b;
+    --sidebar-border: #1e293b;
+
+    /* 3. الكروت والعناصر العائمة (الطبقة البارزة) */
+    --card-bg: #0E172B;
+    /* Slate 800 - بارز بوضوح عن الخلفية */
+    --card-hover: #334155;
+    /* Slate 700 - أفتح عند الـ Hover */
+    --widget-bg: rgba(30, 41, 59, 0.7);
+    /* شفافية واضحة */
+
+
+    --accent: #fada9d;
+    --accent-dark: #e5b869;
+    --accent-light: #fdeccb;
+    --on-accent: #0f172a;
+
+    --foreground: #cbd5e1;
+    --text-primary: #f8fafc;
+    --title-color: #e2e8f0;
+    --sub-color: #94a3b8;
+    --muted-color: #64748b;
+    --text-on-dark: #f8fafc;
+
+    --link: #fada9d;
+    --link-hover: #fdeccb;
+
+    --border-color: #232b36;
+    --border-strong: #334155;
+    --overlay: rgb(0 0 0 / 0.65);
+    --shadow-color: rgb(0 0 0 / 0.35);
+    --shadow-accent: rgb(250 218 157 / 0.15);
+
+
+    --post-bg: #161b22;
+    --post-border: #232b36;
+    --post-title: #fada9d;
+    --post-meta: #94a3b8;
+    --post-body: #cbd5e1;
+    --blockquote-bg: #1c232c;
+    --blockquote-border: #fada9d;
+    --tag-bg: #1c232c;
+    --tag-border: #333d4b;
+    --code-bg: #11161d;
+
+    --success: #22c55e;
+    --warning: #eab308;
+    --danger: #ef4444;
+    --info: #3b82f6;
+}
+
+/* --------------------------------------------------------------------------
+   4. Theme — ربط المتغيرات بكلاسات Tailwind
+   inline مهم عشان الألوان تتبدّل مع الدارك مود صح
+   -------------------------------------------------------------------------- */
+@theme inline {
+    /* أسطح */
+    --color-background: var(--background);
+    --color-background-alt: var(--background-alt);
+    --color-card: var(--card-bg);
+    --color-card-hover: var(--card-hover);
+    --color-widget: var(--widget-bg);
+    --color-footer: var(--footer-bg);
+
+    /* أكسنت */
+    --color-accent: var(--accent);
+    --color-accent-dark: var(--accent-dark);
+    --color-accent-light: var(--accent-light);
+    --color-on-accent: var(--on-accent);
+
+    /* نصوص */
+    --color-foreground: var(--foreground);
+    --color-text-primary: var(--text-primary);
+    --color-title: var(--title-color);
+    --color-sub: var(--sub-color);
+    --color-muted: var(--muted-color);
+    --color-on-dark: var(--text-on-dark);
+    --color-link: var(--link);
+    --color-link-hover: var(--link-hover);
+
+    /* حدود */
+    --color-line: var(--border-color);
+    --color-line-strong: var(--border-strong);
+
+    /* سايدبار */
+    --color-sidebar: var(--sidebar-bg);
+    --color-sidebar-fg: var(--sidebar-fg);
+    --color-sidebar-hover: var(--sidebar-hover);
+    --color-sidebar-line: var(--sidebar-border);
+
+    /* مقالات */
+    --color-post: var(--post-bg);
+    --color-post-line: var(--post-border);
+    --color-post-title: var(--post-title);
+    --color-post-meta: var(--post-meta);
+    --color-post-body: var(--post-body);
+    --color-quote: var(--blockquote-bg);
+    --color-tag: var(--tag-bg);
+    --color-tag-line: var(--tag-border);
+    --color-code: var(--code-bg);
+
+    /* حالات */
+    --color-success: var(--success);
+    --color-warning: var(--warning);
+    --color-danger: var(--danger);
+    --color-info: var(--info);
+
+    /* خطوط */
+    --font-sans: var(--font-sans);
+    --font-display: var(--font-display);
+    --font-mono: var(--font-mono);
+    --font-arabic: var(--font-arabic);
+}
+
+@theme {
+    /* ===== مسافات مرنة → gap-fluid-gap / p-fluid-p / my-fluid-section ===== */
+    --spacing-fluid-gap: clamp(0.8rem, 2vw, 1rem);
+    --spacing-fluid-p: clamp(1rem, 3vw, 1.5rem);
+    --spacing-fluid-section: clamp(1.5rem, 5vw, 2rem);
+    --spacing-fluid-lg: clamp(2rem, 6vw, 4rem);
+
+    /* ===== أحجام خطوط مرنة → text-fluid-h1 ... ===== */
+    --text-fluid-h1: clamp(2rem, 6vw, 5rem);
+    --text-fluid-h1--line-height: 1.05;
+    --text-fluid-h1--letter-spacing: -0.04em;
+    --text-fluid-h1--font-weight: 800;
+
+    --text-fluid-h2: clamp(1.5rem, 4vw, 2.25rem);
+    --text-fluid-h2--line-height: 1.2;
+    --text-fluid-h2--letter-spacing: -0.02em;
+    --text-fluid-h2--font-weight: 700;
+
+    --text-fluid-h3: clamp(1.25rem, 3vw, 1.75rem);
+    --text-fluid-h3--line-height: 1.3;
+    --text-fluid-h3--font-weight: 600;
+
+    --text-fluid-p: clamp(0.875rem, 1.5vw, 1rem);
+    --text-fluid-p--line-height: 1.7;
+
+    --text-fluid-sm: clamp(0.8rem, 1.2vw, 0.9rem);
+    --text-fluid-sm--line-height: 1.6;
+
+    --text-fluid-xs: clamp(0.7rem, 1vw, 0.8rem);
+    --text-fluid-xs--line-height: 1.5;
+
+    /* ===== أنصاف أقطار وظلال ===== */
+    --radius-card: clamp(0.75rem, 2vw, 1.25rem);
+    --shadow-soft: 0 4px 20px -4px var(--shadow-color);
+    --shadow-glow: 0 0 0 1px color-mix(in srgb, var(--accent) 35%, transparent),
+        0 10px 30px -10px color-mix(in srgb, var(--accent) 45%, transparent);
+
+    /* ===== Breakpoint إضافي ===== */
+    --breakpoint-xs: 25rem;
+
+    /* ===== Animations ===== */
+    @keyframes shimmer {
+        100% {
+            transform: translateX(100%);
+        }
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px) scale(0.95);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+        }
+
+        to {
+            opacity: 1;
+        }
+    }
+
+    @keyframes slideDown {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes slideLeft {
+        from {
+            transform: translateX(100%);
+        }
+
+        to {
+            transform: translateX(0);
+        }
+    }
+
+    @keyframes float {
+
+        0%,
+        100% {
+            transform: translateY(0) rotate(6deg);
+        }
+
+        50% {
+            transform: translateY(-20px) rotate(8deg);
+        }
+    }
+
+    @keyframes slow-zoom {
+        0% {
+            transform: scale(1.05);
+        }
+
+        100% {
+            transform: scale(1.2);
+        }
+    }
+
+    @keyframes pulse-glow {
+
+        0%,
+        100% {
+            box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 45%, transparent);
+        }
+
+        50% {
+            box-shadow: 0 0 0 12px transparent;
+        }
+    }
+
+    --animate-shimmer: shimmer 2s infinite;
+    --animate-fade-in-up: fadeInUp 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+    --animate-fade-in: fadeIn 0.4s ease forwards;
+    --animate-slide-down: slideDown 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    --animate-slide-left: slideLeft 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    --animate-float: float 6s ease-in-out infinite;
+    --animate-slow-zoom: slow-zoom 20s linear infinite alternate;
+    --animate-pulse-glow: pulse-glow 2.5s ease-in-out infinite;
+}
+
+/* --------------------------------------------------------------------------
+   5. Components
+   -------------------------------------------------------------------------- */
+@layer components {
+
+    /* ===== الأزرار والـ Inputs الثابتة الهيكل ===== */
+    .btn-primary,
+    .btn-secondary,
+    .btn-outline,
+    .btn-ghost,
+    .btn-danger,
+    .btn-icon,
+    .btn-scroll-top,
+    .form-input,
+    .form-select,
+    .form-textarea {
+        @apply inline-flex items-center justify-center gap-2 font-semibold rounded-xl transition-all duration-200 active:scale-95 disabled:opacity-50 disabled:pointer-events-none;
+    }
+
+    /* ===== الأزرار: الألوان والتخصيص ===== */
+    .btn-primary {
+        @apply bg-accent text-on-accent py-2.5 px-4 sm:px-6 cursor-pointer select-none whitespace-nowrap hover:bg-accent-dark;
+    }
+
+    .btn-secondary {
+        @apply bg-card text-sub border border-line py-2.5 px-4 sm:px-6 cursor-pointer select-none whitespace-nowrap hover:bg-card-hover hover:text-title;
+    }
+
+    .btn-outline {
+        @apply border border-accent text-accent bg-transparent py-2.5 px-4 sm:px-6 cursor-pointer select-none whitespace-nowrap hover:bg-accent hover:text-on-accent;
+    }
+
+    .btn-ghost {
+        @apply bg-transparent text-sub py-2.5 px-4 sm:px-6 cursor-pointer select-none whitespace-nowrap hover:bg-card-hover hover:text-title;
+    }
+
+    .btn-danger {
+        @apply bg-danger text-white py-2.5 px-4 sm:px-6 cursor-pointer select-none whitespace-nowrap hover:brightness-110 hover:bg-danger/70;
+    }
+
+    .btn-icon {
+        @apply size-6 text-sub duration-200 hover:bg-card-hover hover:text-accent cursor-pointer;
+    }
+
+    .btn-scroll-top {
+        @apply fixed bottom-6 end-6 z-50 grid place-items-center size-11 rounded-full bg-card text-accent border border-line shadow-soft duration-300 hover:bg-accent hover:text-on-accent hover:scale-110;
+    }
+
+    /* ===== الفورم ===== */
+    .form-input,
+    .form-select,
+    .form-textarea {
+        @apply w-full px-3 md:px-4 py-2.5 bg-card text-foreground placeholder:text-muted focus:ring-1 disabled:opacity-60 duration-200;
+    }
+
+    .form-textarea {
+        @apply min-h-28 resize-y;
+    }
+
+    .form-label {
+        @apply mb-1 block text-sm font-semibold text-sub capitalize;
+    }
+
+    .form-error {
+        @apply mt-1 block text-fluid-xs text-danger;
+    }
+
+    .form-input option,
+    .form-select option {
+        @apply bg-card text-title font-medium py-2 px-4;
+    }
+
+    /* ===== الكروت ===== */
+    .card,
+    .card-hover {
+        @apply bg-card border border-line rounded-card p-fluid transition-colors duration-300;
+    }
+
+    /* تم حل المشكلة هنا بفصل الكلاس وحذف الـ @apply لـ card */
+    .card-hover:hover {
+        @apply border-accent/40 bg-card-hover -translate-y-1 transition-all duration-300;
+    }
+
+    .glass-card {
+        background-color: color-mix(in srgb, var(--card-bg) 55%, transparent);
+        @apply backdrop-blur-md border border-line/60 rounded-2xl p-4 shadow-xl transition-colors duration-300;
+    }
+
+    .widget {
+        @apply bg-widget border border-line rounded-card p-fluid backdrop-blur-sm;
+    }
+
+    /* ===== عناصر متكررة ===== */
+    .badge {
+        @apply inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-fluid-xs font-semibold bg-accent/15 text-accent;
+    }
+
+    .tag {
+        @apply inline-block rounded-lg border border-tag-line bg-tag px-2.5 py-1 text-fluid-xs font-medium text-sub transition-colors hover:border-accent hover:text-accent;
+    }
+
+    .divider {
+        @apply h-px w-full bg-line my-fluid-gap;
+    }
+
+    .section-title {
+        @apply text-fluid-h2 font-bold text-title mb-fluid-gap;
+    }
+
+    .link-accent {
+        @apply text-link underline-offset-4 hover:underline hover:text-link-hover transition-colors;
+    }
+
+    .skeleton {
+        @apply relative overflow-hidden bg-card-hover rounded-xl;
+    }
+
+    .skeleton::after {
+        content: "";
+        @apply absolute inset-0 -translate-x-full animate-shimmer;
+        background-image: linear-gradient(90deg,
+                transparent,
+                color-mix(in srgb, var(--foreground) 10%, transparent),
+                transparent);
+    }
+
+    /* ===== شبكات جاهزة ===== */
+    .movie-grid {
+        @apply grid grid-cols-2 xs:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-fluid-gap;
+    }
+
+    .auto-grid {
+        @apply grid gap-fluid-gap;
+        grid-template-columns: repeat(auto-fill, minmax(min(100%, 16rem), 1fr));
+    }
+
+    /* ===== السايدبار ===== */
+    .sidebar {
+        @apply bg-sidebar text-sidebar-fg border-e border-sidebar-line transition-colors duration-300;
+    }
+
+    /* دمجنا الكلاسيين مع بعض هنا عشان ياخدوا نفس الخصائص الأساسية الهيكلية */
+    .sidebar-link,
+    .sidebar-link-active {
+        @apply flex items-center gap-3 rounded-xl px-3 py-2.5 font-medium hover:bg-sidebar-hover hover:text-accent transition-colors duration-200;
+    }
+
+    /* هنا بنضيف التميز والألوان الخاصة بالرابط النشط فقط (Active) */
+    .sidebar-link-active {
+        @apply bg-accent/15 text-accent;
+    }
+
+    /* ===== الفوتر ===== */
+    .site-footer {
+        @apply bg-footer text-on-dark px-fluid py-fluid-lg border-t border-line/40;
+    }
+
+    .site-footer a {
+        @apply text-on-dark/80 hover:text-accent transition-colors;
+    }
+
+}
+
+/* --------------------------------------------------------------------------
+   6. Utilities (@utility = بتدعم الـ variants زي md: و hover:)
+   -------------------------------------------------------------------------- */
+@utility p-fluid {
+    padding: clamp(0.75rem, 2vw, 1rem);
+}
+
+@utility px-fluid {
+    padding-inline: clamp(0.75rem, 2vw, 1rem);
+}
+
+@utility py-fluid {
+    padding-block: clamp(0.75rem, 2vw, 1rem);
+}
+
+@utility p-section-fluid {
+    padding: clamp(1.25rem, 4vw, 3rem) clamp(1rem, 5vw, 4rem);
+}
+
+@utility container-fluid {
+    width: 100%;
+    margin-inline: auto;
+    max-width: 90rem;
+    padding-inline: clamp(1rem, 4vw, 3rem);
+}
+
+@utility text-gradient-accent {
+    background-image: linear-gradient(120deg,
+            var(--accent-light),
+            var(--accent),
+            var(--accent-dark));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+@utility no-scrollbar {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+
+    &::-webkit-scrollbar {
+        display: none;
+    }
+}
+
+@utility stroke-text {
+    -webkit-text-stroke: 1px color-mix(in srgb, var(--foreground) 25%, transparent);
+    color: transparent;
+}
+
+@utility line-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+@utility line-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+@utility text-balance-c {
+    text-wrap: balance;
+}
+
+@utility overlay-dark {
+    position: relative;
+
+    &::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(to top,
+                var(--background) 0%,
+                color-mix(in srgb, var(--background) 60%, transparent) 40%,
+                transparent 100%);
+        pointer-events: none;
+    }
+}
+
+@layer utilities {
+
+    /* سكرول بار مخصص */
+    ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+        background: var(--background);
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: var(--border-strong);
+        border: 2px solid var(--background);
+        border-radius: 10px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+        background: var(--accent);
+    }
+
+    * {
+        scrollbar-color: var(--border-strong) var(--background);
+    }
+
+    .will-change-transform {
+        will-change: transform;
+    }
+
+    .will-change-opacity {
+        will-change: opacity;
+    }
+}
+
+/* --------------------------------------------------------------------------
+   8. Media Queries
+   -------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+
+    html {
+        scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+@media (prefers-contrast: more) {
+    :root {
+        --border-color: var(--border-strong);
+        --sub-color: var(--foreground);
+    }
+}
+
+@media print {
+
+    .no-print,
+    nav,
+    footer,
+    aside,
+    button {
+        display: none !important;
+    }
+
+    body {
+        background: #fff !important;
+        color: #000 !important;
+    }
+}
