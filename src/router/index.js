@@ -141,7 +141,8 @@ router.beforeEach(async (to, from, next) => {
             await authStore.restoreSession()
         } catch (err) {
             console.error('السيرفر متوقف أو لا يستجيب:', err)
-            return (authStore.isServerError = true)
+            authStore.isServerError = true;
+            return next({ name: 'login' });
         }
     }
 
