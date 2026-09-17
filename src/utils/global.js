@@ -15,7 +15,9 @@ async function confirmAndDelete({
     fallbackSuccess = 'تم الحذف بنجاح',
     fallbackError = 'حدث خطأ أثناء الحذف'
 }) {
-    if (!confirm(message)) return false
+    // ننتظر قرار المستخدم من الـ Modal
+    const isConfirmed = await notiStore.triggerConfirm(message)
+    if (!isConfirmed) return false
 
     const success = await action()
 

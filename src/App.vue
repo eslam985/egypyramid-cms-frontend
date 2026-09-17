@@ -2,6 +2,7 @@
 import { useAuthStore } from './stores/authStore'
 
 import NotificationApp from '@/components/utils/notificationApp.vue'
+import ConfirmModal from '@/components/utils/ConfirmModal.vue'
 import ServerError from '@/views/errors/ServerError.vue'
 import BackToTop from '@/components/utils/BackToTop.vue';
 
@@ -28,6 +29,8 @@ const authStore = useAuthStore()
     <div v-else>
         <RouterView />
         <NotificationApp />
+        <ConfirmModal />
+
         <!-- زر العودة للأعلى -->
         <BackToTop />
     </div>
