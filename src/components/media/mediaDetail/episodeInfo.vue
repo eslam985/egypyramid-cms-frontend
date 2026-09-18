@@ -5,6 +5,7 @@ import { useMediaStore } from '@/stores/mediaStore'
 import { useNotificationStore } from '@/stores/notificationStore'
 import { useMediaContentStore } from '@/stores/mediaContentStore'
 import { confirmAndDelete } from '@/utils/global'
+
 const router = useRouter()
 const route = useRoute()
 
@@ -19,6 +20,7 @@ const mediaId = route.params.id
 const handleSelectEpisode = async (episodeId) => {
     mediaContentStore.currentEpisode = mediaContentStore.episodes?.find(e => String(e.id) === String(episodeId))
     await mediaContentStore.getLinksByEpisodeId(episodeId)
+    console.log(mediaContentStore.currentEpisode.id)
 }
 
 // 3. إدارة الحلقات
@@ -92,7 +94,7 @@ const handleDeleteEpisode = (episodeId) => {
                 ]">
 
                     <!-- الجزء العلوي: رقم الحلقة والروابط -->
-                    <div @click="handleSelectEpisode(ep.id)"
+                    <a :href="`#${mediaContentStore.currentEpisode?.id}`" @click="handleSelectEpisode(ep.id)"
                         class="cursor-pointer flex items-start justify-between gap-2">
                         <div class="flex items-center gap-2.5">
                             <span
@@ -121,7 +123,7 @@ const handleDeleteEpisode = (episodeId) => {
                                 <span class="text-danger text-[11px]">لا يوجد روابط</span>
                             </template>
                         </div>
-                    </div>
+                    </a>
 
                     <!-- تفاصيل إضافية -->
                     <div class="pt-2 border-t border-line/60 text-fluid-xs space-y-1.5">
