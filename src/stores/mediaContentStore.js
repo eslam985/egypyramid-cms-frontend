@@ -63,7 +63,7 @@ const useMediaContentStore = defineStore('mediaContent', {
                 args: mediaId,
                 targetKey: 'seasons',
                 defaultError: 'حدثت مشكلة اثناء جلب الموسم او المواسم',
-                force
+                force,
             })
 
             // التعديل الأفضل (استخدام Array.isArray كما فعلت في الحلقات)
@@ -128,13 +128,18 @@ const useMediaContentStore = defineStore('mediaContent', {
             return data
         },
         async getEpisodesByMediaId(media_id, params = {}, force = false) {
+            if (typeof params === 'boolean') {
+                params = {}
+                force = true
+            }
+
             const resultData = await handleStoreFetch({
                 store: this,
                 apiCall: findEpisodesByMediaId,
                 args: [media_id, params],
                 targetKey: 'episodes',
                 defaultError: 'حدث خطأ أثناء جلب الحلقات',
-                force
+                force,
             })
 
             // الترتيب فقط في حال نجاح الجلب ورجوع مصفوفة
@@ -151,7 +156,7 @@ const useMediaContentStore = defineStore('mediaContent', {
                 args: season_id,
                 targetKey: 'episodes',
                 defaultError: 'حدث خطأ أثناء جلب الحلقات',
-                force
+                force,
             })
 
             // الترتيب فقط في حال نجاح الجلب ورجوع مصفوفة

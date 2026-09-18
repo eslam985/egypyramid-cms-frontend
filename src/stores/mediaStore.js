@@ -31,14 +31,23 @@ const useMediaStore = defineStore('media', {
     }),
     actions: {
         async getMediaById(id, force = true) {
-            return handleStoreFetch({
+            const data = await handleStoreFetch({
                 store: this,
                 apiCall: findMediaById,
                 args: id,
                 targetKey: 'currentMedia',
                 defaultError: 'حدث خطأ اثناء جلب الميديا بالمعرف (id)',
-                force
+                force,
             })
+
+            // لو الداتا مش موجودة (حصل 404 أو خطأ)، مفروض مفريش الـ medias أو نفضيها
+            if (data) {
+                this.medias = [data]
+            } else {
+                this.medias = [] // أو نسيبها فاضية عشان ما تضربش إيرور
+            }
+
+            return data
         },
         async fetchMedias(
             { category, page = 1, limit = 20, search, sortBy, sortOrder } = {},

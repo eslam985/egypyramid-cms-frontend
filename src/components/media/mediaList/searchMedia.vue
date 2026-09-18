@@ -11,20 +11,37 @@ const mediaStore = useMediaStore()
 const notiStore = useNotificationStore();
 
 const searchInput = ref('')
+
 // معالجة البحث عند الضغط على Enter أو زر البحث
-const handleSearch = () => {
-    if (searchInput.value.length < 3) {
-        notiStore.triggerNotification('حقل البحث لا يجب ان يكون اصغر من 3 حروف !')
-        searchInput.value = ''
-        return
+const handleSearch = async () => {
+    const rawValue = searchInput.value.trim();
+    if (!rawValue) return;
+
+    // التحقق هل القيمة رقم صحيح صافي (بدون علامات عشرية أو حروف)
+    const targetId = Number(rawValue);
+    const isId = Number.isInteger(targetId) && String(targetId) === rawValue;
+
+    // إذا لم يكن ID صحيحاً، نطبق شرط الـ 3 حروف للبحث بالاسم
+    if (!isId && rawValue.length < 3) {
+        notiStore.triggerNotification('حقل البحث بالاسم يجب ألا يكون أصغر من 3 حروف !');
+        searchInput.value = '';
+        return;
     }
 
-    mediaStore.setFilters({ search: searchInput.value.trim() })
+    if (isId) {
+        const foundMediById = await mediaStore.getMediaById(targetId);
+        if (!foundMediById) {
+            notiStore.triggerNotification(mediaStore.errorMessage)
+            await mediaStore.fetchMedias({ page: 1 }, true)
+        }
+    } else {
+        mediaStore.setFilters({ search: rawValue });
+    }
+
     if (route.name !== 'mediaList') {
-        router.push({ name: 'mediaList' })
+        router.push({ name: 'mediaList' });
     }
-    searchInput.value = ''
-
+    searchInput.value = '';
 }
 </script>
 

@@ -37,7 +37,7 @@ const handleDelete = async (id, title) => {
 </script>
 
 <template>
-    <div class="overflow-x-auto rounded-2xl border border-line bg-card shadow-soft mb-6">
+    <div v-if="mediaStore.medias" class="overflow-x-auto rounded-2xl border border-line bg-card shadow-soft mb-6">
         <table class="w-full text-right border-collapse text-fluid-xs">
             <thead class="bg-line/20 border-b border-line text-sub font-semibold select-none">
                 <tr>
@@ -112,7 +112,7 @@ const handleDelete = async (id, title) => {
                 </tr>
 
                 <!-- عرض صفوف الميديا -->
-                <tr v-else v-for="item in mediaStore.medias" :key="item.id" class="hover:bg-line/40 transition-colors">
+                <tr v-else-if="mediaStore.medias" v-for="item in mediaStore?.medias" :key="item?.id" class="hover:bg-line/40 transition-colors">
 
                     <!-- البوستر -->
                     <td class="p-fluid whitespace-nowrap">

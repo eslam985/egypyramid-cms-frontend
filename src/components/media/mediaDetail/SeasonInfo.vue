@@ -68,8 +68,8 @@ const handleDeleteSeason = async (seasonId) => {
 }
 </script>
 
-<template>
-    <main class="space-y-6">
+<template >
+    <main v-if="mediaContentStore.seasons.length > 0" class="space-y-6">
         <!-- حالة جاري التحميل -->
         <div v-if="mediaStore.isLoading"
             class="p-8 text-center text-sub font-medium bg-card rounded-2xl border border-line">
