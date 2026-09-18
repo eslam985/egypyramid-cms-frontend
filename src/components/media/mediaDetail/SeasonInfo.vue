@@ -1,7 +1,7 @@
 <script setup>
 // src/components/media/mediaDetail/SeasonInfo.vue
 import { useRoute, useRouter } from 'vue-router'
-import { computed } from 'vue'
+import { computed, nextTick } from 'vue'
 
 
 import { useMediaStore } from '@/stores/mediaStore'
@@ -21,6 +21,7 @@ const mediaId = route.params.id
 
 
 const isSeries = computed(() => {
+    nextTick
     // نتأكد الأول إن البيانات موجودة، وبعدين نتحقق هل النوع يساوي 'series'
     return mediaStore.currentMedia?.media_type === 'series' || mediaStore.currentMedia?.category === 'tv';
 });
@@ -28,6 +29,15 @@ const isSeries = computed(() => {
 const handleSelectSeason = async (seasonId) => {
     // تعيين الموسم المحدد محلياً بدون استعلام
     mediaContentStore.currentSeason = mediaContentStore.seasons?.find(e => String(e.id) === String(seasonId))
+
+    await nextTick()
+
+    // التمرير السلس إلى الـ div الخاص بالروابط
+    const targetElement = document.getElementById(String(seasonId))
+    if (targetElement) {
+        targetElement.scrollIntoView({ behavior: 'smooth' })
+    }
+
 
     await mediaContentStore.getEpisodesBySeasonId(seasonId, true)
 }
@@ -111,7 +121,7 @@ const handleDeleteSeason = async (seasonId) => {
                             </span>
                             <div>
                                 <span class="text-fluid-xs font-bold text-main block">الموسم {{ season.season_number
-                                    }}</span>
+                                }}</span>
                                 <span class="text-[10px] text-sub/70 font-mono block">ID: {{ season.id }}</span>
                             </div>
                         </div>

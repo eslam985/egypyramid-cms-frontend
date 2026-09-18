@@ -1,9 +1,12 @@
 <script setup>
 // src/components/media/mediaDetail/episodeInfo.vue
+import { nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+
 import { useMediaStore } from '@/stores/mediaStore'
 import { useNotificationStore } from '@/stores/notificationStore'
 import { useMediaContentStore } from '@/stores/mediaContentStore'
+
 import { confirmAndDelete } from '@/utils/global'
 
 const router = useRouter()
@@ -16,11 +19,20 @@ const notiStore = useNotificationStore()
 const mediaId = route.params.id
 
 
-
 const handleSelectEpisode = async (episodeId) => {
     mediaContentStore.currentEpisode = mediaContentStore.episodes?.find(e => String(e.id) === String(episodeId))
+
+    // الانتظار حتى تقوم Vue بتحديث الـ ID في الـ DOM
+    await nextTick()
+
+    // التمرير السلس إلى الـ div الخاص بالروابط
+    const targetElement = document.getElementById(String(episodeId))
+    if (targetElement) {
+        targetElement.scrollIntoView({ behavior: 'smooth' })
+    }
+
+    // جلب الروابط من السيرفر
     await mediaContentStore.getLinksByEpisodeId(episodeId)
-    console.log(mediaContentStore.currentEpisode.id)
 }
 
 // 3. إدارة الحلقات
@@ -69,7 +81,7 @@ const handleDeleteEpisode = (episodeId) => {
                                 d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
                         </svg>
                     </div>
-                    <div>
+                    <div :id="`${mediaContentStore.currentSeason?.id}`">
                         <h2 class="text-fluid-h2 font-bold text-main">قائمة الحلقات</h2>
                         <p class="text-fluid-xs text-sub">إدارة الحلقات والوصول السريع لتفاصيلها</p>
                     </div>
@@ -94,7 +106,7 @@ const handleDeleteEpisode = (episodeId) => {
                 ]">
 
                     <!-- الجزء العلوي: رقم الحلقة والروابط -->
-                    <a :href="`#${mediaContentStore.currentEpisode?.id}`" @click="handleSelectEpisode(ep.id)"
+                    <a @click.prevent="handleSelectEpisode(ep.id)"
                         class="cursor-pointer flex items-start justify-between gap-2">
                         <div class="flex items-center gap-2.5">
                             <span
