@@ -11,21 +11,18 @@ import ServerStatusCounters from '@/components/dashbord/ServerStatusCounters.vue
 
 const analyticsStore = useAnalyticsStore()
 
-
 onMounted(async () => {
-    // جلب العدادات فقط عند فتح الصفحة
-    await analyticsStore.fetchAllCounters()
+  // جلب العدادات فقط عند فتح الصفحة
+  await analyticsStore.fetchAllCounters()
 })
-
-
 </script>
 
 <template>
-    <!-- حالة جاري التحميل -->
-    <div class="space-y-6 max-w-7xl mx-auto w-full min-w-0 overflow-x-hidden" dir="rtl">
-        <HeaderDashbord />
-        <SystemCounters />
-        <ServerStatusCounters />
-        <MainTabs />
-    </div>
+  <!-- حالة جاري التحميل -->
+  <div class="space-y-6 max-w-7xl mx-auto w-full min-w-0 overflow-x-hidden">
+    <HeaderDashbord />
+    <SystemCounters />
+    <ServerStatusCounters />
+    <MainTabs />
+  </div>
 </template>

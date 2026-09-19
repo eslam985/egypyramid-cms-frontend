@@ -1,0 +1,476 @@
+{
+  "header": {
+    "lightMode": "الوضع المضيء",
+    "darkMode": "الوضع الليلي"
+  },
+  "auth": {
+    "logout": "تسجيل الخروج",
+    "loggingOut": "جاري الخروج...",
+    "logoutSuccess": "تم تسجيل الخروج بنجاح.",
+    "welcomeBack": "مرحباً عودتك",
+    "pleaseEnterDetails": "الرجاء إدخال بياناتك لتسجيل الدخول",
+    "username": "اسم المستخدم",
+    "usernamePlaceholder": "مثال: Bret",
+    "password": "كلمة المرور",
+    "forgotPassword": "هل نسيت كلمة المرور؟",
+    "signingIn": "جاري تسجيل الدخول...",
+    "signIn": "تسجيل الدخول"
+  },
+  "settings": {
+    "title": "الإعدادات",
+    "language": "اللغة",
+    "appearance": "المظهر"
+  },
+  "sidebar": {
+    "mainMenu": "القائمة الرئيسية",
+    "dashboard": "الرئيسية",
+    "media": "الأعمال",
+    "genres": "التصنيفات",
+    "tasks": "مهام التحميل",
+    "settings": "الإعدادات"
+  },
+  "footer": {
+    "crafted": "صُنع بـ"
+  },
+  "serverError": {
+    "title": "انقطاع الاتصال بالسيرفر",
+    "message": "تعذر الاتصال بالخادم الرئيسي. يرجى إعادة المحاولة او الرجوع لاحقا",
+    "retry": "إعادة المحاولة"
+  },
+  "notFound": {
+    "title": "الصفحة غير موجودة",
+    "message": "عذراً، الصفحة التي تحاول الوصول إليها غير موجودة أو تم نقلها إلى رابط آخر.",
+    "backHome": "العودة للرئيسية"
+  },
+  "confirmModal": {
+    "title": "تأكيد الإجراء",
+    "cancel": "إلغاء",
+    "confirm": "تأكيد الحذف"
+  },
+  "pagination": {
+    "showingPage": "عرض الصفحة",
+    "of": "من",
+    "total": "إجمالي",
+    "items": "عنصر",
+    "next": "التالي",
+    "previous": "السابق"
+  },
+  "dashboard": {
+    "tabs": {
+      "notReady": "الأعمال غير الجاهزة ({count})",
+      "broken": "الروابط المكسورة ({count})",
+      "telegram": "روابط تليجرام المقفولة ({count})",
+      "missing": "الحلقات المفقودة ({count})"
+    },
+    "overview": {
+      "title": "لوحة التحكم والتحليلات",
+      "subtitle": "نظرة عامة على حالة النظام، الروابط، والأعمال غير المكتملة.",
+      "refresh": "تحديث البيانات"
+    },
+    "serverStatus": {
+      "title": "حالات الروابط حسب السيرفر",
+      "broken": "المكسورة (broken)",
+      "valid": "السليمة (valid)",
+      "pending": "معلقة (pending)",
+      "noData": "لا توجد بيانات لهذه الحالة.",
+      "status": {
+        "broken": "مكسورة",
+        "valid": "سليمة",
+        "pending": "معلقة"
+      }
+    },
+    "counters": {
+      "totalMedias": "إجمالي الأعمال",
+      "totalEpisodes": "إجمالي الحلقات",
+      "totalLinks": "إجمالي الروابط",
+      "brokenLinks": "الروابط المكسورة",
+      "validLinks": "الروابط السليمة",
+      "totalTasks": "إجمالي المهام",
+      "processingTasks": "المهام قيد المعالجة",
+      "failedTasks": "المهام الفاشلة"
+    }
+  },
+  "brokenLinks": {
+    "filterByServer": "تصفية حسب السيرفر:",
+    "table": {
+      "name": "اسم العمل / التفاصيل",
+      "type": "النوع",
+      "serverQuality": "السيرفر / الجودة",
+      "url": "الرابط",
+      "errorReason": "سبب الخطأ",
+      "lastCheck": "آخر فحص",
+      "status": "حالة العمل"
+    },
+    "unknownWork": "عمل غير معروف",
+    "season": "موسم",
+    "episode": "حلقة",
+    "customMovie": "محتوى فيلم مخصص",
+    "series": "مسلسل",
+    "movie": "فيلم",
+    "watch": "مشاهدة",
+    "download": "تحميل",
+    "checkedCount": "فُحص: {count} مرة",
+    "ready": "جاهز للعرض",
+    "notReady": "ليس جاهز للعرض",
+    "loading": "جاري تحميل البيانات...",
+    "noData": "لا توجد روابط مكسورة لهذا السيرفر."
+  },
+
+  "missingEpisodes": {
+    "filterServer": "اختر السيرفر:",
+    "table": {
+      "title": "اسم العمل",
+      "seasonEpisode": "الموسم / الحلقة",
+      "type": "النوع",
+      "workStatus": "حالة العمل",
+      "identifier": "المعرّف (Identifier)",
+      "status": "الحالة"
+    },
+    "season": "موسم",
+    "episode": "حلقة",
+    "movie": "فيلم",
+    "series": "مسلسل",
+    "ready": "جاهز للعرض",
+    "notReady": "ليس جاهز للعرض",
+    "missing": "مفقود",
+    "noData": "لا توجد حلقات مفقودة لهذا السيرفر."
+  },
+  "notReady": {
+    "table": {
+      "poster": "البوستر",
+      "titleYear": "اسم العمل / السنة",
+      "typeGenre": "النوع والتصنيف",
+      "tmdb": "معرف TMDB",
+      "addedAt": "تاريخ الإضافة",
+      "status": "الحالة"
+    },
+    "noImage": "بدون صورة",
+    "series": "مسلسل",
+    "movie": "فيلم",
+    "notReadyBadge": "غير جاهز",
+    "noData": "لا توجد أعمال غير جاهزة."
+  },
+  "telegramLocked": {
+    "table": {
+      "titleEpisode": "اسم العمل / الحلقة",
+      "type": "النوع",
+      "server": "السيرفر",
+      "lockedUrl": "الرابط المغلَق",
+      "workStatus": "حالة العمل",
+      "addedAt": "تاريخ الإضافة"
+    },
+    "season": "موسم",
+    "episode": "حلقة",
+    "customMedia": "محتوى ميديا مخصص",
+    "series": "مسلسل",
+    "movie": "فيلم",
+    "ready": "جاهز للعرض",
+    "notReady": "ليس جاهز للعرض",
+    "noData": "لا توجد روابط تليجرام مقفولة."
+  },
+  "genres": {
+    "loading": "جاري تحميل بيانات التصنيف...",
+    "noData": "لا توجد تصنيفات لعرضها حالياً.",
+    "noGenreToDelete": "لا يوجد تصنيف لحذفه!",
+    "confirmDelete": "هل أنت متأكد من حذف هذا التصنيف؟",
+    "addTitle": "إضافة تصنيف جديد",
+    "editTitle": "تعديل التصنيف",
+    "addSubtitle": "إضافة تصنيف جديد لنظام الميديا",
+    "editSubtitle": "تعديل بيانات التصنيف الحالي",
+    "nameLabel": "اسم التصنيف",
+    "namePlaceholder": "مثال: أكشن، دراما، كوميدي",
+    "addBtn": "إضافة تصنيف",
+    "updateBtn": "تحديث التصنيف",
+    "addedSuccess": "تم إضافة التصنيف بنجاح",
+    "updatedSuccess": "تم تعديل التصنيف بنجاح",
+    "saveError": "حدث خطأ أثناء الحفظ",
+    "notFound": "لم يتم العثور علي التصنيف!",
+    "addNew": "✚ إضافة تصنيف جديد",
+    "searchPlaceholder": "اكتب اسم التصنيف واضغط Enter...💬",
+    "totalGenres": "إجمالي التصنيفات",
+    "searchMinChars": "حقل البحث لا يجب ان يكون اصغر من 3 حروف !",
+    "table": {
+      "actions": "الإجراءات",
+      "createdAt": "وقت الإنشاء",
+      "slug": "الرابط المختصر",
+      "name": "اسم التصنيف",
+      "id": "معرف التصنيف"
+    }
+  },
+  "tasks": {
+    "addedSuccess": "تم إضافة التاسك بنجاح",
+    "updatedSuccess": "تم تعديل التاسك بنجاح",
+    "saveError": "حدث خطأ أثناء الحفظ",
+    "noTaskToDelete": "لا يوجد تاسك لحذفه",
+    "confirmDelete": "هل أنت متأكد من حذف هذا التاسك؟",
+    "loading": "جاري تحميل بيانات المهام...",
+    "noData": "لا توجد مهام لعرضها حالياً",
+    "noDataHint": "قم بإضافة مهام جديدة لتبدأ بالظهور هنا.",
+    "toolbar": {
+      "searchLabel": "البحث باسم التاسك",
+      "searchPlaceholder": "اكتب اسم التاسك واضغط Enter...",
+      "statusLabel": "حالة التحميل",
+      "allStatuses": "جميع الحالات",
+      "addNew": "+ إضافة تاسك جديد",
+      "allStatusesShown": "تم عرض جميع الحالات",
+      "filterSuccess": "تم تصفية المهام بنجاح",
+      "noTasksFound": "لم يتم العثور على مهام بهذه الحالة",
+      "searchMinChars": "حقل البحث لا يجب ان يكون اصغر من 3 حروف !",
+      "taskNotFound": "لم يتم العثور علي التاسك"
+    },
+    "table": {
+      "id": "المعرف",
+      "taskName": "اسم التاسك",
+      "status": "الحالة",
+      "progress": "التقدم والسرعة",
+      "systemMessage": "رسالة النظام",
+      "createdAt": "تاريخ الإنشاء",
+      "actions": "الإجراءات",
+      "year": "السنة",
+      "sourceLink": "رابط المصدر"
+    },
+    "form": {
+      "addTitle": "إضافة تاسك تحميل جديد",
+      "editTitle": "تعديل بيانات التاسك",
+      "addSubtitle": "قم بملء البيانات التالية لإنشاء مهمة تحميل جديدة",
+      "editSubtitle": "تحديث معلومات ومسار مهمة التحميل الحالية",
+      "taskNameLabel": "اسم التاسك (Task Name)",
+      "taskNamePlaceholder": "مثال: Episode 01 - Movie Title",
+      "sourceUrlLabel": "رابط المصدر الأساسي (Source URL)",
+      "trailerUrlLabel": "رابط الإعلان (Trailer URL)",
+      "statusLabel": "حالة التحميل (Status)",
+      "statusOptions": {
+        "idle": "معلق (Idle)",
+        "processing": "جاري التحميل (Processing)",
+        "completed": "مكتمل (Completed)",
+        "failed": "فشل (Failed)"
+      },
+      "progressLabel": "نسبة التقدم (Progress %)",
+      "downloadSpeedLabel": "سرعة التحميل (Download Speed)",
+      "downloadSpeedPlaceholder": "مثال: 5.2 MB/s",
+      "statusMessageLabel": "رسالة الحالة (Status Message)",
+      "statusMessagePlaceholder": "تفاصيل أو ملاحظات الحالة...",
+      "fallbackUrlsLabel": "الروابط البديلة (ضع كل رابط في سطر مستقل)",
+      "isCancelledLabel": "تم إلغاء المهمة (Is Cancelled)",
+      "cancelBtn": "إلغاء",
+      "saveBtn": "حفظ التاسك",
+      "updateBtn": "تحديث البيانات"
+    }
+  },
+  "media": {
+    "noMediaToDelete": "لا يوجد عمل لحذفه",
+    "confirmDelete": "هل أنت متأكد من حذف \"{title}\"؟",
+    "thisMedia": "هذه الميديا",
+    "ready": "جاهز",
+    "draft": "مسودة",
+    "loading": "جاري تحميل بيانات الميديا...",
+    "noData": "لا توجد ميديا متوفرة حالياً.",
+    "noImage": "بدون صورة",
+    "season": "موسم",
+    "seasons": "مواسم",
+    "noSeasonsYet": "لا توجد مواسم بعد",
+    "table": {
+      "poster": "البوستر",
+      "title": "العنوان",
+      "categoryType": "التصنيف / النوع",
+      "year": "السنة",
+      "status": "الحالة",
+      "createdAt": "تاريخ الإضافة",
+      "actions": "الإجراءات"
+    },
+    "filter": {
+      "allCategories": "جميع التصنيفات",
+      "movies": "أفلام (Movie)",
+      "series": "مسلسلات (Series)"
+    },
+    "toolbar": {
+      "refreshData": "تحديث البيانات",
+      "addNewMedia": "✚ إضافة ميديا جديدة"
+    },
+    "detail": {
+      "backToList": "رجوع للقائمة",
+      "typeLabel": "النوع",
+      "readyForDisplay": "جاهز للعرض",
+      "notReadyDisplay": "غير جاهز",
+      "notified": "تم إرسال إشعار",
+      "notNotified": "لم يرسل إشعار",
+      "facebookPosted": "تم النشر في فيسبوك",
+      "facebookNotPosted": "لم ينشر في فيسبوك",
+      "labels": "Labels",
+      "storyTitle": "القصة / الوصف",
+      "noStory": "لا توجد قصة مضافة لهذا العمل.",
+      "noPoster": "لا يوجد بوستر",
+      "noData": "لا توجد بيانات ميديا لعرضها حالياً.",
+      "confirmDeleteWithId": "هل أنت متأكد من حذف {title} (الرقم التعريفي: {id})؟"
+    },
+    "seasonInfo": {
+      "loading": "جاري تحميل بيانات المواسم...",
+      "listTitle": "قائمة المواسم",
+      "listSubtitle": "إدارة المواسم والتنقل بين الحلقات الخاصة بها",
+      "addNew": "إضافة موسم جديد",
+      "seasonLabel": "الموسم {number}",
+      "episode": "حلقة",
+      "noEpisodes": "بدون حلقات",
+      "identifier": "المعرّف:",
+      "episodesCountTitle": "عدد الحلقات المضافة لهذا الموسم",
+      "editSeason": "تعديل الموسم",
+      "deleteSeason": "حذف الموسم",
+      "confirmDelete": "هل أنت متأكد من حذف الموسم رقم {id}؟",
+      "noSeasonToDelete": "لا يوجد موسم لحذفه"
+    },
+    "episodeInfo": {
+      "loading": "جاري تحميل بيانات الحلقات...",
+      "listTitle": "قائمة الحلقات",
+      "listSubtitle": "إدارة الحلقات والوصول السريع لتفاصيلها",
+      "addNew": "إضافة حلقة جديدة",
+      "episodeLabel": "الحلقة {number}",
+      "linksCountTitle": "عدد الروابط المضافة هذه الحلقة",
+      "links": "روابط",
+      "noLinks": "لا يوجد روابط",
+      "seasonId": "الموسم (Season ID)",
+      "identifier": "المعرّف",
+      "editEpisode": "تعديل الحلقة",
+      "deleteEpisode": "حذف الحلقة",
+      "noEpisodesYet": "لا توجد حلقات مضافة لهذا الموسم بعد.",
+      "confirmDelete": "هل أنت متأكد من حذف الحلقة رقم {id}؟",
+      "noEpisodeToDelete": "لا يوجد حلقة لحذفها"
+    },
+    "linksInfo": {
+      "noLinkToDelete": "لا يوجد رابط لحذفه",
+      "confirmDelete": "هل أنت متأكد من حذف الرابط رقم {id}؟",
+      "episodeServers": "سيرفرات الحلقة",
+      "manageDesc": "إدارة جميع روابط المشاهدة والتحميل التابعة لهذه الحلقة",
+      "addNewServer": "إضافة سيرفر جديد",
+      "noLinksYet": "لا توجد روابط أو سيرفرات مضافة لهذه الحلقة بعد",
+      "noLinksHint": "اختر حلقة من القائمة أعلاه أو أضف سيرفر جديد.",
+      "table": {
+        "server": "السيرفر",
+        "linkStatus": "حالة الرابط",
+        "lastCheck": "آخر فحص",
+        "createdAt": "تاريخ الإضافة",
+        "directUrl": "الرابط المباشر",
+        "checks": "الفحوصات",
+        "errorMessage": "رسالة الخطأ",
+        "actions": "الإجراءات"
+      },
+      "status": {
+        "valid": "سليم",
+        "broken": "معطوب",
+        "pending": "قيد الفحص"
+      },
+      "editLink": "تعديل الرابط",
+      "deleteLink": "حذف الرابط"
+    },
+    "form": {
+      "addTitle": "إضافة عمل جديد",
+      "editTitle": "تعديل العمل",
+      "addSubtitle": "أدخل بيانات العمل الدرامي أو السينمائي للإضافة إلى النظام",
+      "editSubtitle": "عدل بيانات العمل الدرامي أو السينمائي",
+      "titleLabel": "Title / Name",
+      "titlePlaceholder": "اكتب اسم العمل",
+      "yearLabel": "Year",
+      "tmdbIdLabel": "TMDB ID",
+      "posterUrlLabel": "Poster URL",
+      "storyLabel": "Story / Overview",
+      "storyPlaceholder": "اكتب قصة العمل...",
+      "ratingLabel": "Rating",
+      "genresLabel": "Genres",
+      "runtimeLabel": "Runtime",
+      "runtimePlaceholder": "1 ساعة و 57 دقيقة",
+      "durationIsoLabel": "Duration (ISO)",
+      "labelsLabel": "Labels",
+      "labelsPlaceholder": "دراما, تاريخ, إثارة, حرب",
+      "categoryLabel": "Category",
+      "categoryTv": "TV",
+      "categoryMovie": "Movie",
+      "mediaTypeLabel": "Media Type",
+      "typeSeries": "Series",
+      "typeMovie": "Movie",
+      "isReadyLabel": "Status: Is Ready",
+      "isFacebookPostedLabel": "Status: Is Facebook Posted",
+      "addBtn": "Add Media",
+      "updateBtn": "Update Media",
+      "addedSuccess": "تم إضافة العمل بنجاح",
+      "updatedSuccess": "تم التعديل بنجاح",
+      "saveError": "حدث خطأ أثناء الحفظ",
+      "notFound": "لم يتم العثور علي الميديا"
+    },
+    "seasonForm": {
+      "addTitle": "إضافة موسم جديد",
+      "editTitle": "تعديل الموسم",
+      "addSubtitle": "إضافة موسم جديد للعمل الحالي",
+      "editSubtitle": "تعديل بيانات الموسم الحالي",
+      "seasonNumberLabel": "رقم الموسم",
+      "seasonNumberPlaceholder": "مثال: 1",
+      "addBtn": "إضافة موسم",
+      "updateBtn": "تحديث الموسم",
+      "addedSuccess": "تم إضافة الموسم الجديد",
+      "updatedSuccess": "تم تعديل الموسم الحالي",
+      "saveError": "حدث خطأ أثناء الحفظ",
+      "notFound": "لم يتم العثور علي السيزون"
+    },
+    "episodeForm": {
+      "addTitle": "إضافة حلقة جديدة",
+      "editTitle": "تعديل بيانات الحلقة",
+      "addSubtitle": "إضافة حلقة جديدة للعمل الحالي",
+      "editSubtitle": "تعديل بيانات الحلقة الحالية",
+      "episodeNumberLabel": "رقم الحلقة",
+      "episodeNumberPlaceholder": "مثال: 1",
+      "seasonLabel": "الموسم",
+      "noSeasons": "لا توجد مواسم مضافة لهذا المسلسل",
+      "progressLabel": "نسبة التقدم (%)",
+      "statusLabel": "الحالة (Status)",
+      "statusPlaceholder": "مثال: active, completed",
+      "statusMessageLabel": "رسالة الحالة",
+      "statusMessagePlaceholder": "مثال: ready",
+      "downloadSpeedLabel": "سرعة التحميل",
+      "downloadSpeedPlaceholder": "مثال: 5 MB/s",
+      "downloadUrlLabel": "رابط التحميل (Download URL)",
+      "saveBtn": "حفظ الحلقة",
+      "updateBtn": "تحديث البيانات",
+      "addedSuccess": "تم اضافة حلقة جديده",
+      "updatedSuccess": "تم تعديل الحلقة الحالية",
+      "saveError": "حدث خطأ أثناء الحفظ",
+      "mediaNotFound": "العمل المطلوب غير موجود",
+      "episodeNotFound": "الحلقة المطلوبة غير موجودة"
+    },
+    "linkForm": {
+      "addTitle": "إضافة رابط جديد",
+      "editTitle": "تعديل بيانات الرابط",
+      "addSubtitle": "إضافة رابط مشاهدة أو تحميل جديد",
+      "editSubtitle": "تعديل بيانات وتفاصيل الرابط الحالي",
+      "serverNameLabel": "اسم السيرفر",
+      "serverNamePlaceholder": "مثال: MixDrop, Voe, Streamtape",
+      "linkTypeLabel": "نوع الرابط",
+      "selectLinkType": "اختر نوع الرابط",
+      "typeWatch": "مشاهدة (Watch)",
+      "typeDownload": "تحميل (Download)",
+      "qualityLabel": "الجودة",
+      "selectQuality": "اختر الجودة (اختياري)",
+      "checkCountLabel": "عدد مرات الفحص",
+      "lastCheckStatusLabel": "حالة الفحص الأخيرة",
+      "selectCheckStatus": "اختر حالة الفحص (اختياري)",
+      "statusPending": "قيد الانتظار (pending)",
+      "statusValid": "شغال / سليم (valid)",
+      "statusBroken": "معطّل / مكسور (broken)",
+      "urlLabel": "رابط السيرفر (URL)",
+      "isFixedLabel": "تم إصلاح الرابط / رابط ثابت (Is Fixed)",
+      "saveBtn": "حفظ الرابط",
+      "updateBtn": "تحديث الرابط",
+      "addedSuccess": "تم اضافة لينك جديد بنجاح",
+      "updatedSuccess": "تم تعديل اللينك الحالي بنجاح",
+      "saveError": "حدث خطأ أثناء الحفظ",
+      "episodeNotFound": "لم يتم العثور علي الحلقة!",
+      "linkNotFound": "لم يتم العثور علي اللينك!"
+    }
+  },
+  "common": {
+    "cancel": "إلغاء",
+    "processing": "جاري المعالجة...",
+    "refreshData": "🔄 تحديث البيانات",
+    "refreshSuccess": "تم تحديث البيانات بنجاح 🔄",
+    "edit": "تعديل",
+    "details": "التفاصيل",
+    "delete": "حذف"
+  }
+}
