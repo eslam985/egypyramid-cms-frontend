@@ -53,7 +53,7 @@ const handleDeleteLink = async (linkId) => {
           </svg>
         </div>
         <div :id="`${mediaContentStore.currentEpisode?.id}`">
-          <h3 class="text-fluid-h2 font-bold text-main flex items-center gap-2">
+          <h3 class="text-fluid-h2 font-boldflex items-center gap-2">
             <span>{{ t('media.linksInfo.episodeServers') }}</span>
             <span v-if="mediaContentStore.currentEpisode?.episode_number" class="text-accent font-black">
               #{{ mediaContentStore.currentEpisode.episode_number }}

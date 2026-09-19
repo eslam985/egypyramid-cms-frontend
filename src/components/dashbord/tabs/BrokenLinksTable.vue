@@ -63,7 +63,7 @@ const handlePageChange = (newPage) => {
         id="server-select"
         v-model="selectedServer"
         @change="handleServerChange"
-        class="px-3 py-1.5 rounded-xl border border-line bg-card text-fluid-xs text-main focus:outline-none focus:border-accent font-medium min-w-[180px] cursor-pointer transition-colors"
+        class="px-3 py-1.5 rounded-xl border border-line bg-card text-fluid-xsfocus:outline-none focus:border-accent font-medium min-w-[180px] cursor-pointer transition-colors"
         :disabled="isLoading"
       >
         <option v-for="server in availableServers" :key="server.value" :value="server.value">
@@ -77,13 +77,13 @@ const handlePageChange = (newPage) => {
       <table class="w-full text-fluid-xs text-right">
         <thead class="text-sub bg-line/20 border-b border-line">
           <tr>
-            <th class="p-fluid whitespace-nowrap">{{ t('brokenLinks.table.name') }}</th>
-            <th class="p-fluid whitespace-nowrap">{{ t('brokenLinks.table.type') }}</th>
-            <th class="p-fluid whitespace-nowrap">{{ t('brokenLinks.table.serverQuality') }}</th>
-            <th class="p-fluid whitespace-nowrap">{{ t('brokenLinks.table.url') }}</th>
-            <th class="p-fluid whitespace-nowrap">{{ t('brokenLinks.table.errorReason') }}</th>
-            <th class="p-fluid whitespace-nowrap">{{ t('brokenLinks.table.lastCheck') }}</th>
-            <th class="p-fluid whitespace-nowrap">{{ t('brokenLinks.table.status') }}</th>
+            <th class="p-fluid whitespace-nowrap text-center">{{ t('brokenLinks.table.name') }}</th>
+            <th class="p-fluid whitespace-nowrap text-center">{{ t('brokenLinks.table.type') }}</th>
+            <th class="p-fluid whitespace-nowrap text-center">{{ t('brokenLinks.table.serverQuality') }}</th>
+            <th class="p-fluid whitespace-nowrap text-center">{{ t('brokenLinks.table.url') }}</th>
+            <th class="p-fluid whitespace-nowrap text-center">{{ t('brokenLinks.table.errorReason') }}</th>
+            <th class="p-fluid whitespace-nowrap text-center">{{ t('brokenLinks.table.lastCheck') }}</th>
+            <th class="p-fluid whitespace-nowrap text-center">{{ t('brokenLinks.table.status') }}</th>
           </tr>
         </thead>
 
@@ -95,8 +95,8 @@ const handlePageChange = (newPage) => {
             class="hover:bg-line/10 transition-colors cursor-pointer"
           >
             <!-- اسم العمل والتفاصيل -->
-            <td class="p-fluid">
-              <div class="font-bold text-main mb-0.5 whitespace-nowrap">
+            <td class="p-fluid text-center">
+              <div class="font-boldmb-0.5 whitespace-nowrap">
                 {{ item.title || t('brokenLinks.unknownWork') }}
               </div>
               <div class="text-sub">
@@ -111,7 +111,7 @@ const handlePageChange = (newPage) => {
             </td>
 
             <!-- نوع العمل -->
-            <td class="p-fluid">
+            <td class="p-fluid text-center">
               <span
                 :class="
                   item.media_type === 'series'
@@ -129,11 +129,11 @@ const handlePageChange = (newPage) => {
             <!-- السيرفر والجودة -->
             <td class="p-fluid text-sub">
               <div
-                class="font-medium text-main font-mono text-fluid-xs bg-line/30 px-2 py-0.5 rounded-md w-fit mb-1 border border-line/40"
+                class="font-mediumfont-mono text-fluid-xs bg-line/30 px-2 py-0.5 rounded-md w-fit mb-1 border border-line/40"
               >
                 {{ item.server_name }}
               </div>
-              <div class="text-fluid-xs text-sub">
+              <div class="text-fluid-xs text-sub  text-center">
                 <span>{{ item.quality || '-' }}</span>
                 <span v-if="item.link_type">
                   ({{
@@ -144,7 +144,7 @@ const handlePageChange = (newPage) => {
             </td>
 
             <!-- الرابط -->
-            <td class="p-fluid ltr text-right" @click.stop>
+            <td class="p-fluid  text-center" @click.stop>
               <a
                 :href="item.url"
                 target="_blank"
@@ -155,7 +155,7 @@ const handlePageChange = (newPage) => {
             </td>
 
             <!-- سبب الخطأ -->
-            <td class="p-fluid">
+            <td class="p-fluid  text-center">
               <span
                 class="px-2.5 py-1 whitespace-nowrap rounded-full text-fluid-xs font-semibold bg-danger/10 text-danger border border-danger/20 inline-block font-mono"
               >
@@ -167,12 +167,12 @@ const handlePageChange = (newPage) => {
             </td>
 
             <!-- آخر فحص -->
-            <td class="p-fluid text-sub whitespace-nowrap">
+            <td class="p-fluid text-sub whitespace-nowrap  text-center">
               {{ formatDate(item.last_check_at) }}
             </td>
 
             <!-- حالة العمل -->
-            <td class="p-fluid whitespace-nowrap">
+            <td class="p-fluid whitespace-nowrap  text-center">
               <span
                 v-if="item.is_ready === true"
                 class="text-success font-semibold bg-success/10 px-2.5 py-1 rounded-lg border border-success/20 inline-block"
@@ -181,7 +181,7 @@ const handlePageChange = (newPage) => {
               </span>
               <span
                 v-else
-                class="text-danger font-semibold bg-danger/10 px-2.5 py-1 rounded-lg border border-danger/20 inline-block"
+                class="text-danger text-center font-semibold bg-danger/10 px-2.5 py-1 rounded-lg border border-danger/20 inline-block"
               >
                 {{ t('brokenLinks.notReady') }}
               </span>

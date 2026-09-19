@@ -46,7 +46,7 @@ onMounted(() => {
         id="server-select"
         v-model="selectedServer"
         @change="loadMissingEpisodes"
-        class="px-3 py-1.5 rounded-xl border border-line bg-card text-fluid-xs text-main focus:outline-none focus:border-accent font-medium min-w-[180px] cursor-pointer transition-colors"
+        class="px-3 py-1.5 rounded-xl border border-line bg-card text-fluid-xsfocus:outline-none focus:border-accent font-medium min-w-[180px] cursor-pointer transition-colors"
       >
         <option v-for="server in servers" :key="server.value" :value="server.value">
           {{ server.label }}
@@ -59,14 +59,14 @@ onMounted(() => {
       <table class="w-full text-fluid-xs text-right">
         <thead class="text-sub bg-background border-b border-line">
           <tr>
-            <th class="p-fluid whitespace-nowrap">{{ t('missingEpisodes.table.title') }}</th>
-            <th class="p-fluid whitespace-nowrap">
+            <th class="p-fluid whitespace-nowrap text-center">{{ t('missingEpisodes.table.title') }}</th>
+            <th class="p-fluid whitespace-nowrap text-center">
               {{ t('missingEpisodes.table.seasonEpisode') }}
             </th>
-            <th class="p-fluid whitespace-nowrap">{{ t('missingEpisodes.table.type') }}</th>
-            <th class="p-fluid whitespace-nowrap">{{ t('missingEpisodes.table.workStatus') }}</th>
-            <th class="p-fluid whitespace-nowrap">{{ t('missingEpisodes.table.identifier') }}</th>
-            <th class="p-fluid whitespace-nowrap">{{ t('missingEpisodes.table.status') }}</th>
+            <th class="p-fluid whitespace-nowrap text-center">{{ t('missingEpisodes.table.type') }}</th>
+            <th class="p-fluid whitespace-nowrap text-center">{{ t('missingEpisodes.table.workStatus') }}</th>
+            <th class="p-fluid whitespace-nowrap text-center">{{ t('missingEpisodes.table.identifier') }}</th>
+            <th class="p-fluid whitespace-nowrap text-center">{{ t('missingEpisodes.table.status') }}</th>
           </tr>
         </thead>
         <tbody class="divide-y divide-line">
@@ -77,10 +77,10 @@ onMounted(() => {
             class="hover:bg-line/10 transition-colors cursor-pointer"
           >
             <!-- اسم العمل -->
-            <td class="p-fluid font-bold text-main whitespace-nowrap">{{ item.title }}</td>
+            <td class="p-fluid font-bold whitespace-nowrap text-center">{{ item.title }}</td>
 
             <!-- الموسم / الحلقة -->
-            <td class="p-fluid text-sub whitespace-nowrap">
+            <td class="p-fluid text-sub whitespace-nowrap text-center">
               <span v-if="item.season_number">
                 {{ t('missingEpisodes.season') }} {{ item.season_number }} -
               </span>
@@ -92,7 +92,7 @@ onMounted(() => {
             </td>
 
             <!-- النوع -->
-            <td class="p-fluid">
+            <td class="p-fluid text-center">
               <span
                 :class="
                   item.media_type === 'series'
@@ -112,7 +112,7 @@ onMounted(() => {
             </td>
 
             <!-- حالة العمل -->
-            <td class="p-fluid whitespace-nowrap">
+            <td class="p-fluid whitespace-nowrap text-center">
               <span
                 v-if="item.is_ready === true"
                 class="text-success font-semibold bg-success/10 px-2.5 py-1 rounded-lg border border-success/20 inline-block"
@@ -128,12 +128,12 @@ onMounted(() => {
             </td>
 
             <!-- المعرف -->
-            <td class="p-fluid font-mono text-fluid-xs text-sub ltr text-start whitespace-nowrap">
+            <td class="p-fluid font-mono text-fluid-xs text-sub whitespace-nowrap text-center">
               {{ item.identifier }}
             </td>
 
             <!-- الحالة -->
-            <td class="p-fluid whitespace-nowrap">
+            <td class="p-fluid whitespace-nowrap text-center">
               <span
                 class="px-2.5 py-1 rounded-full text-fluid-xs font-semibold bg-danger/10 text-danger border border-danger/20 inline-block"
               >

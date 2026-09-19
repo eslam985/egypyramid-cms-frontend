@@ -15,12 +15,12 @@ const { telegramLocked, isLoading } = storeToRefs(analyticsStore)
     <table class="w-full text-fluid-xs text-right">
       <thead class="text-sub bg-line/20 border-b border-line">
         <tr>
-          <th class="p-fluid whitespace-nowrap">{{ t('telegramLocked.table.titleEpisode') }}</th>
-          <th class="p-fluid whitespace-nowrap">{{ t('telegramLocked.table.type') }}</th>
-          <th class="p-fluid whitespace-nowrap">{{ t('telegramLocked.table.server') }}</th>
-          <th class="p-fluid whitespace-nowrap">{{ t('telegramLocked.table.lockedUrl') }}</th>
-          <th class="p-fluid whitespace-nowrap">{{ t('telegramLocked.table.workStatus') }}</th>
-          <th class="p-fluid whitespace-nowrap">{{ t('telegramLocked.table.addedAt') }}</th>
+          <th class="p-fluid whitespace-nowrap text-center">{{ t('telegramLocked.table.titleEpisode') }}</th>
+          <th class="p-fluid whitespace-nowrap text-center">{{ t('telegramLocked.table.type') }}</th>
+          <th class="p-fluid whitespace-nowrap text-center">{{ t('telegramLocked.table.server') }}</th>
+          <th class="p-fluid whitespace-nowrap text-center">{{ t('telegramLocked.table.lockedUrl') }}</th>
+          <th class="p-fluid whitespace-nowrap text-center">{{ t('telegramLocked.table.workStatus') }}</th>
+          <th class="p-fluid whitespace-nowrap text-center">{{ t('telegramLocked.table.addedAt') }}</th>
         </tr>
       </thead>
       <tbody class="divide-y divide-line">
@@ -32,7 +32,7 @@ const { telegramLocked, isLoading } = storeToRefs(analyticsStore)
         >
           <!-- اسم العمل ورقم الحلقة -->
           <td class="p-fluid whitespace-nowrap">
-            <div class="font-bold text-main mb-0.5">{{ item.title }}</div>
+            <div class="font-boldmb-0.5">{{ item.title }}</div>
             <div class="text-sub text-fluid-xs">
               <span v-if="item.media_type === 'series' && item.season_number">
                 {{ t('telegramLocked.season') }} {{ item.season_number }} -
@@ -63,7 +63,7 @@ const { telegramLocked, isLoading } = storeToRefs(analyticsStore)
           <!-- السيرفر -->
           <td class="p-fluid whitespace-nowrap">
             <span
-              class="bg-line/20 text-main border border-line px-2 py-1 rounded-lg font-mono text-fluid-xs"
+              class="bg-line/20border border-line px-2 py-1 rounded-lg font-mono text-fluid-xs"
             >
               {{ item.server_name }}
             </span>

@@ -14,6 +14,7 @@ const loadDashboardData = async () => {
   await analyticsStore.fetchNotReadyMedias(true)
   await analyticsStore.fetchBrokenLinks({ serverName: 'telegram_direct' }, true)
   await analyticsStore.fetchLockedTelegramLinks(true)
+  await analyticsStore.fetchTotalCountersStatusServers('broken', true)
 }
 </script>
 <template>
@@ -21,7 +22,7 @@ const loadDashboardData = async () => {
     <!-- عنوان الصفحة -->
     <div class="flex items-center justify-between flex-wrap gap-3">
       <div>
-        <h1 class="text-fluid-h2 font-bold text-main">{{ t('dashboard.overview.title') }}</h1>
+        <h1 class="text-fluid-h2 font-bold">{{ t('dashboard.overview.title') }}</h1>
         <p class="text-fluid-xs text-sub mt-1">
           {{ t('dashboard.overview.subtitle') }}
         </p>

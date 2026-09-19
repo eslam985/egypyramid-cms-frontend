@@ -142,7 +142,7 @@ const handleDeleteSeason = async (seasonId) => {
                 #{{ season.season_number }}
               </span>
               <div>
-                <span class="text-fluid-xs font-bold text-main block"
+                <span class="text-fluid-xs font-boldblock"
                   >{{ t('media.seasonInfo.seasonLabel', { number: season.season_number }) }}</span
                 >
                 <span class="text-[10px] text-sub/70 font-mono block">ID: {{ season.id }}</span>
@@ -170,7 +170,7 @@ const handleDeleteSeason = async (seasonId) => {
           >
             <span>{{ t('media.seasonInfo.identifier') }}</span>
             <code
-              class="text-[11px] font-mono bg-line/20 border border-line px-1.5 py-0.5 rounded text-main truncate max-w-[120px]"
+              class="text-[11px] font-mono bg-line/20 border border-line px-1.5 py-0.5 roundedtruncate max-w-[120px]"
             >
               {{ season.id }}
             </code>

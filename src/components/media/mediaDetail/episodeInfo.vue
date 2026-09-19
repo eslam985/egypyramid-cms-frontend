@@ -141,7 +141,7 @@ const handleDeleteEpisode = (episodeId) => {
                 #{{ ep.episode_number }}
               </span>
               <div>
-                <span class="text-fluid-xs font-bold text-main block"
+                <span class="text-fluid-xs font-boldblock"
                   >{{ t('media.episodeInfo.episodeLabel', { number: ep.episode_number }) }}</span
                 >
                 <span class="text-[10px] text-sub/70 font-mono block">ID: {{ ep.id }}</span>
@@ -180,12 +180,12 @@ const handleDeleteEpisode = (episodeId) => {
           <div class="pt-2 border-t border-line/60 text-fluid-xs space-y-1.5">
             <div class="flex items-center justify-between text-sub">
               <span>{{ t('media.episodeInfo.seasonId') }}:</span>
-              <span class="font-mono text-main dir-ltr">{{ ep.season_id || 'N/A' }}</span>
+              <span class="font-monodir-ltr">{{ ep.season_id || 'N/A' }}</span>
             </div>
             <div v-if="ep.id" class="flex items-center justify-between text-sub">
               <span>{{ t('media.episodeInfo.identifier') }}:</span>
               <code
-                class="text-[11px] font-mono bg-line/20 border border-line px-1.5 py-0.5 rounded text-main truncate max-w-[120px]"
+                class="text-[11px] font-mono bg-line/20 border border-line px-1.5 py-0.5 roundedtruncate max-w-[120px]"
               >
                 {{ ep.id }}
               </code>

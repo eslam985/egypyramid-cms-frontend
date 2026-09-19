@@ -26,12 +26,12 @@ const handlePageChange = async (newPage) => {
       <table class="w-full text-fluid-xs text-right">
         <thead class="text-sub bg-background/35 p-fluid border-b border-line">
           <tr>
-            <th class="p-fluid whitespace-nowrap">{{ t('notReady.table.poster') }}</th>
-            <th class="p-fluid whitespace-nowrap">{{ t('notReady.table.titleYear') }}</th>
-            <th class="p-fluid whitespace-nowrap">{{ t('notReady.table.typeGenre') }}</th>
-            <th class="p-fluid whitespace-nowrap">{{ t('notReady.table.tmdb') }}</th>
-            <th class="p-fluid whitespace-nowrap">{{ t('notReady.table.addedAt') }}</th>
-            <th class="p-fluid whitespace-nowrap">{{ t('notReady.table.status') }}</th>
+            <th class="p-fluid whitespace-nowrap text-center">{{ t('notReady.table.poster') }}</th>
+            <th class="p-fluid whitespace-nowrap text-center">{{ t('notReady.table.titleYear') }}</th>
+            <th class="p-fluid whitespace-nowrap text-center">{{ t('notReady.table.typeGenre') }}</th>
+            <th class="p-fluid whitespace-nowrap text-center">{{ t('notReady.table.tmdb') }}</th>
+            <th class="p-fluid whitespace-nowrap text-center">{{ t('notReady.table.addedAt') }}</th>
+            <th class="p-fluid whitespace-nowrap text-center">{{ t('notReady.table.status') }}</th>
           </tr>
         </thead>
         <tbody class="divide-y divide-line">
@@ -59,12 +59,12 @@ const handlePageChange = async (newPage) => {
 
             <!-- الاسم والسنة -->
             <td class="p-fluid whitespace-nowrap">
-              <div class="font-bold text-main capitalize">{{ item.title }}</div>
-              <div class="text-sub" v-if="item.year">{{ item.year }}</div>
+              <div class="font-boldcapitalize text-center">{{ item.title }}</div>
+              <div class="text-sub text-center" v-if="item.year">{{ item.year }}</div>
             </td>
 
             <!-- النوع والتصنيفات -->
-            <td class="p-fluid text-sub">
+            <td class="p-fluid text-sub text-center">
               <span
                 :class="
                   item.media_type === 'series'
@@ -75,25 +75,25 @@ const handlePageChange = async (newPage) => {
               >
                 {{ item.media_type === 'series' ? t('notReady.series') : t('notReady.movie') }}
               </span>
-              <div class="text-sub/70 truncate max-w-[150px]" v-if="item.labels">
+              <div class="text-sub/70 truncate max-w-[180px] text-center" v-if="item.labels">
                 {{ item.labels }}
               </div>
             </td>
 
             <!-- TMDB ID -->
-            <td class="p-fluid font-mono text-sub ltr text-start whitespace-nowrap">
+            <td class="p-fluid font-mono text-sub whitespace-nowrap text-center">
               #{{ item.tmdb_id || item.id }}
             </td>
 
             <!-- تاريخ الإضافة -->
-            <td class="p-fluid text-sub whitespace-nowrap">
+            <td class="p-fluid text-sub whitespace-nowrap text-center">
               {{ formatDate(item.created_at) }}
             </td>
 
             <!-- الحالة -->
             <td class="p-fluid whitespace-nowrap">
               <span
-                class="px-2.5 py-1 rounded-full text-fluid-xs font-semibold bg-warning/10 text-warning border border-warning/20 inline-block"
+                class="px-2.5 py-1 rounded-full text-fluid-xs text-center font-semibold bg-warning/10 text-warning border border-warning/20 inline-block"
               >
                 {{ t('notReady.notReadyBadge') }}
               </span>

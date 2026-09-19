@@ -42,11 +42,11 @@ const handleDelete = async (id, title) => {
     <table class="w-full text-start border-collapse text-fluid-xs">
       <thead class="bg-line/20 border-b border-line text-sub font-semibold select-none">
         <tr>
-          <th class="p-fluid whitespace-nowrap">{{ t('media.table.poster') }}</th>
+          <th class="p-fluid whitespace-nowrap text-center">{{ t('media.table.poster') }}</th>
 
           <th class="p-fluid cursor-pointer hover:bg-line/30 transition-colors whitespace-nowrap"
             @click="handleSort('title')">
-            <div class="flex items-center gap-1">
+            <div class="flex items-center gap-1 justify-center">
               <span>{{ t('media.table.title') }}</span>
               <span v-if="mediaStore.filters.sortBy === 'title'">
                 {{ mediaStore.filters.sortOrder === 'ASC' ? '▲' : '▼' }}
@@ -56,7 +56,7 @@ const handleDelete = async (id, title) => {
 
           <th class="p-fluid cursor-pointer hover:bg-line/30 transition-colors whitespace-nowrap"
             @click="handleSort('category')">
-            <div class="flex items-center gap-1">
+            <div class="flex items-center gap-1 justify-center">
               <span>{{ t('media.table.categoryType') }}</span>
               <span v-if="mediaStore.filters.sortBy === 'category'">
                 {{ mediaStore.filters.sortOrder === 'ASC' ? '▲' : '▼' }}
@@ -66,7 +66,7 @@ const handleDelete = async (id, title) => {
 
           <th class="p-fluid cursor-pointer hover:bg-line/30 transition-colors whitespace-nowrap"
             @click="handleSort('year')">
-            <div class="flex items-center gap-1">
+            <div class="flex items-center gap-1 justify-center">
               <span>{{ t('media.table.year') }}</span>
               <span v-if="mediaStore.filters.sortBy === 'year'">
                 {{ mediaStore.filters.sortOrder === 'ASC' ? '▲' : '▼' }}
@@ -76,7 +76,7 @@ const handleDelete = async (id, title) => {
 
           <th class="p-fluid cursor-pointer hover:bg-line/30 transition-colors whitespace-nowrap"
             @click="handleSort('is_ready')">
-            <div class="flex items-center gap-1">
+            <div class="flex items-center gap-1 justify-center">
               <span>{{ t('media.table.status') }}</span>
               <span v-if="mediaStore.filters.sortBy === 'is_ready'">
                 {{ mediaStore.filters.sortOrder === 'ASC' ? '▲' : '▼' }}
@@ -86,7 +86,7 @@ const handleDelete = async (id, title) => {
 
           <th class="p-fluid cursor-pointer hover:bg-line/30 transition-colors whitespace-nowrap"
             @click="handleSort('created_at')">
-            <div class="flex items-center gap-1">
+            <div class="flex items-center gap-1 justify-center">
               <span>{{ t('media.table.createdAt') }}</span>
               <span v-if="mediaStore.filters.sortBy === 'created_at'">
                 {{ mediaStore.filters.sortOrder === 'ASC' ? '▲' : '▼' }}
@@ -125,15 +125,15 @@ const handleDelete = async (id, title) => {
 
           <!-- العنوان والـ Slug والمواسم -->
           <td class="p-fluid whitespace-nowrap">
-            <div class="flex flex-col gap-0.5">
-              <div class="font-bold text-main">{{ item.title }}</div>
+            <div class="flex flex-col items-center gap-1">
+              <div class="font-bold text-fluid-p text-accent">{{ item.title }}</div>
 
               <div v-if="item.slug" class="text-sub/70 text-fluid-xs ltr text-start font-mono">
                 /{{ item.slug }}
               </div>
 
-              <div class="text-fluid-xs">
-                <div v-if="item.seasons_count && item.seasons_count > 0" class="flex items-center gap-1 text-sub">
+              <div class="text-fluid-xs flex justify-center">
+                <div v-if="item.seasons_count && item.seasons_count > 0" class="flex justify-center items-center gap-1 text-sub">
                   <span>{{ item.seasons_count > 1 ? t('media.seasons') + ':' : t('media.season') + ':' }}</span>
                   <span class="text-success font-semibold">{{ item.seasons_count }}</span>
                 </div>
@@ -146,8 +146,8 @@ const handleDelete = async (id, title) => {
 
           <!-- التصنيف والنوع -->
           <td class="p-fluid whitespace-nowrap">
-            <div class="flex flex-col gap-1 items-start">
-              <span class="px-2 py-0.5 rounded-lg text-fluid-xs font-semibold bg-line/20 text-main border border-line">
+            <div class="flex flex-col gap-1 items-center">
+              <span class="px-2 py-0.5 rounded-lg text-fluid-xs font-semibold bg-line/20border border-line">
                 {{ item.category }}
               </span>
               <span class="text-fluid-xs text-sub capitalize">
@@ -157,7 +157,7 @@ const handleDelete = async (id, title) => {
           </td>
 
           <!-- السنة والتقييم -->
-          <td class="p-fluid text-sub font-medium whitespace-nowrap">
+          <td class="p-fluid text-sub font-medium whitespace-nowrap text-center">
             <div>{{ item.year }}</div>
             <div v-if="item.rating" class="text-fluid-xs text-warning font-semibold">
               ★ {{ item.rating }}
@@ -165,7 +165,7 @@ const handleDelete = async (id, title) => {
           </td>
 
           <!-- حالة الجاهزية -->
-          <td class="p-fluid whitespace-nowrap">
+          <td class="p-fluid whitespace-nowrap text-center">
             <span :class="[
               'px-2.5 py-1 rounded-full text-fluid-xs font-semibold border inline-block',
               item.is_ready
@@ -177,7 +177,7 @@ const handleDelete = async (id, title) => {
           </td>
 
           <!-- التاريخ -->
-          <td class="p-fluid text-sub whitespace-nowrap">
+          <td class="p-fluid text-sub whitespace-nowrap text-center">
             {{ formatDate(item.created_at) }}
           </td>
 
@@ -185,7 +185,7 @@ const handleDelete = async (id, title) => {
           <td class="p-fluid whitespace-nowrap">
             <div class="flex items-center justify-center gap-3">
               <router-link :to="`/media/${item.id}/details`"
-                class="flex gap-2 px-3 py-1.5 rounded-xl border border-line font-medium text-main bg-card hover:bg-line/20 transition-all active:scale-95">
+                class="flex gap-2 px-3 py-1.5 rounded-xl border border-line font-mediumbg-card hover:bg-line/20 transition-all active:scale-95">
                 <Info class="self-center text-accent" />
                 <span class="self-center">{{ t('common.details') }}</span>
               </router-link>

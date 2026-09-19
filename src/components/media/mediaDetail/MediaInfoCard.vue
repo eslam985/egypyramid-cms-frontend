@@ -94,7 +94,7 @@ const handleDeleteMedia = () => {
         <div class="md:col-span-3 space-y-4">
           <!-- الشارات والتصنيفات (Badges) -->
           <div class="flex flex-wrap items-center gap-2">
-            <span class="px-3 py-1 rounded-lg text-fluid-xs font-semibold bg-line/20 text-main border border-line">
+            <span class="px-3 py-1 rounded-lg text-fluid-xs font-semibold bg-line/20border border-line">
               {{ t('media.detail.typeLabel') }}: {{ mediaStore.currentMedia.media_type }} ({{
                 mediaStore.currentMedia.category
               }})
@@ -106,7 +106,7 @@ const handleDeleteMedia = () => {
             </span>
 
             <span v-if="mediaStore.currentMedia.runtime"
-              class="px-3 py-1 rounded-lg text-fluid-xs font-semibold bg-line/20 text-main border border-line">
+              class="px-3 py-1 rounded-lg text-fluid-xs font-semibold bg-line/20border border-line">
               ⏱️ {{ mediaStore.currentMedia.runtime }}
             </span>
 
@@ -160,7 +160,7 @@ const handleDeleteMedia = () => {
 
           <!-- القصة والوصف -->
           <div class="pt-3 border-t border-line">
-            <h3 class="text-fluid-xs font-bold text-main mb-1">{{ t('media.detail.storyTitle') }}</h3>
+            <h3 class="text-fluid-xs font-boldmb-1">{{ t('media.detail.storyTitle') }}</h3>
             <p dir="rtl" class="text-fluid-xs text-sub leading-relaxed whitespace-pre-line">
               {{ mediaStore.currentMedia.story || t('media.detail.noStory') }}
             </p>

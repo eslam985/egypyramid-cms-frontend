@@ -50,7 +50,7 @@ const handleRefresh = async () => {
           <select
             id="media-category"
             v-model="selectedCategory"
-            class="form-input w-full bg-line/10 border border-line text-main rounded-xl p-2.5 text-fluid-xs focus:ring-2 focus:ring-accent/20 cursor-pointer"
+            class="form-input w-full bg-line/10 border border-linerounded-xl p-2.5 text-fluid-xs focus:ring-2 focus:ring-accent/20 cursor-pointer"
             @change="handleCategoryChange"
           >
             <option value="">{{ t('media.filter.allCategories') }}</option>

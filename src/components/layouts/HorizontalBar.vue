@@ -12,8 +12,8 @@ const { t } = useI18n()
       <!-- الرئيسية -->
       <router-link
         :to="{ name: 'dashboard' }"
-        exact-active-class="bg-accent text-on-accent font-semibold shadow-glow"
-        class="flex items-center gap-2 px-3.5 py-2 rounded-xl text-fluid-xs font-medium text-sub hover:bg-card-hover hover:text-accent transition-all duration-200 shrink-0"
+        exact-active-class="btn-outline shadow-glow/30 text-accent hover:text-slate-900 hover:bg-accent/70"
+        class="btn-secondary text-fluid-xs"
       >
         <House class="size-4" />
         <span>{{ t('sidebar.dashboard') }}</span>
@@ -22,8 +22,8 @@ const { t } = useI18n()
       <!-- الأعمال -->
       <router-link
         :to="{ name: 'mediaList' }"
-        exact-active-class="bg-accent text-on-accent font-semibold shadow-glow"
-        class="flex items-center gap-2 px-3.5 py-2 rounded-xl text-fluid-xs font-medium text-sub hover:bg-card-hover hover:text-accent transition-all duration-200 shrink-0"
+        exact-active-class="btn-outline shadow-glow/30 text-accent hover:text-slate-900 hover:bg-accent/70"
+        class="btn-secondary text-fluid-xs"
       >
         <Video class="size-4" />
         <span>{{ t('sidebar.media') }}</span>
@@ -32,8 +32,8 @@ const { t } = useI18n()
       <!-- التصنيفات -->
       <router-link
         :to="{ name: 'genresList' }"
-        exact-active-class="bg-accent text-on-accent font-semibold shadow-glow"
-        class="flex items-center gap-2 px-3.5 py-2 rounded-xl text-fluid-xs font-medium text-sub hover:bg-card-hover hover:text-accent transition-all duration-200 shrink-0"
+        exact-active-class="btn-outline shadow-glow/30 text-accent hover:text-slate-900 hover:bg-accent/70"
+        class="btn-secondary text-fluid-xs"
       >
         <ChartBarStacked class="size-4" />
         <span>{{ t('sidebar.genres') }}</span>
@@ -42,8 +42,8 @@ const { t } = useI18n()
       <!-- مهام التحميل -->
       <router-link
         :to="{ name: 'tasksList' }"
-        exact-active-class="bg-accent text-on-accent font-semibold shadow-glow"
-        class="flex items-center gap-2 px-3.5 py-2 rounded-xl text-fluid-xs font-medium text-sub hover:bg-card-hover hover:text-accent transition-all duration-200 shrink-0"
+        exact-active-class="btn-outline shadow-glow/30 text-accent hover:text-slate-900 hover:bg-accent/70"
+        class="btn-secondary text-fluid-xs"
       >
         <Download class="size-4" />
         <span>{{ t('sidebar.tasks') }}</span>
@@ -52,8 +52,8 @@ const { t } = useI18n()
       <!-- الإعدادات -->
       <router-link
         :to="{ name: 'settings' }"
-        exact-active-class="bg-accent text-on-accent font-semibold shadow-glow"
-        class="flex items-center gap-2 px-3.5 py-2 rounded-xl text-fluid-xs font-medium text-sub hover:bg-card-hover hover:text-accent transition-all duration-200 shrink-0"
+        exact-active-class="btn-outline shadow-glow/30 text-accent hover:text-slate-900 hover:bg-accent/70"
+        class="btn-secondary text-fluid-xs"
       >
         <Settings class="size-4" />
         <span>{{ t('sidebar.settings') }}</span>

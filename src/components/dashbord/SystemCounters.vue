@@ -20,7 +20,7 @@ const { systemCounters } = storeToRefs(analyticsStore)
         <span class="text-sub text-fluid-xs font-medium group-hover:text-main">{{
           t('dashboard.counters.totalMedias')
         }}</span>
-        <span class="font-black text-main text-fluid-h3 mt-3">{{
+        <span class="font-blacktext-fluid-h3 mt-3">{{
           systemCounters.total_medias ?? 0
         }}</span>
       </router-link>
@@ -32,7 +32,7 @@ const { systemCounters } = storeToRefs(analyticsStore)
         <span class="text-sub text-fluid-xs font-medium">{{
           t('dashboard.counters.totalEpisodes')
         }}</span>
-        <span class="font-black text-main text-fluid-h3 mt-3">{{
+        <span class="font-blacktext-fluid-h3 mt-3">{{
           systemCounters.total_episodes ?? 0
         }}</span>
       </div>
@@ -44,7 +44,7 @@ const { systemCounters } = storeToRefs(analyticsStore)
         <span class="text-sub text-fluid-xs font-medium">{{
           t('dashboard.counters.totalLinks')
         }}</span>
-        <span class="font-black text-main text-fluid-h3 mt-3">{{
+        <span class="font-blacktext-fluid-h3 mt-3">{{
           systemCounters.total_links ?? 0
         }}</span>
       </div>
@@ -81,7 +81,7 @@ const { systemCounters } = storeToRefs(analyticsStore)
         <span class="text-sub text-fluid-xs font-medium group-hover:text-main">{{
           t('dashboard.counters.totalTasks')
         }}</span>
-        <span class="font-black text-main text-fluid-h3 mt-3">{{
+        <span class="font-blacktext-fluid-h3 mt-3">{{
           systemCounters.total_tasks ?? 0
         }}</span>
       </router-link>
