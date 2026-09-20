@@ -5,6 +5,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { useMediaStore } from '@/stores/mediaStore'
 import { useNotificationStore } from '@/stores/notificationStore'
 import { Search } from '@lucide/vue'
+
 const router = useRouter()
 const route = useRoute()
 const mediaStore = useMediaStore()
@@ -53,9 +54,9 @@ const handleSearch = async () => {
       id="media-search"
       type="search"
       v-model="searchInput"
-      class="form-input md:p-2.5 text-center"
+      class="form-input md:p-2.5 text-center bg-line/10 border border-accent/20 border-linerounded-xl"
       @keyup.enter="handleSearch"
     />
-    <Search @click="handleSearch" class="self-center absolute left-2 text-accent-dark" />
+    <Search @click="handleSearch" class="self-center absolute left-2 text-accent" />
   </div>
 </template>

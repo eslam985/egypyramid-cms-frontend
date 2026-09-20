@@ -5,6 +5,7 @@ import { useI18n } from 'vue-i18n'
 
 import { useTaskStore } from '@/stores/taskStore'
 import { useNotificationStore } from '@/stores/notificationStore'
+import { Search } from '@lucide/vue'
 
 const { t } = useI18n()
 
@@ -66,31 +67,30 @@ const handleSearch = async () => {
 }
 </script>
 <template>
-  <div class="bg-card border border-line rounded-2xl p-fluidsm:p-6 shadow-soft mb-6">
+  <div class="bg-card border border-line rounded-2xl p-fluid shadow-soft mb-6">
     <div class="flex flex-col lg:flex-row items-end justify-between gap-4">
       <!-- أدوات الفلترة والبحث والتحديث -->
-      <div class="grid grid-cols-1 md:grid-cols-12 p-fluid gap-3 md:gap-12 w-full lg:w-auto flex-1">
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-3 md:gap-12 w-full lg:w-auto flex-1">
         <!-- left -->
         <div class="col-span-6 grid grid-cols-8 gap-fluid gap-2">
           <!-- حقل البحث -->
-          <div class="col-span-4">
-            <label for="task-search" class="form-label">{{ t('tasks.toolbar.searchLabel') }}</label>
+          <div class="col-span-4 flex self-center relative">
             <input
               id="task-search"
               type="search"
               v-model="inputValue"
               :placeholder="t('tasks.toolbar.searchPlaceholder')"
-              class="form-input"
+              class="form-input p-fluid text-center bg-line/10 border border-accent/20 border-linerounded-xl"
               @keyup.enter="handleSearch"
             />
+            <Search @click="handleSearch" class="self-center absolute left-2 text-accent" />
             </div>
 
             <div class="col-span-4">
-            <label for="task-status" class="form-label">{{ t('tasks.toolbar.statusLabel') }}</label>
             <select
               id="task-status"
               v-model="selectState"
-              class="form-input"
+              class="form-input w-full p-fluid bg-line/10 border border-accent/20 border-linerounded-xl focus:ring-2 focus:ring-accent/20 cursor-pointer"
               @change="handleChooseState"
             >
               <option value="">{{ t('tasks.toolbar.allStatuses') }}</option>
@@ -102,10 +102,10 @@ const handleSearch = async () => {
         </div>
 
         <!-- right -->
-        <div class="col-span-6 flex justify-around md:justify-end gap-3 md:gap-6 pt-4">
+        <div class="col-span-6 flex justify-around md:justify-end gap-3 md:gap-6">
           <button
             type="button"
-            class="btn-secondary w-full text-fluid-p text-center self-center"
+            class="btn-outline shadow-glow/10 text-fluid-xs! lg:text-fluid-p text-accent-dark hover:text-slate-900 hover:bg-accent/70 w-full"
             @click="handleRefresh"
           >
             {{ t('common.refreshData') }}
@@ -113,7 +113,7 @@ const handleSearch = async () => {
 
             <router-link
             to="/new-task"
-            class="btn-primary w-full text-fluid-p text-center self-center"
+            class="btn-outline shadow-glow/10 text-fluid-xs lg:text-fluid-p text-accent-dark hover:text-slate-900 hover:bg-accent/70 w-full"
             >
             {{ t('tasks.toolbar.addNew') }}
           </router-link>

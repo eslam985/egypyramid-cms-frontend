@@ -37,7 +37,7 @@ onUnmounted(() => {
       v-show="isVisible"
       type="button"
       @click="scrollToTop"
-      class="fixed bottom-6 left-6 z-50 p-3 rounded-2xl bg-accent hover:bg-accent-dark text-white shadow-lg shadow-accent/20 transition-all duration-300 cursor-pointer border border-custom-border flex items-center justify-center active:scale-95"
+      class="btn-scroll-top"
       aria-label="العودة للأعلى"
     >
       <svg

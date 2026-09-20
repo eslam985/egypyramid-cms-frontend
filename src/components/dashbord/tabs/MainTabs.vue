@@ -47,60 +47,60 @@ const switchTab = async (tab) => {
 <template>
   <div class="rounded-2xl mb-6 md:p-fluid space-y-4 shadow-soft">
     <!-- أزرار التبويبات -->
-    <div class="grid grid-cols-2 md:flex items-center gap-4 py-fluid">
+    <div class="grid grid-cols-2 md:flex items-center gap-fluid-gap py-fluid">
       <!-- الأعمال غير الجاهزة -->
       <button
         @click="switchTab('notReady')"
-        class="flex items-center gap-2 py-fluid md:px-4 rounded-xl text-fluid-xs font-semibold transition-all duration-200 cursor-pointer active:scale-95 select-none"
+        class="flex items-center justify-center gap-2 py-fluid md:px-4 rounded-xl text-fluid-xs font-semibold transition-all duration-200 cursor-pointer active:scale-95 select-none"
         :class="
           activeTab === 'notReady'
             ? 'bg-danger! text-white! shadow-soft hover:brightness-110'
             : 'bg-line/20 border border-line text-sub hover:text-main hover:bg-line/40'
         "
       >
-        <span>{{ t('dashboard.tabs.notReady', { count: mediasNotReadyList.length }) }}</span>
+        <span class="text-fluid-xs md:text-fluid-p">{{ t('dashboard.tabs.notReady', { count: mediasNotReadyList.length }) }}</span>
         <CircleOff class="size-4 shrink-0" />
       </button>
 
       <!-- الروابط المكسورة -->
       <button
         @click="switchTab('broken')"
-        class="flex items-center gap-2 py-fluid md:px-4 rounded-xl text-fluid-xs font-semibold transition-all duration-200 cursor-pointer active:scale-95 select-none"
+        class="flex items-center justify-center gap-2 py-fluid md:px-4 rounded-xl text-fluid-xs font-semibold transition-all duration-200 cursor-pointer active:scale-95 select-none"
         :class="
           activeTab === 'broken'
             ? 'bg-danger! text-white! shadow-soft hover:brightness-110'
             : 'bg-line/20 border border-line text-sub hover:text-main hover:bg-line/40'
         "
       >
-        <span>{{ t('dashboard.tabs.broken', { count: brokenLinksList.length }) }}</span>
+        <span class="text-fluid-xs md:text-fluid-p">{{ t('dashboard.tabs.broken', { count: brokenLinksList.length }) }}</span>
         <BoneFracture class="size-4 shrink-0" />
       </button>
 
       <!-- روابط تليجرام المقفولة -->
       <button
         @click="switchTab('telegram')"
-        class="flex items-center gap-2 py-fluid md:px-4 rounded-xl text-fluid-xs font-semibold transition-all duration-200 cursor-pointer active:scale-95 select-none"
+        class="flex items-center justify-center gap-2 py-fluid md:px-4 rounded-xl text-fluid-xs font-semibold transition-all duration-200 cursor-pointer active:scale-95 select-none"
         :class="
           activeTab === 'telegram'
             ? 'bg-danger! text-white! shadow-soft hover:brightness-110'
             : 'bg-line/20 border border-line text-sub hover:text-main hover:bg-line/40'
         "
       >
-        <span>{{ t('dashboard.tabs.telegram', { count: telegramLocked.length }) }}</span>
+        <span class="text-fluid-xs md:text-fluid-p">{{ t('dashboard.tabs.telegram', { count: telegramLocked.length }) }}</span>
         <Lock class="size-4 shrink-0" />
       </button>
 
       <!-- الحلقات المفقودة -->
       <button
         @click="switchTab('missing')"
-        class="flex items-center gap-2 py-fluid md:px-4 rounded-xl text-fluid-xs font-semibold transition-all duration-200 cursor-pointer active:scale-95 select-none"
+        class="flex items-center justify-center gap-2 py-fluid md:px-4 rounded-xl text-fluid-xs font-semibold transition-all duration-200 cursor-pointer active:scale-95 select-none"
         :class="
           activeTab === 'missing'
             ? 'bg-danger! text-white! shadow-soft hover:brightness-110'
             : 'bg-line/20 border border-line text-sub hover:text-main hover:bg-line/40'
         "
       >
-        <span>{{ t('dashboard.tabs.missing', { count: missingLinksByServer.length }) }}</span>
+        <span class="text-fluid-xs md:text-fluid-p">{{ t('dashboard.tabs.missing', { count: missingLinksByServer.length }) }}</span>
         <FileX class="size-4 shrink-0" />
       </button>
     </div>

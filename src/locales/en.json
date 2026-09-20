@@ -161,6 +161,7 @@
       "lastCheck": "Last Check",
       "status": "Status"
     },
+    "mediaType" : "Media Type",
     "unknownWork": "Unknown Title",
     "season": "Season",
     "episode": "Episode",
@@ -284,7 +285,7 @@
     },
     "toolbar": {
       "refreshData": "Refresh Data",
-      "addNewMedia": "✚ Add New Media"
+      "addNewMedia": "Add New Media"
     },
     "detail": {
       "backToList": "Back to list",
@@ -466,8 +467,8 @@
   "common": {
     "cancel": "Cancel",
     "processing": "Processing...",
-    "refreshData": "🔄 Refresh Data",
-    "refreshSuccess": "Data refreshed successfully 🔄",
+    "refreshData": "Refresh Data",
+    "refreshSuccess": "Data refreshed successfully",
     "edit": "Edit",
     "details": "Details",
     "delete": "Delete"

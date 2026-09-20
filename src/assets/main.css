@@ -30,6 +30,9 @@ html {
   scroll-padding-top: 5rem;
   color-scheme: light;
   tab-size: 4;
+  height: 100%;
+  height: -webkit-fill-available;
+  overflow-x: hidden;
 }
 
 html.dark,
@@ -43,10 +46,18 @@ body {
   background-color: var(--background);
   color: var(--foreground);
   overflow-x: hidden;
-  min-height: 100dvh;
+  min-height: 100%;
+  min-height: 100svh;
+  min-height: -webkit-fill-available;
   transition:
     background-color 0.3s ease,
     color 0.3s ease;
+}
+
+@media (display-mode: standalone) {
+  body {
+    min-height: 100dvh;
+  }
 }
 
 main {
@@ -66,44 +77,10 @@ canvas {
   border-style: none;
 }
 
-button,
-input,
-select,
-textarea {
-  font-family: inherit;
-  font-size: 100%;
-  line-height: 1.15;
-}
-
 input {
   outline: none;
 }
 
-button {
-  text-transform: none;
-  border: none;
-}
-
-button,
-[type='button'],
-[type='submit'],
-[type='reset'] {
-  -webkit-appearance: button;
-  appearance: button;
-  cursor: pointer;
-}
-
-button::-moz-focus-inner,
-[type='button']::-moz-focus-inner,
-[type='submit']::-moz-focus-inner {
-  border-style: none;
-  padding: 0;
-}
-
-::-webkit-file-upload-button {
-  -webkit-appearance: button;
-  font: inherit;
-}
 
 h1,
 h2,
@@ -432,6 +409,7 @@ body[data-theme='dark'] {
   }
 
   @keyframes float {
+
     0%,
     100% {
       transform: translateY(0) rotate(6deg);
@@ -453,6 +431,7 @@ body[data-theme='dark'] {
   }
 
   @keyframes pulse-glow {
+
     0%,
     100% {
       box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 45%, transparent);
@@ -477,6 +456,7 @@ body[data-theme='dark'] {
    5. Components
    -------------------------------------------------------------------------- */
 @layer components {
+
   /* ===== الأزرار والـ Inputs الثابتة الهيكل ===== */
   .btn-primary,
   .btn-secondary,
@@ -488,36 +468,36 @@ body[data-theme='dark'] {
   .form-input,
   .form-select,
   .form-textarea {
-    @apply inline-flex items-center justify-center gap-2 font-semibold rounded-xl transition-all duration-200 active:scale-95 disabled:opacity-50 disabled:pointer-events-none;
+    @apply inline-flex items-center justify-center gap-2 font-semibold rounded-xl transition-all duration-200 active:scale-95 disabled:opacity-50 disabled:pointer-events-none text-fluid-xs md:text-fluid-p;
   }
 
   /* ===== الأزرار: الألوان والتخصيص ===== */
   .btn-primary {
-    @apply bg-accent text-on-accent py-2.5 px-4 sm:px-6 cursor-pointer select-none whitespace-nowrap hover:bg-accent-dark;
+    @apply bg-accent text-on-accent py-2.5 px-4 sm:px-6 cursor-pointer select-none whitespace-nowrap hover:bg-accent-dark text-fluid-xs md:text-fluid-p;
   }
 
   .btn-secondary {
-    @apply bg-card text-sub border border-line py-2.5 px-4 sm:px-6 cursor-pointer select-none whitespace-nowrap hover:bg-card-hover hover:text-title;
+    @apply bg-card text-sub border border-line py-2.5 px-4 sm:px-6 cursor-pointer select-none whitespace-nowrap hover:bg-card-hover hover:text-title text-fluid-xs md:text-fluid-p;
   }
 
   .btn-outline {
-    @apply border border-accent text-accent bg-transparent py-2.5 px-4 sm:px-6 cursor-pointer select-none whitespace-nowrap hover:bg-accent hover:text-on-accent;
+    @apply border border-accent/20 text-accent bg-transparent py-2.5 px-4 sm:px-6 cursor-pointer select-none whitespace-nowrap hover:bg-accent hover:text-on-accent text-fluid-xs md:text-fluid-p;
   }
 
   .btn-ghost {
-    @apply bg-transparent text-sub py-2.5 px-4 sm:px-6 cursor-pointer select-none whitespace-nowrap hover:bg-card-hover hover:text-title;
+    @apply bg-transparent text-sub py-2.5 px-4 sm:px-6 cursor-pointer select-none whitespace-nowrap hover:bg-card-hover hover:text-title text-fluid-xs md:text-fluid-p;
   }
 
   .btn-danger {
-    @apply bg-danger text-white py-2.5 px-4 sm:px-6 cursor-pointer select-none whitespace-nowrap hover:brightness-110 hover:bg-danger/70;
+    @apply bg-danger text-white py-2.5 px-4 sm:px-6 cursor-pointer select-none whitespace-nowrap hover:brightness-110 hover:bg-danger/70 text-fluid-xs md:text-fluid-p;
   }
 
   .btn-icon {
-    @apply size-6 text-sub duration-200 hover:bg-card-hover hover:text-accent cursor-pointer;
+    @apply size-6 text-sub duration-200 hover:bg-card-hover hover:text-accent cursor-pointer text-fluid-xs md:text-fluid-p;
   }
 
   .btn-scroll-top {
-    @apply fixed bottom-6 end-6 z-50 grid place-items-center size-11 rounded-full bg-card text-accent border border-line shadow-soft duration-300 hover:bg-accent hover:text-on-accent hover:scale-110;
+    @apply fixed bottom-6 inset-e-6 z-50 grid place-items-center size-11 rounded-full bg-card border border-line shadow-soft duration-300 hover:bg-accent hover:text-on-accent hover:scale-110 text-fluid-xs md:text-fluid-p;
   }
 
   /* ===== الفورم ===== */
@@ -592,12 +572,10 @@ body[data-theme='dark'] {
   .skeleton::after {
     content: '';
     @apply absolute inset-0 -translate-x-full animate-shimmer;
-    background-image: linear-gradient(
-      90deg,
-      transparent,
-      color-mix(in srgb, var(--foreground) 10%, transparent),
-      transparent
-    );
+    background-image: linear-gradient(90deg,
+        transparent,
+        color-mix(in srgb, var(--foreground) 10%, transparent),
+        transparent);
   }
 
   /* ===== شبكات جاهزة ===== */
@@ -708,17 +686,16 @@ body[data-theme='dark'] {
     content: '';
     position: absolute;
     inset: 0;
-    background: linear-gradient(
-      to top,
-      var(--background) 0%,
-      color-mix(in srgb, var(--background) 60%, transparent) 40%,
-      transparent 100%
-    );
+    background: linear-gradient(to top,
+        var(--background) 0%,
+        color-mix(in srgb, var(--background) 60%, transparent) 40%,
+        transparent 100%);
     pointer-events: none;
   }
 }
 
 @layer utilities {
+
   /* سكرول بار مخصص */
   ::-webkit-scrollbar {
     width: 8px;
@@ -778,6 +755,7 @@ body[data-theme='dark'] {
 }
 
 @media print {
+
   .no-print,
   nav,
   footer,

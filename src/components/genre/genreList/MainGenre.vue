@@ -1,9 +1,14 @@
 <script setup>
+import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
+
 import { useGenresStore } from '@/stores/genreStore'
 import { useNotificationStore } from '@/stores/notificationStore'
 import { formatDate, confirmAndDelete } from '@/utils/global'
-import { useRouter } from 'vue-router'
-import { useI18n } from 'vue-i18n'
+
+import BaseTable from '@/components/ui/BaseTable.vue'
+import { Info, Trash } from '@lucide/vue'
+
 const { t } = useI18n()
 const genresStore = useGenresStore()
 const notiStore = useNotificationStore()
@@ -24,69 +29,43 @@ const handleDelete = async (id) => {
     onSuccess: () => router.push({ name: 'genresList' }),
   })
 }
+
+const columns = [
+  { label: t('genres.table.id'), key: 'id' },
+  { label: t('genres.table.name'), key: 'name' },
+  { label: t('genres.table.slug'), key: 'slug' },
+  { label: t('genres.table.createdAt'), key: 'created_at' },
+  { label: t('genres.table.actions'), key: 'actions' },
+]
 </script>
 <template>
-  <div class="bg-card border border-line rounded-card shadow-soft overflow-hidden transition-colors duration-300">
-    <!-- حالة جاري التحميل -->
-    <div v-if="genresStore.isLoading" class="p-8 text-center text-sub font-medium animate-pulse">
-      {{ t('genres.loading') }}
-    </div>
+  <div>
+    <BaseTable
+    :columns="columns"
+    :rows="genresStore.allGenres"
+    :isLoading="genresStore.isLoading"
+    storeKey="genres"
+    >
 
-    <!-- جدول التصنيف عند توفر البيانات -->
-    <div v-else-if="genresStore.allGenres && genresStore.allGenres.length > 0" class="overflow-x-auto">
-      <table class="w-full text-start text-sm">
-        <thead class="bg-background-alt border-b border-line text-sub font-semibold">
-          <tr>
-            <th class="p-fluid text-center">{{ t('genres.table.actions') }}</th>
-            <th class="p-fluid text-center">{{ t('genres.table.createdAt') }}</th>
-            <th class="p-fluid text-center">{{ t('genres.table.slug') }}</th>
-            <th class="p-fluid text-center">{{ t('genres.table.name') }}</th>
-            <th class="p-fluid text-center">{{ t('genres.table.id') }}</th>
-          </tr>
-        </thead>
-        <tbody class="divide-y divide-line">
-          <tr v-for="genre in genresStore.allGenres" :key="genre.id"
-            class="hover:bg-card-hover/60 transition-colors duration-150">
-            <!-- أزرار الإجراءات -->
-            <td class="p-fluid whitespace-nowrap text-center">
-              <div class="flex items-center justify-center gap-fluid-gap">
-                <button type="button" @click="handleDelete(genre.id)" class="btn-danger">
-                  {{ t('common.delete') }}
-                </button>
+    <template #cell-created_at="{ value }">
+      {{ formatDate(value) }}
+    </template>
 
-                <router-link :to="`/edit-genre/${genre.id}`" class="btn-outline">
-                  {{ t('common.edit') }}
-                </router-link>
-              </div>
-            </td>
+        <template #cell-actions="{ row }">
+          <div class="flex items-center justify-center gap-fluid-gap">
+            <router-link :to="`/edit-genre/${row.id}`"
+              class="flex gap-2 px-3 py-1.5 rounded-xl border border-line font-mediumbg-card hover:bg-line/20 transition-all active:scale-95">
+              <Info class="self-center text-accent" />
+              <span class="self-center"> {{ t('common.edit') }}</span>
+            </router-link>
 
-            <!-- تاريخ الإنشاء -->
-            <td class="p-fluid whitespace-nowrap text-sub text-center">
-              {{ formatDate(genre.created_at) }}
-            </td>
-
-            <!-- الرابط المختصر-->
-            <td class="p-fluid max-w-xs truncate text-sub text-center" :title="genre.slug">
-              {{ genre.slug || '-' }}
-            </td>
-
-            <!-- اسم التصنيف -->
-            <td class="p-fluid text-center">
-              <div class="font-semibold text-title leading-snug max-w-xs sm:max-w-md truncate">
-                {{ genre.name }}
-              </div>
-            </td>
-
-            <!-- معرف التصنيف -->
-            <td class="p-fluid whitespace-nowrap text-sub text-center">
-              {{ genre.id }}
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-
-    <!-- حالة عدم وجود بيانات -->
-    <div v-else class="p-12 text-center text-sub font-medium">{{ t('genres.noData') }}</div>
+            <button type="button" @click="handleDelete(row.id)" :disabled="genresStore .isLoading"
+              class="flex gap-2 px-3 py-2 rounded-xl border border-danger/20 hover:bg-danger/10 font-medium transition-all active:scale-95 disabled:opacity-50 cursor-pointer">
+              <Trash class="self-center text-danger" />
+              <span class="self-center">{{ t('common.delete') }}</span>
+            </button>
+          </div>
+      </template>
+    </BaseTable>
   </div>
 </template>

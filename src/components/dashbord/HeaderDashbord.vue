@@ -22,8 +22,8 @@ const loadDashboardData = async () => {
     <!-- عنوان الصفحة -->
     <div class="flex items-center justify-between flex-wrap gap-3">
       <div>
-        <h1 class="text-fluid-h2 font-bold">{{ t('dashboard.overview.title') }}</h1>
-        <p class="text-fluid-xs text-sub mt-1">
+        <h1 class="text-fluid-h3 font-bold">{{ t('dashboard.overview.title') }}</h1>
+        <p class="text-[9px] md:text-fluid-p text-sub mt-1 ">
           {{ t('dashboard.overview.subtitle') }}
         </p>
       </div>

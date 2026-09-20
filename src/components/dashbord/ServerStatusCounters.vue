@@ -27,7 +27,7 @@ onMounted(() => {
       <select
         v-model="selectedStatus"
         @change="handleStatusChange"
-        class="bg-card border border-line rounded-xl px-3 py-1.5 text-fluid-xs font-mediumfocus:outline-none focus:border-accent cursor-pointer transition-colors"
+        class="bg-card border border-line rounded-xl p-fluid text-fluid-xs font-mediumfocus:outline-none focus:border-accent cursor-pointer transition-colors"
       >
         <option value="broken">{{ t('dashboard.serverStatus.broken') }}</option>
         <option value="valid">{{ t('dashboard.serverStatus.valid') }}</option>

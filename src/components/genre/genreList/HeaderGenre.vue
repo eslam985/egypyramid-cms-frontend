@@ -2,12 +2,15 @@
 import { ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-const { t } = useI18n()
+import { Search } from '@lucide/vue'
+
+
 import { useGenresStore } from '@/stores/genreStore'
 import { useNotificationStore } from '@/stores/notificationStore'
 
 const genresStore = useGenresStore()
 const notiStore = useNotificationStore()
+const { t } = useI18n()
 
 const router = useRouter()
 const route = useRoute()
@@ -45,68 +48,56 @@ const handleRefresh = async () => {
 }
 </script>
 <template>
-  <!-- تم استبدال bg-card-bg و border-custom-border و shadow-sm بكلاسات النظام -->
+  <!-- أدوات الفلترة والبحث والتحديث -->
   <div
-    class="bg-card border border-line rounded-card p-2 md:p-fluid sm:p-6 shadow-soft mb-6 transition-colors duration-300"
-  >
-    <div class="flex flex-col lg:flex-row items-end justify-between gap-4">
-      <!-- أدوات الفلترة والبحث والتحديث -->
-      <div class="grid grid-cols-1 md:grid-cols-12 p-fluid gap-3 md:gap-6 w-full lg:w-auto flex-1">
-        <!-- right -->
-        <div class="col-span-6 flex justify-around md:justify-end gap-3 md:gap-6">
-          <router-link
-            to="/new-genre"
-            class="btn-primary w-full text-fluid-xs md:text-fluid-p text-center self-center"
-          >
-            {{ t('genres.addNew') }}
-          </router-link>
+    class="grid grid-cols-1 sm:grid-cols-2 items-center gap-2 md:gap-fluid-gap md:px-6 bg-card ounded-b-lg overflow-x-auto no-scrollbar border border-line rounded-2xl p-fluid shadow-soft mb-6">
 
-          <button
-            type="button"
-            class="btn-secondary w-full text-fluid-p text-center self-center"
-            @click="handleRefresh"
-            :disabled="genresStore.isLoading"
-          >
-            {{ t('common.refreshData') }}
-          </button>
-        </div>
+    <!-- left -->
+    <div class="flex md:justify-start flex-wrap justify-between items-center gap-fluid-gap flex-1 w-full">
+      <!-- حقل البحث -->
+      <div class="flex gap-2 self-center relative max-w-[145px] lg:max-w-full">
+        <input
+          id="genre-search"
+          type="search"
+          v-model="searchInput"
+          @keyup.enter="handleSearch"
+          :placeholder="t('genres.searchPlaceholder')"
+          class="form-input pl-8 py-fluid text-center bg-line/10 border border-accent/20 border-linerounded-xl w-full"
+          />
 
-        <!-- left -->
-        <div class="col-span-6 grid grid-cols-12 gap-fluid-gap">
-          <!-- حقل البحث -->
-          <div
-            :class="
-              genresStore.allGenres.length > 0
-                ? 'col-span-6 self-center'
-                : 'col-span-12 self-center'
-            "
-          >
-            <input
-              id="genre-search"
-              type="search"
-              v-model="searchInput"
-              :placeholder="t('genres.searchPlaceholder')"
-              class="form-input"
-              @keyup.enter="handleSearch"
-            />
-          </div>
+        <Search @click="handleSearch" class="self-center absolute left-2 text-accent" />
+      </div>
 
-          <!-- صندوق إجمالي التصنيفات: تم استبدال bg-slate المباشرة بـ bg-card-hover و border-line لدعم الدارك مود -->
-          <div
-            v-if="genresStore.allGenres.length > 0"
-            class="col-span-6 flex justify-center self-center text-start bg-card-hover hover:bg-card-hover/80 text-sub border border-line font-semibold py-3 px-1 sm:px-4 rounded-xl transition-all duration-200"
-          >
-            <div>
-              <span class="text-fluid-xs md:text-fluid-p text-center px-2 self-center text-sub"
-                >{{ t('genres.totalGenres') }}:
-              </span>
-              <span class="text-center text-accent font-bold">
-                {{ genresStore.allGenres.length }}</span
-              >
-            </div>
-          </div>
+
+      <!-- صندوق إجمالي التصنيفات: تم استبدال bg-slate المباشرة بـ bg-card-hover و border-line لدعم الدارك مود -->
+      <div v-if="genresStore.allGenres.length > 0" class="flex justify-center self-center ">
+        <div
+          class="w-full py-3 px-fluid rounded-xl bg-line/10 border border-accent/20 border-linerounded-xl text-fluid-xs">
+          <span class="text-fluid-xs md:text-fluid-p text-center self-center text-sub">{{ t('genres.totalGenres')
+          }}:
+          </span>
+          <span class="text-center text-accent font-bold text-nowrap">
+            {{ genresStore.allGenres.length }}</span>
         </div>
       </div>
+
     </div>
+
+
+    <!-- right -->
+    <div class="flex  items-center justify-between gap-3 w-full">
+      <button
+        @click="handleRefresh" :disabled="genresStore.isLoading" type="button"
+        class="btn-outline shadow-glow/10 text-fluid-xs p-fluid lg:text-fluid-p text-accent-dark hover:text-slate-900 hover:bg-accent/70 w-full">
+
+        {{ t('common.refreshData') }}
+      </button>
+
+      <router-link to="/new-genre"
+        class="btn-outline shadow-glow/10 text-fluid-xs lg:text-fluid-p text-accent-dark hover:text-slate-900 hover:bg-accent/70 w-full">
+        {{ t('genres.addNew') }}
+      </router-link>
+    </div>
+
   </div>
 </template>

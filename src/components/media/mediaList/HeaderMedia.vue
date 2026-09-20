@@ -8,7 +8,7 @@ import { useMediaStore } from '@/stores/mediaStore'
 import { useNotificationStore } from '@/stores/notificationStore'
 
 import SearchMedia from '@/components/media/mediaList/searchMedia.vue'
-import { Loader } from '@lucide/vue'
+import { Loader, Plus } from '@lucide/vue'
 
 const mediaStore = useMediaStore()
 const notiStore = useNotificationStore()
@@ -34,55 +34,45 @@ const handleRefresh = async () => {
   }
 }
 </script>
-
 <template>
-  <div class="bg-card border border-line rounded-2xl p-4 md:p-fluid shadow-soft mb-6">
-    <div class="flex flex-col lg:flex-row items-center justify-between gap-4">
-      <!-- أدوات الفلترة والبحث -->
-      <div class="flex flex-col sm:flex-row items-center gap-3 w-full lg:w-auto flex-1">
-        <!-- حقل البحث -->
-        <div class="w-full sm:w-1/2">
-          <SearchMedia />
-        </div>
+  <div
+    class="grid grid-cols-1 sm:grid-cols-2 items-center gap-2 md:gap-fluid-gap md:px-6 bg-card ounded-b-lg overflow-x-auto no-scrollbar border border-line rounded-2xl p-fluid shadow-soft mb-6">
 
-        <!-- تصفية حسب التصنيف -->
-        <div class="w-full sm:w-1/2">
-          <select
-            id="media-category"
-            v-model="selectedCategory"
-            class="form-input w-full bg-line/10 border border-linerounded-xl p-2.5 text-fluid-xs focus:ring-2 focus:ring-accent/20 cursor-pointer"
-            @change="handleCategoryChange"
-          >
-            <option value="">{{ t('media.filter.allCategories') }}</option>
-            <option value="movie">{{ t('media.filter.movies') }}</option>
-            <option value="tv">{{ t('media.filter.series') }}</option>
-          </select>
-        </div>
+    <!-- أدوات الفلترة والبحث -->
+    <div class="flex flex-col sm:flex-row items-center gap-3 flex-1">
+      <!-- حقل البحث -->
+      <div class="w-full sm:w-1/2">
+        <SearchMedia />
       </div>
 
-      <!-- أزرار الإجراءات -->
-      <div class="flex items-center gap-3 w-full sm:w-auto shrink-0">
-        <button
-          type="button"
-          class="btn-secondary flex-1 sm:flex-none flex items-center justify-center gap-2 text-fluid-xs active:scale-95 transition-all duration-200 disabled:opacity-50"
-          @click="handleRefresh"
-          :disabled="mediaStore.isLoading"
-        >
-          <Loader
-            class="size-5 text-accent"
-            :class="{ 'animate-spin': mediaStore.isLoading }"
-            :stroke-width="2"
-          />
-          <span class="btn-ghost">{{ t('media.toolbar.refreshData') }}</span>
-        </button>
-
-        <router-link
-          to="/new-media"
-          class="btn-ghost flex-1 sm:flex-none flex items-center justify-center gap-2 text-fluid-xs active:scale-95 transition-all duration-200 whitespace-nowrap"
-        >
-          <span>{{ t('media.toolbar.addNewMedia') }}</span>
-        </router-link>
+      <!-- تصفية حسب التصنيف -->
+      <div class="w-full sm:w-1/2">
+        <select id="media-category" v-model="selectedCategory"
+          class="form-input w-full bg-line/10 border border-accent/20 border-linerounded-xl p-2.5 text-fluid-xs focus:ring-2 focus:ring-accent/20 cursor-pointer"
+          @change="handleCategoryChange">
+          <option class="text-fluid-xs" value="">{{ t('media.filter.allCategories') }}</option>
+          <option class="text-fluid-xs" value="movie">{{ t('media.filter.movies') }}</option>
+          <option class="text-fluid-xs" value="tv">{{ t('media.filter.series') }}</option>
+        </select>
       </div>
     </div>
+
+
+    <!-- أزرار الإجراءات -->
+    <div class="flex items-center justify-end gap-3 w-full">
+      <button type="button"
+        class="btn-outline shadow-glow/10 text-fluid-xs  lg:text-fluid-p text-accent-dark hover:text-slate-900 hover:bg-accent/70 w-full"
+        @click="handleRefresh" :disabled="mediaStore.isLoading">
+        <Loader class="size-5 text-accent" :class="{ 'animate-spin': mediaStore.isLoading }" :stroke-width="2" />
+        <span class="text-fluid-xs">{{ t('media.toolbar.refreshData') }}</span>
+      </button>
+
+      <router-link to="/new-media"
+        class="btn-outline shadow-glow/10 text-fluid-xs lg:text-fluid-p text-accent-dark hover:text-slate-900 hover:bg-accent/70 w-full">
+        <Plus />
+        <span class="text-fluid-xs">{{ t('media.toolbar.addNewMedia') }}</span>
+      </router-link>
+    </div>
+
   </div>
 </template>

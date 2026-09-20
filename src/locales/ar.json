@@ -101,6 +101,7 @@
       "lastCheck": "آخر فحص",
       "status": "حالة العمل"
     },
+    "mediaType" : "نوع العمل",
     "unknownWork": "عمل غير معروف",
     "season": "موسم",
     "episode": "حلقة",
@@ -285,7 +286,7 @@
     },
     "toolbar": {
       "refreshData": "تحديث البيانات",
-      "addNewMedia": "✚ إضافة ميديا جديدة"
+      "addNewMedia": "إضافة ميديا جديدة"
     },
     "detail": {
       "backToList": "رجوع للقائمة",
@@ -467,8 +468,8 @@
   "common": {
     "cancel": "إلغاء",
     "processing": "جاري المعالجة...",
-    "refreshData": "🔄 تحديث البيانات",
-    "refreshSuccess": "تم تحديث البيانات بنجاح 🔄",
+    "refreshData": "تحديث البيانات",
+    "refreshSuccess": "تم تحديث البيانات بنجاح",
     "edit": "تعديل",
     "details": "التفاصيل",
     "delete": "حذف"
