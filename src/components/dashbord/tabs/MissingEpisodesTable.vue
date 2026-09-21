@@ -6,11 +6,12 @@ import { useI18n } from 'vue-i18n'
 import { useAnalyticsStore } from '@/stores/analyticsStore'
 
 import BaseTable from '@/components/ui/BaseTable.vue'
+import AppPagination from '@/components/utils/AppPagination.vue'
 
 const { t } = useI18n()
 const router = useRouter()
 const analyticsStore = useAnalyticsStore()
-const { missingLinksByServer, isLoading } = storeToRefs(analyticsStore)
+const { missingLinksByServer, pagination, isLoading } = storeToRefs(analyticsStore)
 
 const servers = [
   { label: 'تليجرام مباشر', value: 'telegram_direct' },
@@ -34,18 +35,13 @@ onMounted(() => {
   loadMissingEpisodes()
 })
 
-/*
-<tr>
-  <th class="p-fluid whitespace-nowrap text-center">{{ t('missingEpisodes.table.title') }}</th>
-  <th class="p-fluid whitespace-nowrap text-center">
-    {{ t('missingEpisodes.table.seasonEpisode') }}
-  </th>
-  <th class="p-fluid whitespace-nowrap text-center">{{ t('missingEpisodes.table.type') }}</th>
-  <th class="p-fluid whitespace-nowrap text-center">{{ t('missingEpisodes.table.workStatus') }}</th>
-  <th class="p-fluid whitespace-nowrap text-center">{{ t('missingEpisodes.table.identifier') }}</th>
-  <th class="p-fluid whitespace-nowrap text-center">{{ t('missingEpisodes.table.status') }}</th>
-</tr>
-*/
+const handlePageChange = async (newPage) => {
+  console.log('هقلب لصفحة:', newPage) // اتأكد انها واصلة الاول
+  await analyticsStore.fetchMissingEpisodesByServer({
+    page: newPage,  // غيرتها من newPage لـ page
+    serverName: selectedServer.value
+  }, true)
+}
 const handleRowClick = (row) => {
   router.push(`/media/${row.media_id}/details`)
 }
@@ -152,5 +148,12 @@ const columns = [
         </div>
       </template>
     </BaseTable>
+
+
+    <AppPagination
+      :pagination="pagination"
+      :is-loading="isLoading"
+      @change-page="handlePageChange"
+    />
     </div>
 </template>

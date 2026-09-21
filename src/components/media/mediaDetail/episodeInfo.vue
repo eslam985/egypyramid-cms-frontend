@@ -36,7 +36,7 @@ const handleSelectEpisode = async (episodeId) => {
   }
 
   // جلب الروابط من السيرفر
-  await mediaContentStore.getLinksByEpisodeId(episodeId)
+  await mediaContentStore.getLinksByEpisodeId(episodeId, true)
 }
 
 // 3. إدارة الحلقات
@@ -45,7 +45,7 @@ const handleAddEpisode = () => {
 }
 
 const handleEditEpisode = async (episode) => {
-  await mediaContentStore.getEpisodeById(episode)
+  await mediaContentStore.getEpisodeById(episode, true)
   router.push({ name: 'editEpisode', params: { id: mediaContentStore.currentEpisode.id } })
 }
 

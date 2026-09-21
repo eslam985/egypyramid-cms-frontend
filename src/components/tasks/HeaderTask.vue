@@ -1,11 +1,13 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
+import { Search } from '@lucide/vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 
-import { useTaskStore } from '@/stores/taskStore'
 import { useNotificationStore } from '@/stores/notificationStore'
-import { Search } from '@lucide/vue'
+import { useTaskStore } from '@/stores/taskStore'
+import { confirmAndDelete } from '@/utils/global'
+
 
 const { t } = useI18n()
 
@@ -65,6 +67,21 @@ const handleSearch = async () => {
 
   inputValue.value = ''
 }
+
+const failedCount = computed(() =>
+  taskStore.allTasks.filter(t => t.status === 'failed').length
+)
+
+const handleDeleteFailed = async () => {
+  await confirmAndDelete({
+    message: t('tasks.confirm.deleteFailed', { count: failedCount.value }),
+    action: () => taskStore.removeAllFailedTasks(),
+    store: taskStore,
+    notiStore: notiStore,
+    fallbackSuccess: t('tasks.confirm.deleteFailedSuccess', { count: failedCount.value }),
+    fallbackError: t('tasks.confirm.deleteFailedError')
+  })
+}
 </script>
 <template>
   <div class="bg-card border border-line rounded-2xl p-fluid shadow-soft mb-6">
@@ -102,10 +119,10 @@ const handleSearch = async () => {
         </div>
 
         <!-- right -->
-        <div class="col-span-6 flex justify-around md:justify-end gap-3 md:gap-6">
+        <div class="col-span-6 flex justify-around md:justify-end gap-3">
           <button
             type="button"
-            class="btn-outline shadow-glow/10 text-fluid-xs! lg:text-fluid-p text-accent-dark hover:text-slate-900 hover:bg-accent/70 w-full"
+            class="btn-outline shadow-glow/10 text-fluid-xs! lg:text-fluid-p text-accent-dark hover:text-slate-900 hover:bg-accent/70"
             @click="handleRefresh"
           >
             {{ t('common.refreshData') }}
@@ -113,10 +130,19 @@ const handleSearch = async () => {
 
             <router-link
             to="/new-task"
-            class="btn-outline shadow-glow/10 text-fluid-xs lg:text-fluid-p text-accent-dark hover:text-slate-900 hover:bg-accent/70 w-full"
+            class="btn-outline shadow-glow/10 text-fluid-xs lg:text-fluid-p text-accent-dark hover:text-slate-900 hover:bg-accent/70 "
             >
             {{ t('tasks.toolbar.addNew') }}
           </router-link>
+
+          <button
+            v-if="failedCount > 0"
+            @click="handleDeleteFailed"
+            :disabled="taskStore.isLoading"
+            class="btn-danger text-fluid-xs"
+          >
+            {{ taskStore.isLoading ? t('tasks.toolbar.deleting') : t('tasks.toolbar.deleteFailed', { count: failedCount }) }}
+          </button>
         </div>
       </div>
     </div>

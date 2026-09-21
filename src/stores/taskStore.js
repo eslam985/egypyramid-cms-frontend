@@ -9,6 +9,8 @@ import {
   findByTaskId,
   findByTaskByName,
   deleteTaskById,
+  deleteTasksByIds,
+  deleteAllTasksFailed,
 } from '@/api/data/downloadTasks'
 
 const useTaskStore = defineStore('task', {
@@ -109,6 +111,26 @@ const useTaskStore = defineStore('task', {
         id,
         listKey: 'allTasks',
         defaultError: 'حدث خطأ اثناء حذف التاسك!',
+      })
+    },
+
+    async removeAllFailedTasks() {
+      return handleStoreDelete({
+        store: this,
+        apiCall: deleteAllTasksFailed,
+        listKey: 'allTasks',
+        defaultError: 'حدث خطأ اثناء حذف التاسكات الفاشلة!',
+        filterFn: (tasks) => tasks.filter((t) => t.status !== 'failed'),
+      })
+    },
+
+    async removeTasksByIds(ids) {
+      return handleStoreDelete({
+        store: this,
+        apiCall: deleteTasksByIds,
+        id: ids, // [1,5,10]
+        listKey: 'allTasks',
+        defaultError: 'حدث خطأ اثناء حذف التاسكات!',
       })
     },
   },

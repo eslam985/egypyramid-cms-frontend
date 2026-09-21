@@ -101,7 +101,7 @@
       "lastCheck": "آخر فحص",
       "status": "حالة العمل"
     },
-    "mediaType" : "نوع العمل",
+    "mediaType": "نوع العمل",
     "unknownWork": "عمل غير معروف",
     "season": "موسم",
     "episode": "حلقة",
@@ -217,7 +217,17 @@
       "filterSuccess": "تم تصفية المهام بنجاح",
       "noTasksFound": "لم يتم العثور على مهام بهذه الحالة",
       "searchMinChars": "حقل البحث لا يجب ان يكون اصغر من 3 حروف !",
-      "taskNotFound": "لم يتم العثور علي التاسك"
+      "taskNotFound": "لم يتم العثور علي التاسك",
+      "deleteFailed": "حذف كل الفيلد ({count})",
+      "deleting": "جاري الحذف...",
+      "bulkDelete": "هتمسح {count} تاسك مرة واحدة؟",
+      "bulkDeleteSuccess": "تم حذف {count} تاسك",
+      "deleteSelected": "حذف المحدد ({count})"
+    },
+    "confirm": {
+      "deleteFailed": "هتمسح {count} تاسك فيلد مرة واحدة؟ العملية نهائية!",
+      "deleteFailedSuccess": "تم حذف {count} تاسك بنجاح",
+      "deleteFailedError": "مقدرناش نحذف التاسكات الفيلد"
     },
     "table": {
       "id": "المعرف",

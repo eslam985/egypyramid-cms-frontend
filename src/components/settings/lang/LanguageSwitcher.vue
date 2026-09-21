@@ -2,7 +2,7 @@
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 
-const { locale, t } = useI18n()
+const { locale } = useI18n()
 
 const change = (l) => {
   locale.value = l
@@ -15,14 +15,10 @@ const isArabic = computed(() => locale.value === 'ar')
 const toggleLang = () => {
   change(isArabic.value ? 'en' : 'ar')
 }
+
 </script>
 
 <template>
-  <div class="card p-4 flex justify-between items-center">
-    <h3 class="font-bold text-title">
-      {{ t('settings.language') }}
-    </h3>
-
     <div class="flex items-center gap-2">
       <span class="text-fluid-xs font-bold" :class="isArabic ? 'text-title' : 'text-muted'">AR</span>
 
@@ -44,5 +40,4 @@ const toggleLang = () => {
 
       <span class="text-fluid-xs font-bold" :class="!isArabic ? 'text-title' : 'text-muted'">EN</span>
     </div>
-  </div>
 </template>

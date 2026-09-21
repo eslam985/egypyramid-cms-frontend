@@ -45,4 +45,25 @@ const deleteTaskById = async (id) => {
   return result.data
 }
 
-export { createTask, updateTaskById, getAllTasks, findByTaskId, findByTaskByName, deleteTaskById }
+const deleteAllTasksFailed = async () => {
+  const result = await api.delete(`/tasks/failed`)
+  return result.data
+}
+
+const deleteTasksByIds = async (ids) => {
+  const result = await api.delete(`/tasks`, {
+    data: { ids } // [1,5,10]
+  })
+  return result.data
+}
+
+export {
+  createTask,
+  updateTaskById,
+  getAllTasks,
+  findByTaskId,
+  findByTaskByName,
+  deleteTaskById,
+  deleteAllTasksFailed,
+  deleteTasksByIds
+}

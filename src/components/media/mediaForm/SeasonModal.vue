@@ -40,7 +40,7 @@ onMounted(async () => {
 
   // edit current season
   if (route.name === 'editSeason') {
-    const foundSeason = await mediaContentStore.getSeasonById(seasonId)
+    const foundSeason = await mediaContentStore.getSeasonById(seasonId, true)
 
     if (!foundSeason && !mediaContentStore.currentSeason) {
       notiStore.triggerNotification(mediaContentStore.errorMessage || t('media.seasonForm.notFound'))

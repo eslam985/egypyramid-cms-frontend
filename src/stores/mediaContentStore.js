@@ -73,13 +73,14 @@ const useMediaContentStore = defineStore('mediaContent', {
 
       return data
     },
-    async getSeasonById(id) {
+    async getSeasonById(id, force = false) {
       return handleStoreFetch({
         store: this,
         apiCall: findSeasonById,
         args: id,
         targetKey: 'currentSeason',
         defaultError: 'حدثت مشكلة اثناء جلب الموسم',
+        force
       })
     },
     async addSeason(media_id, data) {
@@ -112,13 +113,14 @@ const useMediaContentStore = defineStore('mediaContent', {
       })
     },
     // --- Episodes ---
-    async getEpisodeById(id) {
+    async getEpisodeById(id, force= false) {
       const data = await handleStoreFetch({
         store: this,
         apiCall: findEpisodeById,
         args: id,
         targetKey: 'currentEpisode',
         defaultError: 'حدثت مشكلة اثناء جلب الحلقة',
+        force
       })
 
       if (data) {
@@ -196,13 +198,14 @@ const useMediaContentStore = defineStore('mediaContent', {
       })
     },
     // --- Links ---
-    async getLinksByEpisodeId(episode_id) {
+    async getLinksByEpisodeId(episode_id, force = false ) {
       const data = await handleStoreFetch({
         store: this,
         apiCall: findLinksByEpisodeId,
         args: episode_id,
         targetKey: 'links',
         defaultError: 'حدثت مشكلة اثناء جلب اللينكات',
+        force
       })
 
       if (data && Array.isArray(this.links)) {
@@ -215,13 +218,14 @@ const useMediaContentStore = defineStore('mediaContent', {
 
       return data
     },
-    async getLinkById(id) {
+    async getLinkById(id, force = false) {
       return handleStoreFetch({
         store: this,
         apiCall: findLinkById,
         args: id,
         targetKey: 'currentLink',
         defaultError: 'حدثت مشكلة اثناء جلب اللينك',
+        force
       })
     },
     async addLink(episode_id, data = {}) {

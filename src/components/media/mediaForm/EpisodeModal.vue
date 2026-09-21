@@ -57,7 +57,7 @@ onMounted(async () => {
       formData.season_id = null
     }
   } else if (route.name === 'editEpisode') {
-    const episode = await mediaContentStore.getEpisodeById(episodeId)
+    const episode = await mediaContentStore.getEpisodeById(episodeId, true)
 
     if (!episode) {
       notiStore.triggerNotification(t('media.episodeForm.episodeNotFound'))

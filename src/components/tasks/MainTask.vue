@@ -1,11 +1,15 @@
 <script setup>
+import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
+import { Info, Trash, Check } from '@lucide/vue'
+
+
 import { useTaskStore } from '@/stores/taskStore'
 import { useNotificationStore } from '@/stores/notificationStore'
 import { formatDate, confirmAndDelete } from '@/utils/global'
+
 import BaseTable from '@/components/ui/BaseTable.vue'
-import { Info, Trash } from '@lucide/vue'
 
 const taskStore = useTaskStore()
 const notiStore = useNotificationStore()
@@ -69,17 +73,46 @@ const getStatusBadge = (status) => {
   }
 }
 
+const selectedIds = ref([])
+
+// لما تختار صف من الجدول
+const toggleSelect = (id) => {
+  if (selectedIds.value.includes(id)) {
+    selectedIds.value = selectedIds.value.filter(i => i !== id)
+  } else {
+    selectedIds.value.push(id)
+  }
+}
+
+// ده اللي هينادي الدالة اللي انت عاملها
+const handleBulkDelete = () => {
+  if (selectedIds.value.length === 0) return
+
+  confirmAndDelete({
+    message: t('tasks.confirm.bulkDelete', { count: selectedIds.value.length }),
+    action: () => taskStore.removeTasksByIds(selectedIds.value),
+    store: taskStore,
+    notiStore,
+
+    onSuccess: () => {
+      selectedIds.value = [] // فضي الاختيار بعد الحذف
+    },
+    fallbackSuccess: t('tasks.confirm.bulkDeleteSuccess', { count: selectedIds.value.length }),
+  })
+}
 </script>
 
 <template>
   <div>
+    <!-- ده هيظهر بس لما تختار حاجة -->
+    <div v-if="selectedIds.length > 0" class="mb-4 flex justify-end">
+      <button @click="handleBulkDelete" :disabled="taskStore.isLoading" class="btn-danger text-fluid-xs">
+        {{ t('tasks.toolbar.deleteSelected', { count: selectedIds.length }) }}
+      </button>
+    </div>
+
     <!-- من غير ما تكتب اي header خالص -->
-    <BaseTable
-      :columns="columns"
-      :rows="taskStore.allTasks"
-      :isLoading="taskStore.isLoading"
-      storeKey="tasks"
-      >
+    <BaseTable :columns="columns" :rows="taskStore.allTasks" :isLoading="taskStore.isLoading" storeKey="tasks">
       <template #cell-status="{ value }">
         <span class="px-2 py-1 rounded border text-xs" :class="getStatusBadge(value).class">
           {{ getStatusBadge(value).label }}
@@ -102,20 +135,35 @@ const getStatusBadge = (status) => {
         {{ formatDate(value) }}
       </template>
 
-        <template #cell-actions="{ row }">
-          <div class="flex items-center justify-center gap-fluid-gap">
-            <div @click="handleEdit(row.id)"
-              class="flex gap-2 px-3 py-1.5 rounded-xl border border-line font-mediumbg-card hover:bg-line/20 transition-all active:scale-95">
-              <Info class="self-center text-accent" />
-              <span class="self-center"> {{ t('common.edit') }}</span>
-            </div>
-
-            <button type="button" @click="handleDelete(row.id)" :disabled="taskStore .isLoading"
-              class="flex gap-2 px-3 py-2 rounded-xl border border-danger/20 hover:bg-danger/10 font-medium transition-all active:scale-95 disabled:opacity-50 cursor-pointer">
-              <Trash class="self-center text-danger" />
-              <span class="self-center">{{ t('common.delete') }}</span>
-            </button>
+      <template #cell-actions="{ row }">
+        <div class="flex items-center justify-center gap-fluid-gap">
+          <div @click="handleEdit(row.id)"
+            class="flex gap-2 px-3 py-1.5 rounded-xl border border-line font-mediumbg-card hover:bg-line/20 transition-all active:scale-95">
+            <Info class="self-center text-accent" />
+            <span class="self-center"> {{ t('common.edit') }}</span>
           </div>
+
+          <button type="button" @click="handleDelete(row.id)" :disabled="taskStore.isLoading"
+            class="flex gap-2 px-3 py-2 rounded-xl border border-danger/20 hover:bg-danger/10 font-medium transition-all active:scale-95 disabled:opacity-50 cursor-pointer">
+            <Trash class="self-center text-danger" />
+            <span class="self-center">{{ t('common.delete') }}</span>
+          </button>
+        </div>
+      </template>
+
+      <template #cell-id="{ row }">
+        <label class="relative flex cursor-pointer">
+          <input
+            type="checkbox"
+            :checked="selectedIds.includes(row.id)"
+            @change="toggleSelect(row.id)"
+            class="peer sr-only"
+            />
+          <div
+            class="w-6 h-6 rounded-md border-2 border-line bg-card! peer-checked:bg-accent peer-checked:border-accent transition-all flex items-center justify-center">
+            <Check v-if="selectedIds.includes(row.id)" class="w-3.5 h-3.5 text-white stroke-4" />
+          </div>
+        </label>
       </template>
     </BaseTable>
   </div>

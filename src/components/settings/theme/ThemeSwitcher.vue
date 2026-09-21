@@ -1,8 +1,6 @@
 <script setup>
 import { ref, onMounted } from 'vue'
-import { useI18n } from 'vue-i18n'
 
-const { t } = useI18n()
 const isDark = ref(false)
 
 const toggle = () => {
@@ -22,11 +20,6 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="card p-4 flex justify-between items-center">
-    <h3 class="font-bold text-title">
-      {{ t('settings.appearance') }}
-    </h3>
-
     <button
       type="button"
       dir="ltr"
@@ -41,5 +34,4 @@ onMounted(() => {
         :class="isDark ? 'translate-x-6' : 'translate-x-0'"
       />
     </button>
-  </div>
 </template>

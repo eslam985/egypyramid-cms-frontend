@@ -5,16 +5,24 @@ export async function handleStoreDelete({
   listKey,
   idKey = 'id',
   defaultError = 'حدث خطأ أثناء الحذف',
+  filterFn = null, // هنضيف ده
 }) {
   store.isLoading = true
   store.successMessage = ''
   store.errorMessage = ''
   try {
-    const result = await apiCall(id)
+    const result = id!== undefined? await apiCall(id) : await apiCall()
     if (result.success) {
       store.successMessage = result.message
       if (listKey && Array.isArray(store[listKey])) {
-        store[listKey] = store[listKey].filter((item) => item[idKey] !== id)
+        if (filterFn) {
+          store[listKey] = filterFn(store[listKey])
+        } else if (Array.isArray(id)) {
+          const idsSet = new Set(id)
+          store[listKey] = store[listKey].filter((item) =>!idsSet.has(item[idKey]))
+        } else {
+          store[listKey] = store[listKey].filter((item) => item[idKey]!== id)
+        }
       }
       return true
     } else {

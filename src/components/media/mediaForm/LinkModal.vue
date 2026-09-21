@@ -36,13 +36,13 @@ const formData = reactive({
 
 onMounted(async () => {
   if (route.name === 'addLink') {
-    const foundEpisode = await mediaContentStore.getEpisodeById(episodeId)
+    const foundEpisode = await mediaContentStore.getEpisodeById(episodeId, true)
     if (!foundEpisode) {
       notiStore.triggerNotification(mediaContentStore.errorMessage || t('media.linkForm.episodeNotFound'))
       router.push({ name: 'NotFound' })
     }
   } else if (route.name === 'editLink') {
-    const link = await mediaContentStore.getLinkById(linkId)
+    const link = await mediaContentStore.getLinkById(linkId, true)
     if (!link) {
       notiStore.triggerNotification(mediaContentStore.errorMessage || t('media.linkForm.linkNotFound'))
       router.push({ name: 'NotFound' })

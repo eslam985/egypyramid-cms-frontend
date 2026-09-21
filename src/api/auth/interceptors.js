@@ -1,6 +1,7 @@
 import api from './client'
 import { useAuthStore } from '@/stores/authStore'
 import router from '@/router' // تأكد من مسار الـ router الصحيح لديك
+import { useNotificationStore } from '@/stores/notificationStore'
 
 let isRefreshing = false
 let failedQueue = []
@@ -43,6 +44,19 @@ api.interceptors.response.use(
     const authStore = useAuthStore()
     const originalRequest = err.config
     const status = err.response?.status
+
+    // if response status 429
+    if (status === 429) {
+      const h = err.response.headers
+      const raw = h.get('Retry-After') || h.get('retry-after') || h.get('RateLimit-Reset')
+      const retryAfter = parseInt(raw, 10) || 60
+      const mins = Math.ceil(retryAfter / 60)
+
+      const notiStore = useNotificationStore()
+      notiStore.triggerNotification(`Too many requests - Try again after ${mins}`, 'error')
+
+      return Promise.reject(err)
+    }
 
     const isAuthEndpoint =
       originalRequest?.url?.includes('/auth/login') ||

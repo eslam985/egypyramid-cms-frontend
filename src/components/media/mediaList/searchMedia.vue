@@ -57,6 +57,6 @@ const handleSearch = async () => {
       class="form-input md:p-2.5 text-center bg-line/10 border border-accent/20 border-linerounded-xl"
       @keyup.enter="handleSearch"
     />
-    <Search @click="handleSearch" class="self-center absolute left-2 text-accent" />
+    <Search @click="handleSearch" class="self-center absolute left-2 text-accent w-4 md:2-8" />
   </div>
 </template>
