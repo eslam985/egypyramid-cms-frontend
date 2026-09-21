@@ -2,7 +2,7 @@
 import { ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-import { Search } from '@lucide/vue'
+import { Search, Loader } from '@lucide/vue'
 
 
 import { useGenresStore } from '@/stores/genreStore'
@@ -89,12 +89,12 @@ const handleRefresh = async () => {
       <button
         @click="handleRefresh" :disabled="genresStore.isLoading" type="button"
         class="btn-outline shadow-glow/10 text-fluid-xs p-fluid lg:text-fluid-p text-accent-dark hover:text-slate-900 hover:bg-accent/70 w-full">
-
+        <Loader class="size-5 text-accent" :class="{ 'animate-spin': genresStore.isLoading }" :stroke-width="2" />
         {{ t('common.refreshData') }}
       </button>
 
       <router-link to="/new-genre"
-        class="btn-outline shadow-glow/10 text-fluid-xs lg:text-fluid-p text-accent-dark hover:text-slate-900 hover:bg-accent/70 w-full">
+        class="btn-outline shadow-glow/10 text-fluid-xs p-fluid lg:text-fluid-p text-accent-dark hover:text-slate-900 hover:bg-accent/70 w-full">
         {{ t('genres.addNew') }}
       </router-link>
     </div>

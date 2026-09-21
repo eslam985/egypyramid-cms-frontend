@@ -10,7 +10,7 @@ const { t } = useI18n()
 </script>
 
 <template>
-  <div class="card p-4 flex justify-between items-center">
+  <div class="card p-fluid flex justify-between items-center">
     <h3 class="font-bold text-title">
       {{ t('settings.language') }}
     </h3>

@@ -75,15 +75,15 @@ const handleDeleteSeason = async (seasonId) => {
     <!-- حالة جاري التحميل -->
     <div
       v-if="mediaStore.isLoading"
-      class="p-8 text-center text-sub font-medium bg-card rounded-2xl border border-line"
+      class="p-fluid text-center text-sub font-medium bg-card rounded-2xl border border-line"
     >
       {{ t('media.seasonInfo.loading') }}
     </div>
 
-    <div v-else class="bg-card rounded-2xl border border-line p-4 md:p-6 shadow-soft space-y-6">
+    <div v-else class="bg-card rounded-2xl border border-line p-fluid md:p-6 shadow-soft space-y-6">
       <!-- الهيدر: عنوان القائمة وزر الإضافة -->
       <div
-        class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-line"
+        class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-fluid pb-4 border-b border-line"
       >
         <div class="flex items-center gap-3">
           <div class="p-2.5 rounded-xl bg-accent/10 text-accent border border-accent/20">
@@ -118,13 +118,13 @@ const handleDeleteSeason = async (seasonId) => {
       <!-- عرض المواسم بنظام الشبكة (Grid Layout) -->
       <div
         v-if="mediaContentStore.seasons && mediaContentStore.seasons.length > 0 && isSeries"
-        class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4"
+        class="grid grid-cols-2 xs:grid-cols-3 md:grid-cols-4 gap-3 md:gap-fluid"
       >
         <div
           v-for="season in mediaContentStore.seasons"
           :key="season.id"
           :class="[
-            'group bg-card hover:bg-line/10 border rounded-xl p-4 transition-all duration-200 shadow-soft flex flex-col justify-between gap-3',
+            'group bg-card hover:bg-line/10 border rounded-xl p-fluid transition-all duration-200 shadow-soft flex flex-col justify-between gap-3',
             mediaContentStore.currentSeason?.id === season.id
               ? 'border-accent bg-accent/10 ring-2 ring-accent/30'
               : 'border-line hover:border-accent/50',
@@ -133,9 +133,8 @@ const handleDeleteSeason = async (seasonId) => {
           <!-- الجزء العلوي: رقم الموسم وعدد الحلقات -->
           <div
             @click="handleSelectSeason(season.id)"
-            class="cursor-pointer flex items-start justify-between gap-2"
+            class="cursor-pointer flex items-start flex-wrap justify-between gap-2"
           >
-            <div class="flex items-center gap-2.5">
               <span
                 class="px-2 py-1 rounded-lg bg-accent/10 text-accent font-black text-fluid-xs flex items-center justify-center border border-accent/20 group-hover:scale-105 transition-transform"
               >
@@ -147,8 +146,9 @@ const handleDeleteSeason = async (seasonId) => {
                 >
                 <span class="text-[10px] text-sub/70 font-mono block">ID: {{ season.id }}</span>
               </div>
-            </div>
 
+
+          </div>
             <!-- شارة عدد الحلقات المضافة -->
             <div
               class="px-2.5 py-1 rounded-full text-fluid-xs font-semibold bg-line/20 border border-line flex items-center gap-1 shrink-0"
@@ -162,8 +162,6 @@ const handleDeleteSeason = async (seasonId) => {
                 <span class="text-danger text-fluid-xs">{{ t('media.seasonInfo.noEpisodes') }}</span>
               </template>
             </div>
-          </div>
-
           <!-- تفاصيل إضافية -->
           <div
             class="pt-2 border-t border-line/60 text-fluid-xs flex items-center justify-between text-sub"

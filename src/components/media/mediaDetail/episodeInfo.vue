@@ -70,15 +70,15 @@ const handleDeleteEpisode = (episodeId) => {
     <!-- حالة جاري التحميل -->
     <div
       v-if="mediaStore.isLoading"
-      class="p-8 text-center text-sub font-medium bg-card rounded-2xl border border-line"
+      class="p-fluid text-center text-sub font-medium bg-card rounded-2xl border border-line"
     >
       {{ t('media.episodeInfo.loading') }}
     </div>
 
-    <div v-else class="bg-card rounded-2xl border border-line p-4 md:p-6 shadow-soft space-y-6">
+    <div v-else class="bg-card rounded-2xl border border-line p-fluid shadow-soft space-y-6">
       <!-- الهيدر: عنوان القائمة وزر الإضافة -->
       <div
-        class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-line"
+        class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-fluid pb-4 border-b border-line"
       >
         <div class="flex items-center gap-3">
           <div class="p-2.5 rounded-xl bg-accent/10 text-accent border border-accent/20">
@@ -117,13 +117,13 @@ const handleDeleteEpisode = (episodeId) => {
       <!-- عرض الحلقات بنظام الشبكة (Grid Layout) -->
       <div
         v-if="mediaContentStore.episodes && mediaContentStore.episodes.length > 0"
-        class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4"
+        class="grid grid-cols-2 xs:grid-cols-3 md:grid-cols-4 gap-3 md:gap-fluid"
       >
         <div
           v-for="ep in mediaContentStore.episodes"
           :key="ep.id"
           :class="[
-            'group bg-card hover:bg-line/10 border rounded-xl p-4 transition-all duration-200 shadow-soft flex flex-col justify-between gap-3',
+            'group bg-card hover:bg-line/10 border rounded-xl p-fluid transition-all duration-200 shadow-soft flex flex-col justify-between gap-3',
             mediaContentStore.currentEpisode?.id === ep.id
               ? 'border-accent bg-accent/10 ring-2 ring-accent/30'
               : 'border-line hover:border-accent/50',
@@ -132,9 +132,8 @@ const handleDeleteEpisode = (episodeId) => {
           <!-- الجزء العلوي: رقم الحلقة والروابط -->
           <a
             @click.prevent="handleSelectEpisode(ep.id)"
-            class="cursor-pointer flex items-start justify-between gap-2"
+            class="cursor-pointer flex items-start flex-wrap justify-between gap-2"
           >
-            <div class="flex items-center gap-2.5">
               <span
                 class="px-2 py-1 rounded-lg bg-accent/10 text-accent font-black text-fluid-xs flex items-center justify-center border border-accent/20 group-hover:scale-105 transition-transform"
               >
@@ -146,8 +145,9 @@ const handleDeleteEpisode = (episodeId) => {
                 >
                 <span class="text-[10px] text-sub/70 font-mono block">ID: {{ ep.id }}</span>
               </div>
-            </div>
 
+
+          </a>
             <!-- شارة (Badge) عدد الروابط -->
             <div
               class="px-2.5 py-1 rounded-full text-fluid-xs font-semibold bg-line/20 border border-line flex items-center gap-1.5 shrink-0"
@@ -174,8 +174,6 @@ const handleDeleteEpisode = (episodeId) => {
                 <span class="text-danger text-">{{ t('media.episodeInfo.noLinks') }}</span>
               </template>
             </div>
-          </a>
-
           <!-- تفاصيل إضافية -->
           <div class="pt-2 border-t border-line/60 text-fluid-xs space-y-1.5">
             <div class="flex items-center justify-between text-sub">

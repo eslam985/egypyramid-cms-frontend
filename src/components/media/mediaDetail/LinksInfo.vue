@@ -37,8 +37,8 @@ const handleDeleteLink = async (linkId) => {
 </script>
 
 <template>
-  <div class="bg-card rounded-2xl border border-line p-4 sm:p-6 shadow-soft space-y-4 my-6 max-w-full overflow-hidden">
-    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-line">
+  <div class=" bg-card rounded-2xl border border-line p-fluid shadow-soft space-y-4 my-6 overflow-hidden">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-fluid pb-4 border-b border-line">
       <div class="flex items-center gap-3">
         <div class="p-2.5 rounded-xl bg-accent/10 text-accent border border-accent/20">
           <Link2 class="w-5 h-5" />

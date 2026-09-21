@@ -1,6 +1,6 @@
 <script setup>
 import { ref, computed } from 'vue'
-import { Search } from '@lucide/vue'
+import { Search, Loader } from '@lucide/vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 
@@ -85,7 +85,7 @@ const handleDeleteFailed = async () => {
 </script>
 <template>
   <div class="bg-card border border-line rounded-2xl p-fluid shadow-soft mb-6">
-    <div class="flex flex-col lg:flex-row items-end justify-between gap-4">
+    <div class="flex flex-col lg:flex-row items-end justify-between gap-fluid">
       <!-- أدوات الفلترة والبحث والتحديث -->
       <div class="grid grid-cols-1 md:grid-cols-12 gap-3 md:gap-12 w-full lg:w-auto flex-1">
         <!-- left -->
@@ -125,6 +125,7 @@ const handleDeleteFailed = async () => {
             class="btn-outline shadow-glow/10 text-fluid-xs! lg:text-fluid-p text-accent-dark hover:text-slate-900 hover:bg-accent/70"
             @click="handleRefresh"
           >
+            <Loader class="size-5 text-accent" :class="{ 'animate-spin': taskStore.isLoading }" :stroke-width="2" />
             {{ t('common.refreshData') }}
             </button>
 

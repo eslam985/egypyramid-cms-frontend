@@ -103,7 +103,7 @@ onMounted(async () => {
 <template>
   <main class="max-w-5xl mx-auto my-3 md:my-8 card p-6 md:p-8 shadow-soft">
     <!-- Header -->
-    <div class="mb-6 pb-4 border-b border-line flex flex-col md:flex-row items-center justify-between gap-4">
+    <div class="mb-6 pb-4 border-b border-line flex flex-col md:flex-row items-center justify-between gap-fluid">
       <div>
         <h2 class="text-fluid-h2 font-bold text-title">
           {{ mediaId ? t('media.form.editTitle') : t('media.form.addTitle') }}

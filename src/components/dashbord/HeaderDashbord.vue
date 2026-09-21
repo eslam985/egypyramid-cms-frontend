@@ -30,7 +30,7 @@ const loadDashboardData = async () => {
 
       <button
         @click="loadDashboardData"
-        class="btn-secondary flex items-center justify-center gap-2 text-fluid-xs min-w-[120px] cursor-pointer"
+        class="btn-outline shadow-glow/10 text-fluid-xs lg:text-fluid-p text-accent-dark hover:text-slate-900 hover:bg-accent/70"
         :disabled="isLoading"
       >
         <Loader
@@ -38,7 +38,7 @@ const loadDashboardData = async () => {
           :class="{ 'animate-spin': isLoading }"
           :stroke-width="2"
         />
-        <span class="btn-ghost">{{ t('dashboard.overview.refresh') }}</span>
+        <span>{{ t('dashboard.overview.refresh') }}</span>
       </button>
     </div>
 

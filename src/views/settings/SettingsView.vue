@@ -26,7 +26,7 @@ const handleLogout = async () => {
     <h1 class="text-2xl font-black">{{ t('settings.title') }}</h1>
     <MainLang />
     <MainTheme />
-    <div class="card p-4">
+    <div class="card p-fluid">
       <button @click="handleLogout" class="btn-danger w-full">{{ t('auth.logout') }}</button>
     </div>
   </div>

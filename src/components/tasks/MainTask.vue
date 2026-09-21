@@ -38,6 +38,7 @@ const handleEdit = (id) => {
 }
 
 const columns = [
+  { label: 'checked', key: 'checked' },
   { label: t('tasks.table.id'), key: 'id' },
   { label: t('tasks.table.taskName'), key: 'task_name' },
   { label: t('tasks.table.status'), key: 'status' },
@@ -151,7 +152,7 @@ const handleBulkDelete = () => {
         </div>
       </template>
 
-      <template #cell-id="{ row }">
+      <template #cell-checked="{ row }">
         <label class="relative flex cursor-pointer">
           <input
             type="checkbox"

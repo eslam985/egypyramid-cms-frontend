@@ -3,14 +3,14 @@
   <div
     v-if="notiStore.confirmModal.show"
     @click.self="notiStore.handleConfirmResult(false)"
-    class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-fade-in cursor-pointer"
+    class="fixed inset-0 z-50 flex items-center justify-center p-fluid bg-black/60 backdrop-blur-xs animate-fade-in cursor-pointer"
   >
     <!-- كارت التأكيد -->
     <div
       class="card p-fluid-section w-full max-w-md shadow-soft border border-line transform transition-all animate-fade-in-up cursor-default"
     >
       <!-- محتوى الهيدر / الأيقونة -->
-      <div class="flex items-start gap-4 mb-4">
+      <div class="flex items-start gap-fluid mb-4">
         <div
           class="size-12 rounded-2xl bg-danger/10 border border-danger/20 flex items-center justify-center text-danger shrink-0"
         >

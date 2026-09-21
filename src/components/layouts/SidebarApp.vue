@@ -9,7 +9,7 @@ const { t } = useI18n()
 <template>
   <aside
     v-if="notiStore.isShowSideBar"
-    class="bg-sidebar w-64 h-full p-4 flex flex-col gap-1.5 select-none fixed inset-y-0 inset-s-0 z-50 md:static border-e border-sidebar-line"
+    class="bg-sidebar w-64 h-full p-fluid flex flex-col gap-1.5 select-none fixed inset-y-0 inset-s-0 z-50 md:static border-e border-sidebar-line"
     :class="{ 'hidden md:flex': !notiStore.isShowSideBar }"
   >
     <div class="flex justify-between px-3 py-2 mb-2">
