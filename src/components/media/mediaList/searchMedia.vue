@@ -1,10 +1,11 @@
 <script setup>
 import { ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { Search } from '@lucide/vue'
 
 import { useMediaStore } from '@/stores/mediaStore'
 import { useNotificationStore } from '@/stores/notificationStore'
-import { Search } from '@lucide/vue'
+import { handleSearch } from '@/composables/useSearch'
 
 const router = useRouter()
 const route = useRoute()
@@ -12,51 +13,64 @@ const mediaStore = useMediaStore()
 const notiStore = useNotificationStore()
 
 const searchInput = ref('')
+// id, targetTable, force = false
+/*
+  searchInput,
+  notiStore,
+  targetStore,
+  apiCallById,
+  params,
+  apiCallAll,
+  apiCallByName,
+  defaultErrorMsg = 'Not found!',
+*/
+const sreach = async () => {
+  const data = await handleSearch({
+    searchInput: searchInput,
+    notiStore: notiStore,
+    targetStore: mediaStore,
+    apiCallById: (id) => mediaStore.fetchMediaByAnyId(id, 'all', true),
+    apiCallAll: () => mediaStore.fetchMedias({ force: true }),
+    apiCallByName: (value) => mediaStore.setFilters({ search: value }),
+    defaultErrorMsg: mediaStore.errorMessage
+  })
 
-// معالجة البحث عند الضغط على Enter أو زر البحث
-const handleSearch = async () => {
-  const rawValue = searchInput.value.trim()
-  if (!rawValue) return
+  // 1. استخراج الـ media_id بشكل آمن
+  let finalMediaId = null;
+  const current = mediaStore.currentMedia;
 
-  // التحقق هل القيمة رقم صحيح صافي (بدون علامات عشرية أو حروف)
-  const targetId = Number(rawValue)
-  const isId = Number.isInteger(targetId) && String(targetId) === rawValue
-
-  // إذا لم يكن ID صحيحاً، نطبق شرط الـ 3 حروف للبحث بالاسم
-  if (!isId && rawValue.length < 3) {
-    notiStore.triggerNotification('حقل البحث بالاسم يجب ألا يكون أصغر من 3 حروف !')
-    searchInput.value = ''
-    return
-  }
-
-  if (isId) {
-    const foundMediById = await mediaStore.getMediaById(targetId)
-    if (!foundMediById) {
-      notiStore.triggerNotification(mediaStore.errorMessage)
-      await mediaStore.fetchMedias({ page: 1 }, true)
+  if (current) {
+    if (Array.isArray(current) && current.length > 0) {
+      finalMediaId = current[0].media_id;
+    } else if (!Array.isArray(current)) {
+      finalMediaId = current.media_id;
     }
-  } else {
-    mediaStore.setFilters({ search: rawValue })
   }
 
-  if (route.name !== 'mediaList') {
-    router.push({ name: 'mediaList' })
+  // 2. التحقق والتوجيه
+  if (data && data.targetId && finalMediaId) {
+    if (route.name !== 'mediaDetails') {
+      router.push(`/media/${finalMediaId}/details`)
+    } else {
+      // إذا كنا بالفعل في صفحة التفاصيل وأردنا الانتقال لميديا أخرى
+      router.push({ path: `/media/${finalMediaId}/details`, force: true })
+    }
   }
-  searchInput.value = ''
+
+  if (data.rawValue) {
+    if (route.name !== 'mediaList') {
+      router.push({ name: 'mediaList' })
+    }
+  }
 }
 </script>
 
 <template>
   <!-- حقل البحث -->
   <div class="col-span-4 flex self-center relative">
-    <input
-      placeholder="Quick search..."
-      id="media-search"
-      type="search"
-      v-model="searchInput"
+    <input placeholder="Quick search..." id="media-search" type="search" v-model="searchInput"
       class="form-input md:p-2.5 text-center bg-line/10 border border-accent/20 border-linerounded-xl"
-      @keyup.enter="handleSearch"
-    />
-    <Search @click="handleSearch" class="self-center absolute left-2 text-accent w-4 md:2-8" />
+      @keyup.enter="sreach" />
+    <Search @click="sreach" class="self-center absolute left-2 text-accent w-4 md:2-8" />
   </div>
 </template>

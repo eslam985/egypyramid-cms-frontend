@@ -7,6 +7,7 @@ import { useI18n } from 'vue-i18n'
 import { useNotificationStore } from '@/stores/notificationStore'
 import { useTaskStore } from '@/stores/taskStore'
 import { confirmAndDelete } from '@/utils/global'
+import { handleSearch } from '@/composables/useSearch'
 
 
 const { t } = useI18n()
@@ -16,8 +17,8 @@ const notiStore = useNotificationStore()
 const router = useRouter()
 const route = useRoute()
 
-let inputValue = ref('')
 let selectState = ref('')
+let searchInput = ref('')
 
 const handleChooseState = async () => {
   // 1. عند اختيار "جميع الحالات" (القيمة فارغة "")
@@ -37,7 +38,7 @@ const handleChooseState = async () => {
 }
 
 const handleRefresh = async () => {
-  inputValue.value = ''
+  searchInput.value = ''
   selectState.value = ''
   const data = await taskStore.fetchAllTasks(true)
   if (data) {
@@ -45,27 +46,22 @@ const handleRefresh = async () => {
   }
 }
 
-const handleSearch = async () => {
-  if (inputValue.value.length < 3) {
-    notiStore.triggerNotification(t('tasks.toolbar.searchMinChars'))
-    inputValue.value = ''
-    return
+const sreach = async () => {
+  const data = await handleSearch({
+    searchInput: searchInput,
+    notiStore: notiStore,
+    targetStore: taskStore,
+    apiCallById: (id) => taskStore.fetchTaskById(id, true),
+    apiCallAll: () => taskStore.fetchAllTasks(true),
+    apiCallByName: (value, force) => taskStore.fetchByTaskName(value, force),
+    defaultErrorMsg: taskStore.errorMessage
+  })
+
+  if (data) {
+    if (route.name !== 'tasksList') {
+      router.push({ name: 'tasksList' })
+    }
   }
-
-  const cleanInput = inputValue.value.trim().toString()
-  const foundTask = await taskStore.fetchByTaskName(cleanInput, true)
-
-  if (foundTask) {
-    notiStore.triggerNotification(taskStore.successMessage)
-  } else {
-    notiStore.triggerNotification(taskStore.errorMessage || t('tasks.toolbar.taskNotFound'))
-  }
-
-  if (route.name !== 'tasksList') {
-    router.push({ name: 'tasksList' })
-  }
-
-  inputValue.value = ''
 }
 
 const failedCount = computed(() =>
@@ -92,24 +88,17 @@ const handleDeleteFailed = async () => {
         <div class="col-span-6 grid grid-cols-8 gap-fluid gap-2">
           <!-- حقل البحث -->
           <div class="col-span-4 flex self-center relative">
-            <input
-              id="task-search"
-              type="search"
-              v-model="inputValue"
+            <input id="task-search" type="search" v-model="searchInput"
               :placeholder="t('tasks.toolbar.searchPlaceholder')"
               class="form-input p-fluid text-center bg-line/10 border border-accent/20 border-linerounded-xl"
-              @keyup.enter="handleSearch"
-            />
-            <Search @click="handleSearch" class="self-center absolute left-2 text-accent" />
-            </div>
+              @keyup.enter="sreach" />
+            <Search @click="sreach" class="self-center absolute left-2 text-accent" />
+          </div>
 
-            <div class="col-span-4">
-            <select
-              id="task-status"
-              v-model="selectState"
+          <div class="col-span-4">
+            <select id="task-status" v-model="selectState"
               class="form-input w-full p-fluid bg-line/10 border border-accent/20 border-linerounded-xl focus:ring-2 focus:ring-accent/20 cursor-pointer"
-              @change="handleChooseState"
-            >
+              @change="handleChooseState">
               <option value="">{{ t('tasks.toolbar.allStatuses') }}</option>
               <option value="idle">{{ t('tasks.form.statusOptions.idle') }}</option>
               <option value="processing">{{ t('tasks.form.statusOptions.processing') }}</option>
@@ -120,29 +109,23 @@ const handleDeleteFailed = async () => {
 
         <!-- right -->
         <div class="col-span-6 flex justify-around md:justify-end gap-3">
-          <button
-            type="button"
+          <button type="button"
             class="btn-outline shadow-glow/10 text-fluid-xs! lg:text-fluid-p text-accent-dark hover:text-slate-900 hover:bg-accent/70"
-            @click="handleRefresh"
-          >
+            @click="handleRefresh">
             <Loader class="size-5 text-accent" :class="{ 'animate-spin': taskStore.isLoading }" :stroke-width="2" />
             {{ t('common.refreshData') }}
-            </button>
+          </button>
 
-            <router-link
-            to="/new-task"
-            class="btn-outline shadow-glow/10 text-fluid-xs lg:text-fluid-p text-accent-dark hover:text-slate-900 hover:bg-accent/70 "
-            >
+          <router-link to="/new-task"
+            class="btn-outline shadow-glow/10 text-fluid-xs lg:text-fluid-p text-accent-dark hover:text-slate-900 hover:bg-accent/70 ">
             {{ t('tasks.toolbar.addNew') }}
           </router-link>
 
-          <button
-            v-if="failedCount > 0"
-            @click="handleDeleteFailed"
-            :disabled="taskStore.isLoading"
-            class="btn-danger text-fluid-xs"
-          >
-            {{ taskStore.isLoading ? t('tasks.toolbar.deleting') : t('tasks.toolbar.deleteFailed', { count: failedCount }) }}
+          <button v-if="failedCount > 0" @click="handleDeleteFailed" :disabled="taskStore.isLoading"
+            class="btn-danger text-fluid-xs">
+            {{ taskStore.isLoading ? t('tasks.toolbar.deleting') : t('tasks.toolbar.deleteFailed', {
+              count: failedCount
+            }) }}
           </button>
         </div>
       </div>

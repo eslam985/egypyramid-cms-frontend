@@ -37,13 +37,13 @@ api.interceptors.request.use(
 )
 
 // 2. Response Interceptor: التجديد الآلي عند تلقي 401
-// 2. Response Interceptor: التجديد الآلي عند تلقي 401
 api.interceptors.response.use(
   (response) => response,
   async (err) => {
     const authStore = useAuthStore()
     const originalRequest = err.config
     const status = err.response?.status
+    const notiStore = useNotificationStore()
 
     // if response status 429
     if (status === 429) {
@@ -52,10 +52,14 @@ api.interceptors.response.use(
       const retryAfter = parseInt(raw, 10) || 60
       const mins = Math.ceil(retryAfter / 60)
 
-      const notiStore = useNotificationStore()
       notiStore.triggerNotification(`Too many requests - Try again after ${mins}`, 'error')
 
       return Promise.reject(err)
+    }
+
+    // if response status 404
+    if(status === 404){
+      notiStore.triggerNotification("We couldn't find what you're looking for.", 'error')
     }
 
     const isAuthEndpoint =

@@ -12,6 +12,7 @@ import {
   deleteTasksByIds,
   deleteAllTasksFailed,
 } from '@/api/data/downloadTasks'
+import { da } from 'zod/locales'
 
 const useTaskStore = defineStore('task', {
   state: () => ({
@@ -59,7 +60,7 @@ const useTaskStore = defineStore('task', {
       })
     },
     async fetchTaskById(id, force = false) {
-      return handleStoreFetch({
+      const data = await handleStoreFetch({
         store: this,
         apiCall: findByTaskId,
         args: id,
@@ -67,6 +68,16 @@ const useTaskStore = defineStore('task', {
         defaultError: 'حدث خطأ اثناء جلب بيانات التاسك',
         force,
       })
+
+      if (!data || data === undefined) {
+        return null
+      }
+
+      if (data || Object.keys(data).length > 0) {
+        this.allTasks = [data]
+      }
+
+      return data
     },
     async fetchByTaskName(taskName, page = 1, limit = 20, force = false) {
       // إذا تم تمرير boolean في المعامل الثاني نعتبره هو الـ force

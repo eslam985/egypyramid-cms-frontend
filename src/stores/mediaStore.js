@@ -7,6 +7,7 @@ import {
   deleteMediaById,
   findAllMedia,
   findMediaById,
+  findMediaByAnyId,
 } from '@/api/data/medias'
 
 const useMediaStore = defineStore('media', {
@@ -40,19 +41,41 @@ const useMediaStore = defineStore('media', {
         force,
       })
 
-      // لو الداتا مش موجودة (حصل 404 أو خطأ)، مفروض مفريش الـ medias أو نفضيها
-      if (data) {
+      if (!data) return null
+
+      if (data || Object.keys(data).length > 0) {
         this.medias = [data]
-      } else {
-        this.medias = [] // أو نسيبها فاضية عشان ما تضربش إيرور
       }
 
       return data
     },
-    async fetchMedias(
-      { category, page = 1, limit = 20, search, sortBy, sortOrder } = {},
+    async fetchMediaByAnyId(id, targetTable, force = false) {
+      if (typeof targetTable === 'boolean') {
+        force = true
+        targetTable = 'all'
+      }
+      const data = await handleStoreFetch({
+        store: this,
+        apiCall: findMediaByAnyId,
+        args: [id, targetTable],
+        targetKey: 'currentMedia',
+        defaultError: 'حدث خطأ اثناء جلب الميديا بالمعرف (id)',
+        force,
+      })
+
+      if (!data || data.length < 1) return null
+
+      return data
+    },
+    async fetchMedias({
+      category,
+      page = 1,
+      limit = 20,
+      search,
+      sortBy,
+      sortOrder,
       force = false,
-    ) {
+    } = {}) {
       const params = {
         category: category ?? this.filters.category,
         page,
@@ -72,16 +95,17 @@ const useMediaStore = defineStore('media', {
         force,
       })
     },
-    async addMedia(data) {
+    async addMedia(data, force = true) {
       return handleStoreAdd({
         store: this,
         apiCall: createMedia,
         data,
         listKey: 'medias',
         defaultError: 'حدث خطأ اثناء انشاء الميديا',
+        force
       })
     },
-    async editMediaById(id, data) {
+    async editMediaById(id, data, force = true) {
       return handleStoreEdit({
         store: this,
         apiCall: updateMediaById,
@@ -89,6 +113,7 @@ const useMediaStore = defineStore('media', {
         data,
         listKey: 'medias',
         defaultError: 'حدث خطأ اثناء تعديل الميديا',
+        force
       })
     },
     async removeMediaById(id) {
@@ -122,27 +147,23 @@ const useMediaStore = defineStore('media', {
     async setPage(page) {
       this.pagination.page = page
 
-      return await this.fetchMedias(
-        {
-          ...this.filters,
-          page: this.pagination.page,
-          limit: this.pagination.limit || 20,
-        },
-        true,
-      )
+      return await this.fetchMedias({
+        ...this.filters,
+        page: this.pagination.page,
+        limit: this.pagination.limit || 20,
+        force: true,
+      })
     },
     async setFilters(newFilters) {
       this.filters = { ...this.filters, ...newFilters }
       this.pagination.page = 1
 
-      return await this.fetchMedias(
-        {
-          ...this.filters,
-          page: 1,
-          limit: this.pagination.limit || 20,
-        },
-        true,
-      )
+      return await this.fetchMedias({
+        ...this.filters,
+        page: 1,
+        limit: this.pagination.limit || 20,
+        force: true,
+      })
     },
   },
 })

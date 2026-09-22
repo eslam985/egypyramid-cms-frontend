@@ -1,44 +1,20 @@
 <script setup>
 import { ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { useI18n } from 'vue-i18n'
 import { Search, Loader } from '@lucide/vue'
+import { useI18n } from 'vue-i18n'
+const { t } = useI18n()
 
 
+import { handleSearch } from '@/composables/useSearch'
 import { useGenresStore } from '@/stores/genreStore'
 import { useNotificationStore } from '@/stores/notificationStore'
 
 const genresStore = useGenresStore()
 const notiStore = useNotificationStore()
-const { t } = useI18n()
 
 const router = useRouter()
 const route = useRoute()
-
-const searchInput = ref('')
-
-const handleSearch = async () => {
-  if (searchInput.value.length < 3) {
-    notiStore.triggerNotification(t('genres.searchMinChars'))
-    searchInput.value = ''
-    return
-  }
-
-  const cleanInputValue = searchInput.value?.toString().trim()
-  const foundGenre = await genresStore.fetchGenreByName(cleanInputValue)
-
-  if (foundGenre && genresStore.currentGenre) {
-    notiStore.triggerNotification(genresStore.successMessage)
-  } else {
-    notiStore.triggerNotification(genresStore.errorMessage)
-  }
-
-  if (route.name !== 'genresList') {
-    router.push({ name: 'genresList' })
-  }
-
-  searchInput.value = ''
-}
 
 const handleRefresh = async () => {
   const data = await genresStore.fetchAllGenres(true) // force = true لتجاوز الكاش
@@ -46,6 +22,27 @@ const handleRefresh = async () => {
     notiStore.triggerNotification(t('common.refreshSuccess'))
   }
 }
+
+const searchInput = ref('')
+
+const sreach = async () => {
+  const data = await handleSearch({
+    searchInput: searchInput,
+    notiStore: notiStore,
+    targetStore: genresStore,
+    apiCallById: (id) => genresStore.fetchGenreById(id, true),
+    apiCallAll: () => genresStore.fetchAllGenres({ force: true }),
+    apiCallByName: (value, force) => genresStore.fetchGenreByName(value, force),
+    defaultErrorMsg: genresStore.errorMessage
+  })
+
+  if (data) {
+    if (route.name !== 'genresList') {
+      router.push({ name: 'genresList' })
+    }
+  }
+}
+
 </script>
 <template>
   <!-- أدوات الفلترة والبحث والتحديث -->
@@ -56,16 +53,11 @@ const handleRefresh = async () => {
     <div class="flex md:justify-start flex-wrap justify-between items-center gap-fluid-gap flex-1 w-full">
       <!-- حقل البحث -->
       <div class="flex gap-2 self-center relative max-w-[145px] lg:max-w-full">
-        <input
-          id="genre-search"
-          type="search"
-          v-model="searchInput"
-          @keyup.enter="handleSearch"
+        <input id="genre-search" type="search" v-model="searchInput" @keyup.enter="sreach"
           :placeholder="t('genres.searchPlaceholder')"
-          class="form-input pl-8 py-fluid text-center bg-line/10 border border-accent/20 border-linerounded-xl w-full"
-          />
+          class="form-input pl-8 py-fluid text-center bg-line/10 border border-accent/20 border-linerounded-xl w-full" />
 
-        <Search @click="handleSearch" class="self-center absolute left-2 text-accent" />
+        <Search @click="sreach" class="self-center absolute left-2 text-accent" />
       </div>
 
 
@@ -74,7 +66,7 @@ const handleRefresh = async () => {
         <div
           class="w-full py-3 px-fluid rounded-xl bg-line/10 border border-accent/20 border-linerounded-xl text-fluid-xs">
           <span class="text-fluid-xs md:text-fluid-p text-center self-center text-sub">{{ t('genres.totalGenres')
-          }}:
+            }}:
           </span>
           <span class="text-center text-accent font-bold text-nowrap">
             {{ genresStore.allGenres.length }}</span>
@@ -86,8 +78,7 @@ const handleRefresh = async () => {
 
     <!-- right -->
     <div class="flex  items-center justify-between gap-3 w-full">
-      <button
-        @click="handleRefresh" :disabled="genresStore.isLoading" type="button"
+      <button @click="handleRefresh" :disabled="genresStore.isLoading" type="button"
         class="btn-outline shadow-glow/10 text-fluid-xs p-fluid lg:text-fluid-p text-accent-dark hover:text-slate-900 hover:bg-accent/70 w-full">
         <Loader class="size-5 text-accent" :class="{ 'animate-spin': genresStore.isLoading }" :stroke-width="2" />
         {{ t('common.refreshData') }}

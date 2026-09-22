@@ -19,6 +19,12 @@ const findMediaById = async (id) => {
   const result = await api.get(`/medias/${id}`)
   return result.data
 }
+const findMediaByAnyId = async (id, targetTable) => {
+  const result = await api.get(`/medias/any-id/${id}`, {
+    params: { targetTable },
+  })
+  return result.data
+}
 
 // /api/medias?page=1&limit=10
 // findAllMedia({category, page = 1, limit = 20, search})
@@ -37,4 +43,11 @@ const findAllMedia = async ({ category, page = 1, limit = 20, search, sortBy, so
   return result.data
 }
 
-export { createMedia, updateMediaById, deleteMediaById, findAllMedia, findMediaById }
+export {
+  createMedia,
+  updateMediaById,
+  deleteMediaById,
+  findAllMedia,
+  findMediaById,
+  findMediaByAnyId,
+}

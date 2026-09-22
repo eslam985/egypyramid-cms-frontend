@@ -269,6 +269,7 @@
     }
   },
   "media": {
+    "noDataHint": "لم نجد ما تبحث عنه!",
     "noMediaToDelete": "لا يوجد عمل لحذفه",
     "confirmDelete": "هل أنت متأكد من حذف \"{title}\"؟",
     "thisMedia": "هذه الميديا",

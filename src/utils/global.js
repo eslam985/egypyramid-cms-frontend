@@ -1,8 +1,14 @@
 const formatDate = (dateStr) => {
   if (!dateStr) return '-'
-  return new Date(dateStr).toLocaleString('ar-EG', {
-    dateStyle: 'short',
-  })
+  const d = new Date(dateStr)
+  if (isNaN(d)) return '-'
+
+  const year = d.getFullYear()
+  const month = String(d.getMonth() + 1).padStart(2, '0')
+  const day = String(d.getDate()).padStart(2, '0')
+  const time = d.toLocaleTimeString('en-US', { timeStyle: 'short' })
+
+  return `${year}/${month}/${day}, ${time}`
 }
 
 async function confirmAndDelete({

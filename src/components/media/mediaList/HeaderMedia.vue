@@ -27,7 +27,7 @@ const handleRefresh = async () => {
   selectedCategory.value = ''
   mediaStore.filters.search = ''
   mediaStore.filters.category = ''
-  await mediaStore.fetchMedias({ page: 1 }, true)
+  await mediaStore.fetchMedias({ page: 1, force: true })
 
   if (mediaStore.errorMessage) {
     notiStore.triggerNotification(mediaStore.errorMessage)

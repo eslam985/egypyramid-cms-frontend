@@ -35,12 +35,17 @@ const useGenresStore = defineStore('genre', {
         defaultError: 'حدث خطأ أثناء جلب التصنيفات',
       })
     },
-    async fetchGenreByName(name) {
+    async fetchGenreByName(name, force = false) {
+      if (!name) {
+        const err = new Error('name required!')
+        throw err
+      }
       const data = await handleStoreFetch({
         store: this,
         apiCall: findGenreByName,
         args: name,
         defaultError: 'حدث خطأ أثناء جلب التصنيف بالاسم',
+        force,
       })
 
       if (data) {
@@ -50,14 +55,20 @@ const useGenresStore = defineStore('genre', {
 
       return data
     },
-    async fetchGenreById(id) {
-      return handleStoreFetch({
+    async fetchGenreById(id, force = false) {
+      const data = await handleStoreFetch({
         store: this,
         apiCall: findGenreById,
         args: id,
         targetKey: 'currentGenre',
         defaultError: 'حدث خطا اثناء جلب التصنيف بالمعرف (id)',
+        force,
       })
+
+      if (data && Object.keys(data).length > 0) {
+        this.allGenres = [data]
+      }
+      return data
     },
     async addGenre(data) {
       return handleStoreAdd({

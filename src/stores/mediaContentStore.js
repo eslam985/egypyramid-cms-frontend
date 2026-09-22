@@ -80,10 +80,10 @@ const useMediaContentStore = defineStore('mediaContent', {
         args: id,
         targetKey: 'currentSeason',
         defaultError: 'حدثت مشكلة اثناء جلب الموسم',
-        force
+        force,
       })
     },
-    async addSeason(media_id, data) {
+    async addSeason(media_id, data = {}, force = true) {
       return handleStoreAdd({
         store: this,
         apiCall: createSeason,
@@ -91,9 +91,10 @@ const useMediaContentStore = defineStore('mediaContent', {
         data,
         listKey: 'seasons',
         defaultError: 'حدثت مشكلة اثناء إضافة الموسم',
+        force,
       })
     },
-    async editSeasonById(id, data) {
+    async editSeasonById(id, data = {}, force = true) {
       return handleStoreEdit({
         store: this,
         apiCall: updateSeasonById,
@@ -101,26 +102,28 @@ const useMediaContentStore = defineStore('mediaContent', {
         data,
         listKey: 'seasons',
         defaultError: 'حدثت مشكلة اثناء تعديل الموسم',
+        force,
       })
     },
-    async removeSeasonById(id) {
+    async removeSeasonById(id, force = true) {
       return handleStoreDelete({
         store: this,
         apiCall: deleteSeasonById,
         id,
         listKey: 'seasons',
         defaultError: 'حدث خطأ اثناء حذف الموسم',
+        force,
       })
     },
     // --- Episodes ---
-    async getEpisodeById(id, force= false) {
+    async getEpisodeById(id, force = false) {
       const data = await handleStoreFetch({
         store: this,
         apiCall: findEpisodeById,
         args: id,
         targetKey: 'currentEpisode',
         defaultError: 'حدثت مشكلة اثناء جلب الحلقة',
-        force
+        force,
       })
 
       if (data) {
@@ -168,7 +171,7 @@ const useMediaContentStore = defineStore('mediaContent', {
 
       return resultData
     },
-    async addEpisode(mediaId, data) {
+    async addEpisode(mediaId, data = {}, force = true) {
       return handleStoreAdd({
         store: this,
         apiCall: createEpisode,
@@ -176,9 +179,10 @@ const useMediaContentStore = defineStore('mediaContent', {
         data,
         listKey: 'episodes',
         defaultError: 'حدث خطأ اثناء اضافة الحلقة!',
+        force,
       })
     },
-    async editEpisodeById(id, data) {
+    async editEpisodeById(id, data = {}, force = true) {
       return handleStoreEdit({
         store: this,
         apiCall: updateEpisodeById,
@@ -186,26 +190,28 @@ const useMediaContentStore = defineStore('mediaContent', {
         data,
         listKey: 'episodes',
         defaultError: 'حدث خطأ اثناء تعديل الحلقة!',
+        force,
       })
     },
-    async removeEpisodeById(id) {
+    async removeEpisodeById(id, force = true) {
       return handleStoreDelete({
         store: this,
         apiCall: deleteEpisodeById,
         id,
         listKey: 'episodes',
         defaultError: 'حدث خطأ اثناء حذف الحلقة',
+        force,
       })
     },
     // --- Links ---
-    async getLinksByEpisodeId(episode_id, force = false ) {
+    async getLinksByEpisodeId(episode_id, force = false) {
       const data = await handleStoreFetch({
         store: this,
         apiCall: findLinksByEpisodeId,
         args: episode_id,
         targetKey: 'links',
         defaultError: 'حدثت مشكلة اثناء جلب اللينكات',
-        force
+        force,
       })
 
       if (data && Array.isArray(this.links)) {
@@ -225,10 +231,10 @@ const useMediaContentStore = defineStore('mediaContent', {
         args: id,
         targetKey: 'currentLink',
         defaultError: 'حدثت مشكلة اثناء جلب اللينك',
-        force
+        force,
       })
     },
-    async addLink(episode_id, data = {}) {
+    async addLink(episode_id, data = {}, force = true) {
       const resultData = await handleStoreAdd({
         store: this,
         apiCall: createLink,
@@ -236,6 +242,7 @@ const useMediaContentStore = defineStore('mediaContent', {
         data,
         listKey: 'links',
         defaultError: 'حدثت مشكلة اثناء اضافة الرابط',
+        force,
       })
 
       if (resultData) {
@@ -248,7 +255,7 @@ const useMediaContentStore = defineStore('mediaContent', {
 
       return resultData
     },
-    async editLinkById(id, data = {}) {
+    async editLinkById(id, data = {}, force = true) {
       const resultData = await handleStoreEdit({
         store: this,
         apiCall: updateLinkById,
@@ -256,6 +263,7 @@ const useMediaContentStore = defineStore('mediaContent', {
         data,
         listKey: 'links',
         defaultError: 'حدث خطأ اثناء تعديل الرابط',
+        force,
       })
 
       // إعادة الترتيب بعد نجاح التعديل
@@ -269,13 +277,14 @@ const useMediaContentStore = defineStore('mediaContent', {
 
       return resultData
     },
-    async removeLinkById(id) {
+    async removeLinkById(id, force = true) {
       return handleStoreDelete({
         store: this,
         apiCall: deleteLinkById,
         id,
         listKey: 'links',
         defaultError: 'حدث خطأ اثناء حذف الرابط',
+        force,
       })
     },
   },

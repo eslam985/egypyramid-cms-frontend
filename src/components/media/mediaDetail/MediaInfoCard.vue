@@ -71,7 +71,6 @@ const handleDeleteMedia = () => {
       <!-- main -->
       <!-- تفاصيل المحتوى -->
       <div class="flex flex-col gap-fluid-gap">
-
         <!-- left main -->
         <div class="flex">
 
@@ -107,7 +106,7 @@ const handleDeleteMedia = () => {
               <span class="text-main font-semibold">{{ t('media.detail.labels') }}:</span>
               <span class="bg-line/10 px-2 py-0.5 rounded border border-line font-mono">{{
                 mediaStore.currentMedia.labels
-              }}</span>
+                }}</span>
             </div>
 
 
@@ -146,7 +145,6 @@ const handleDeleteMedia = () => {
               </span>
             </div>
 
-
           </div>
 
 
@@ -167,9 +165,6 @@ const handleDeleteMedia = () => {
         </div>
 
         <!-- right main -->
-
-
-
         <!-- Left -->
         <div class=" space-y-4">
           <!-- القصة والوصف -->
@@ -181,6 +176,7 @@ const handleDeleteMedia = () => {
           </div>
         </div>
       </div>
+
 
       <!-- action / footer -->
       <!-- أزرار الإجراءات -->
@@ -202,7 +198,6 @@ const handleDeleteMedia = () => {
           <span>{{ t('common.delete') }}</span>
         </button>
       </div>
-
     </div>
     <!-- حالة عدم وجود بيانات -->
     <div v-else class="p-12 text-center text-sub italic">{{ t('media.detail.noData') }}</div>
