@@ -20,7 +20,8 @@ export const useAuthStore = defineStore('auth', {
     },
     clearAccessToken() {
       this.accessToken = null
-      this.refreshToken = null // ← أضف
+      this.refreshToken = null
+      sessionStorage.removeItem('refreshToken') // ← أضف
     },
     async restoreSession() {
       // تشغيل التحميل فقط إذا كانت هذه أول مرة لتجنب تعليق الواجهة أثناء التجديد الصامت
@@ -31,6 +32,9 @@ export const useAuthStore = defineStore('auth', {
       this.errorMessage = ''
       this.successMessage = ''
       try {
+        const storedToken = sessionStorage.getItem('refreshToken')
+        if (storedToken) this.refreshToken = storedToken
+
         const result = await refresh(this.refreshToken)
         if (result.success) {
           this.setAccessToken(result.data)
@@ -62,7 +66,8 @@ export const useAuthStore = defineStore('auth', {
 
         if (result.success) {
           this.setAccessToken(result.data.accessToken) // ← كان result.data
-          this.refreshToken = result.data.refreshToken // ← أضف
+          this.refreshToken = result.data.refreshToken
+          sessionStorage.setItem('refreshToken', result.data.refreshToken)
           this.successMessage = result.message || 'Login successful'
           return true
         }
@@ -82,7 +87,7 @@ export const useAuthStore = defineStore('auth', {
       this.successMessage = ''
       try {
         // عدّل logoutUser — مرر الـ token
-        const result = await logout(this.refreshToken) 
+        const result = await logout(this.refreshToken)
         if (result?.success) {
           this.successMessage = result.message || 'Logout successful'
         }
