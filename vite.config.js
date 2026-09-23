@@ -11,7 +11,7 @@ export default defineConfig({
         host: true,
         proxy: {
             '/api': {
-                target: 'https://egypyramid-cms-backend.vercel.app', // رابط الباك إند الصريح
+                target: 'https://egystreamer-egypyramid-cms-backend.hf.space', // رابط الباك إند الصريح
                 changeOrigin: true,
             },
         },
