@@ -7,14 +7,16 @@ export const login = async (userData) => {
   return result.data
 }
 
-export const refresh = async () => {
-  const result = await api.post('/auth/refresh')
-
+export const refresh = async (refreshToken) => {
+  const result = await api.post('/auth/refresh', null, {
+    headers: { 'x-refresh-token': refreshToken }
+  })
   return result.data
 }
 
-export const logout = async () => {
-  const result = await api.post('/auth/logout')
-
+export const logout = async (refreshToken) => {
+  const result = await api.post('/auth/logout', null, {
+    headers: { 'x-refresh-token': refreshToken }
+  })
   return result.data
 }

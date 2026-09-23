@@ -4,6 +4,7 @@ import { login, logout, refresh } from '@/api/auth/auth'
 export const useAuthStore = defineStore('auth', {
   state: () => ({
     accessToken: null,
+    refreshToken: null, // ← أضف
     isLoading: false,
     isInitialized: false,
     isServerError: false,
@@ -19,6 +20,7 @@ export const useAuthStore = defineStore('auth', {
     },
     clearAccessToken() {
       this.accessToken = null
+      this.refreshToken = null // ← أضف
     },
     async restoreSession() {
       // تشغيل التحميل فقط إذا كانت هذه أول مرة لتجنب تعليق الواجهة أثناء التجديد الصامت
@@ -29,8 +31,7 @@ export const useAuthStore = defineStore('auth', {
       this.errorMessage = ''
       this.successMessage = ''
       try {
-        const result = await refresh()
-
+        const result = await refresh(this.refreshToken)
         if (result.success) {
           this.setAccessToken(result.data)
           this.successMessage = result.message || 'Access token updated successfully'
@@ -60,7 +61,8 @@ export const useAuthStore = defineStore('auth', {
         const result = await login(credentials)
 
         if (result.success) {
-          this.setAccessToken(result.data)
+          this.setAccessToken(result.data.accessToken) // ← كان result.data
+          this.refreshToken = result.data.refreshToken // ← أضف
           this.successMessage = result.message || 'Login successful'
           return true
         }
@@ -79,7 +81,8 @@ export const useAuthStore = defineStore('auth', {
       this.errorMessage = ''
       this.successMessage = ''
       try {
-        const result = await logout()
+        // عدّل logoutUser — مرر الـ token
+        const result = await logout(this.refreshToken) 
         if (result?.success) {
           this.successMessage = result.message || 'Logout successful'
         }
