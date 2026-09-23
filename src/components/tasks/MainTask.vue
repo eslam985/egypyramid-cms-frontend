@@ -4,38 +4,18 @@ import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { Info, Trash, Check } from '@lucide/vue'
 
-
 import { useTaskStore } from '@/stores/taskStore'
 import { useNotificationStore } from '@/stores/notificationStore'
 import { formatDate, confirmAndDelete } from '@/utils/global'
 
 import BaseTable from '@/components/ui/BaseTable.vue'
 
+const { t } = useI18n()
 const taskStore = useTaskStore()
 const notiStore = useNotificationStore()
 const router = useRouter()
-const { t } = useI18n()
+const selectedIds = ref([])
 
-
-// التعامل مع حذف تاسك
-const handleDelete = (id) => {
-  if (!id) {
-    notiStore.triggerNotification(t('tasks.noTaskToDelete'))
-    return
-  }
-
-  confirmAndDelete({
-    message: t('tasks.confirmDelete'),
-    action: () => taskStore.removeTaskById(id),
-    store: taskStore,
-    notiStore,
-  })
-}
-
-// الانتقال لصفحة التعديل
-const handleEdit = (id) => {
-  router.push(`/edit-task/${id}`)
-}
 
 const columns = [
   { label: 'checked', key: 'checked' },
@@ -74,7 +54,26 @@ const getStatusBadge = (status) => {
   }
 }
 
-const selectedIds = ref([])
+
+// الانتقال لصفحة التعديل
+const handleEdit = (id) => {
+  router.push(`/edit-task/${id}`)
+}
+
+// التعامل مع حذف تاسك
+const handleDelete = (id) => {
+  if (!id) {
+    notiStore.triggerNotification(t('tasks.noTaskToDelete'))
+    return
+  }
+
+  confirmAndDelete({
+    message: t('tasks.confirmDelete'),
+    action: () => taskStore.removeTaskById(id),
+    store: taskStore,
+    notiStore,
+  })
+}
 
 // لما تختار صف من الجدول
 const toggleSelect = (id) => {
@@ -139,7 +138,7 @@ const handleBulkDelete = () => {
       <template #cell-actions="{ row }">
         <div class="flex items-center justify-center gap-fluid-gap">
           <div @click="handleEdit(row.id)"
-            class="flex gap-2 px-3 py-1.5 rounded-xl border border-line font-mediumbg-card hover:bg-line/20 transition-all active:scale-95">
+            class="cursor-pointer flex gap-2 px-3 py-1.5 rounded-xl border border-line font-mediumbg-card hover:bg-line/20 transition-all active:scale-95">
             <Info class="self-center text-accent" />
             <span class="self-center"> {{ t('common.edit') }}</span>
           </div>
@@ -154,12 +153,8 @@ const handleBulkDelete = () => {
 
       <template #cell-checked="{ row }">
         <label class="relative flex cursor-pointer">
-          <input
-            type="checkbox"
-            :checked="selectedIds.includes(row.id)"
-            @change="toggleSelect(row.id)"
-            class="peer sr-only"
-            />
+          <input type="checkbox" :checked="selectedIds.includes(row.id)" @change="toggleSelect(row.id)"
+            class="peer sr-only" />
           <div
             class="w-6 h-6 rounded-md border-2 border-line bg-card! peer-checked:bg-accent peer-checked:border-accent transition-all flex items-center justify-center">
             <Check v-if="selectedIds.includes(row.id)" class="w-3.5 h-3.5 text-white stroke-4" />

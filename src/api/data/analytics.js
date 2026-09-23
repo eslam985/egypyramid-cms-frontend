@@ -15,17 +15,6 @@ const getTotalBrokenAndValidAndPendingLinks = async (status) => {
   return result.data
 }
 
-const getTasksByStatus = async ({ status, page = 1, limit = 20 } = {}) => {
-  const result = await api.get(`/analytics/tasks/by-status`, {
-    params: {
-      ...(status && { status }),
-      page,
-      limit,
-    },
-  })
-  return result.data
-}
-
 const getNotReadyMedias = async ({ page = 1, limit = 20 } = {}) => {
   const result = await api.get(`/analytics/medias/not-ready`, {
     params: {
@@ -71,7 +60,6 @@ const getLockedTelegramLinks = async ({ page = 1, limit = 20 } = {}) => {
 export {
   getSystemCounters,
   getTotalBrokenAndValidAndPendingLinks,
-  getTasksByStatus,
   getNotReadyMedias,
   getBrokenLinks,
   getMissingEpisodesByServer,

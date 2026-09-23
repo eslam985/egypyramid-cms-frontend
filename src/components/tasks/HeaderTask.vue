@@ -7,7 +7,6 @@ import { useI18n } from 'vue-i18n'
 import { useNotificationStore } from '@/stores/notificationStore'
 import { useTaskStore } from '@/stores/taskStore'
 import { confirmAndDelete } from '@/utils/global'
-import { handleSearch } from '@/composables/useSearch'
 
 
 const { t } = useI18n()
@@ -19,49 +18,75 @@ const route = useRoute()
 
 let selectState = ref('')
 let searchInput = ref('')
-
 const handleChooseState = async () => {
-  // 1. عند اختيار "جميع الحالات" (القيمة فارغة "")
+  // 1. نقوم بتحديث الرابط فقط (مع الاحتفاظ بأي بحث سابق في الرابط إن وجد)
+  await router.push({
+    query: {
+      ...route.query, // نحافظ على باقي البرامترز مثل search
+      status: selectState.value || undefined, // سيتم إزالة الـ status من الرابط إذا كان فارغاً
+      page: 1 // دائماً عند تغيير الفلتر نعود للصفحة الأولى
+    }
+  })
+  // 2. معالجة الإشعارات
   if (!selectState.value) {
-    await taskStore.fetchAllTasks(true)
     notiStore.triggerNotification(t('tasks.toolbar.allStatusesShown'))
-    return
-  }
-
-  // 2. عند اختيار حالة محددة
-  const foundState = await taskStore.fetchTasksByStatus(selectState.value, true)
-  if (foundState) {
-    notiStore.triggerNotification(taskStore.successMessage || t('tasks.toolbar.filterSuccess'))
   } else {
-    notiStore.triggerNotification(taskStore.errorMessage || t('tasks.toolbar.noTasksFound'))
+    // يمكنك هنا ترك رسالة نجاح عامة للفلترة
+    notiStore.triggerNotification(t('tasks.toolbar.filterSuccess'))
   }
 }
 
 const handleRefresh = async () => {
   searchInput.value = ''
   selectState.value = ''
-  const data = await taskStore.fetchAllTasks(true)
-  if (data) {
-    notiStore.triggerNotification(t('common.refreshSuccess'))
+
+  // إذا كان الرابط لا يحتوي على فلاتر أو بحث مسبق، قم بعمل ريفريش إجباري من السيرفر
+  if (Object.keys(route.query).length === 0) {
+    await taskStore.fetchAllTasks({}, true)
+  } else {
+    // إذا كان الرابط يحتوي على فلاتر، نقوم بتنظيفه، وهذا سيحفز الـ watch تلقائياً لجلب البيانات
+    await router.push({ name: 'tasksList', query: {} })
   }
+
+  notiStore.triggerNotification(t('common.refreshSuccess'))
 }
 
 const sreach = async () => {
-  const data = await handleSearch({
-    searchInput: searchInput,
-    notiStore: notiStore,
-    targetStore: taskStore,
-    apiCallById: (id) => taskStore.fetchTaskById(id, true),
-    apiCallAll: () => taskStore.fetchAllTasks(true),
-    apiCallByName: (value, force) => taskStore.fetchByTaskName(value, force),
-    defaultErrorMsg: taskStore.errorMessage
-  })
+  const rawValue = searchInput.value.trim()
+  if (!rawValue) return
 
-  if (data) {
-    if (route.name !== 'tasksList') {
-      router.push({ name: 'tasksList' })
-    }
+  const targetId = Number(rawValue)
+  const isId = Number.isInteger(targetId) && String(targetId) === rawValue
+
+  if (!isId && rawValue.length < 3) {
+    notiStore.triggerNotification('حقل البحث بالاسم يجب ألا يكون أصغر من 3 حروف !')
+    searchInput.value = ''
+    return
   }
+
+  if (isId) {
+    // 1. البحث بالـ ID: هذه حالة خاصة تجلب عنصراً واحداً فقط
+    const foundItem = await taskStore.fetchTaskById(targetId, true)
+    if (!foundItem) {
+      notiStore.triggerNotification(taskStore.errorMessage)
+    }
+    // نقوم بتنظيف الرابط لكي لا يظهر للمستخدم أنه يبحث بـ Status أو Search واسم أثناء عرض عنصر واحد
+    if (Object.keys(route.query).length > 0) {
+      router.push({ name: 'tasksList', query: {} })
+    }
+  } else {
+    // 2. البحث بالاسم: نحدث الرابط فقط! والـ watch في الصفحة الرئيسية سيجلب البيانات
+    await router.push({
+      name: 'tasksList',
+      query: {
+        ...route.query,
+        search: rawValue, // إضافة كلمة البحث للرابط
+        page: 1 // العودة للصفحة الأولى دائماً عند إجراء بحث جديد
+      }
+    })
+  }
+
+  searchInput.value = ''
 }
 
 const failedCount = computed(() =>

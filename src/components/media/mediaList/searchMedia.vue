@@ -13,17 +13,7 @@ const mediaStore = useMediaStore()
 const notiStore = useNotificationStore()
 
 const searchInput = ref('')
-// id, targetTable, force = false
-/*
-  searchInput,
-  notiStore,
-  targetStore,
-  apiCallById,
-  params,
-  apiCallAll,
-  apiCallByName,
-  defaultErrorMsg = 'Not found!',
-*/
+
 const sreach = async () => {
   const data = await handleSearch({
     searchInput: searchInput,
@@ -57,9 +47,17 @@ const sreach = async () => {
     }
   }
 
-  if (data.rawValue) {
+  if (data?.rawValue) {
     if (route.name !== 'mediaList') {
-      router.push({ name: 'mediaList' })
+      router.push({
+        name: 'mediaList',
+        query: {
+          ...route.query,
+          search: data.rawValue,
+          page: 1,
+          limit: 20
+        }
+      })
     }
   }
 }

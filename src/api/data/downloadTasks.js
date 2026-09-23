@@ -10,13 +10,14 @@ const updateTaskById = async (id, data) => {
   return result.data
 }
 
-const getAllTasks = async ({ order = 'DESC', page = 1, limit = 20, search } = {}) => {
+const getAllTasks = async ({ order = "DESC", page = 1, limit = 20, search, status } = {}) => {
   const result = await api.get('/tasks', {
     params: {
       ...(order && { order }),
+      ...(status && { status }),
+      ...(search && { search }),
       page,
       limit,
-      ...(search && { search }),
     },
   })
 
@@ -25,18 +26,6 @@ const getAllTasks = async ({ order = 'DESC', page = 1, limit = 20, search } = {}
 
 const findByTaskId = async (id) => {
   const result = await api.get(`/tasks/${id}`)
-  return result.data
-}
-
-const findByTaskByName = async ({ taskName, page = 1, limit = 20 } = {}) => {
-  const result = await api.get('/tasks/by-name', {
-    params: {
-      taskName,
-      page,
-      limit,
-    },
-  })
-
   return result.data
 }
 
@@ -62,7 +51,6 @@ export {
   updateTaskById,
   getAllTasks,
   findByTaskId,
-  findByTaskByName,
   deleteTaskById,
   deleteAllTasksFailed,
   deleteTasksByIds

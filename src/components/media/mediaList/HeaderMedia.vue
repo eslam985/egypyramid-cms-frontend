@@ -9,10 +9,12 @@ import { useNotificationStore } from '@/stores/notificationStore'
 
 import SearchMedia from '@/components/media/mediaList/searchMedia.vue'
 import { Loader, Plus } from '@lucide/vue'
+import { useRoute, useRouter } from 'vue-router'
 
 const mediaStore = useMediaStore()
 const notiStore = useNotificationStore()
-
+const route = useRoute()
+const router = useRouter()
 const searchInput = ref('')
 const selectedCategory = ref('')
 
@@ -21,13 +23,26 @@ const handleCategoryChange = () => {
   mediaStore.setFilters({ category: selectedCategory.value })
 }
 
-// إعادة تعيين الفلاتر والجلب من جديد
+
 const handleRefresh = async () => {
   searchInput.value = ''
   selectedCategory.value = ''
   mediaStore.filters.search = ''
   mediaStore.filters.category = ''
-  await mediaStore.fetchMedias({ page: 1, force: true })
+
+  router.push({
+    name: 'mediaList',
+    query: {
+      ...route.query,
+      page: 1,
+      limit: 20
+    }
+  })
+  await mediaStore.fetchMedias({
+    page: 1,
+    limit: 20,
+    force: true
+  })
 
   if (mediaStore.errorMessage) {
     notiStore.triggerNotification(mediaStore.errorMessage)

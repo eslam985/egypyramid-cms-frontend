@@ -112,7 +112,7 @@ const columns = [
       <template #cell-actions="{ row }">
         <div class="flex items-center justify-center gap-fluid-gap">
           <router-link :to="`/media/${row.id}/details`"
-            class="flex gap-2 px-3 py-1.5 rounded-xl border border-line font-mediumbg-card hover:bg-line/20 transition-all active:scale-95">
+            class="cursor-pointer flex gap-2 px-3 py-1.5 rounded-xl border border-line font-mediumbg-card hover:bg-line/20 transition-all active:scale-95">
             <Info class="self-center text-accent" />
             <span class="self-center">{{ t('common.edit') }}</span>
           </router-link>

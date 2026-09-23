@@ -1,5 +1,4 @@
 import { defineStore } from 'pinia'
-import { getTasksByStatus } from '@/api/data/analytics'
 import { handleStoreDelete, handleStoreEdit, handleStoreAdd, handleStoreFetch } from '@/utils/store'
 
 import {
@@ -7,12 +6,10 @@ import {
   updateTaskById,
   getAllTasks,
   findByTaskId,
-  findByTaskByName,
   deleteTaskById,
   deleteTasksByIds,
   deleteAllTasksFailed,
 } from '@/api/data/downloadTasks'
-import { da } from 'zod/locales'
 
 const useTaskStore = defineStore('task', {
   state: () => ({
@@ -41,21 +38,8 @@ const useTaskStore = defineStore('task', {
         apiCall: getAllTasks,
         args: data,
         targetKey: 'allTasks',
+        paginationKey: 'pagination', 
         defaultError: 'حدث خطأ اثناء جلب البيانات!',
-        force,
-      })
-    },
-    async fetchTasksByStatus(statusOrParams, force = false) {
-      const params =
-        typeof statusOrParams === 'string' ? { status: statusOrParams } : statusOrParams
-
-      return handleStoreFetch({
-        store: this,
-        apiCall: getTasksByStatus,
-        args: params,
-        targetKey: 'allTasks',
-        paginationKey: 'pagination',
-        defaultError: 'حدث خطأ أثناء جلب الحالات!',
         force,
       })
     },
@@ -79,23 +63,7 @@ const useTaskStore = defineStore('task', {
 
       return data
     },
-    async fetchByTaskName(taskName, page = 1, limit = 20, force = false) {
-      // إذا تم تمرير boolean في المعامل الثاني نعتبره هو الـ force
-      if (typeof page === 'boolean') {
-        force = true
-        page = 1
-      }
 
-      return handleStoreFetch({
-        store: this,
-        apiCall: findByTaskByName,
-        args: { taskName, page, limit },
-        targetKey: 'allTasks',
-        paginationKey: 'pagination',
-        defaultError: 'حدث خطأ اثناء جلب بيانات التاسك',
-        force,
-      })
-    },
     async addTask(data = {}) {
       return handleStoreAdd({
         store: this,

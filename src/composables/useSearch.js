@@ -42,6 +42,5 @@ export const handleSearch = async ({
   }
 
   searchInput.value = ''
-  console.log(data)
   return data
 }

@@ -36,7 +36,6 @@ onMounted(() => {
 })
 
 const handlePageChange = async (newPage) => {
-  console.log('هقلب لصفحة:', newPage) // اتأكد انها واصلة الاول
   await analyticsStore.fetchMissingEpisodesByServer({
     page: newPage,  // غيرتها من newPage لـ page
     serverName: selectedServer.value
