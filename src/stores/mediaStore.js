@@ -140,8 +140,8 @@ const useMediaStore = defineStore('media', {
           ...this.filters,
           page: 1,
           limit: this.pagination.limit || 20,
+          force: true,
         },
-        true,
       )
     },
     async setPage(page) {

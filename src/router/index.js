@@ -14,6 +14,12 @@ const routes = [
     meta: { requiresAuth: true },
     children: [
       {
+        path: '/profile',
+        name: 'profile',
+        component: () => import('@/views/profile/ProfileView.vue'),
+        meta: { requiresAuth: true },
+      },
+      {
         path: '/settings',
         name: 'settings',
         component: () => import('@/views/settings/SettingsView.vue'),
