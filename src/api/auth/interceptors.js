@@ -61,6 +61,16 @@ api.interceptors.response.use(
     if(status === 404){
       notiStore.triggerNotification("We couldn't find what you're looking for.", 'error')
     }
+    
+    // 💡 التعديل الجديد: التقاظ خطأ الحجم الزائد 413 وعرض رسالة السيرفر المخصصة
+    if (status === 413) {
+      // قراءة الرسالة العربية القادمة من السيرفر مباشرة، وإذا لم توجد نضع نصاً احتياطياً
+      const errorMessage = err.response?.data?.message || 'حجم الملف المرفوع كبير جداً!'
+
+      notiStore.triggerNotification(errorMessage, 'error')
+
+      return Promise.reject(err) // نمرر الـ reject لكي ينتهي الطلب برمجياً بشكل صحيح
+    }
 
     const isAuthEndpoint =
       originalRequest?.url?.includes('/auth/login') ||

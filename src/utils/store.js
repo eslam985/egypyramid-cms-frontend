@@ -11,23 +11,30 @@ export async function handleStoreDelete({
   store.successMessage = ''
   store.errorMessage = ''
   try {
-    const result = id!== undefined? await apiCall(id) : await apiCall()
+    const result = id !== undefined ? await apiCall(id) : await apiCall()
     if (result.success) {
       store.successMessage = result.message
-      if (listKey && Array.isArray(store[listKey])) {
-        if (filterFn) {
-          store[listKey] = filterFn(store[listKey])
-        } else if (Array.isArray(id)) {
-          const idsSet = new Set(id)
-          store[listKey] = store[listKey].filter((item) =>!idsSet.has(item[idKey]))
-        } else {
-          store[listKey] = store[listKey].filter((item) => item[idKey]!== id)
+
+      if (listKey) {
+        if (Array.isArray(store[listKey])) {
+          // كود المصفوفات الحالي الخاص بك (سليم 100%)
+          if (filterFn) {
+            store[listKey] = filterFn(store[listKey])
+          } else if (Array.isArray(id)) {
+            const idsSet = new Set(id)
+            store[listKey] = store[listKey].filter((item) => !idsSet.has(item[idKey]))
+          } else {
+            store[listKey] = store[listKey].filter((item) => item[idKey] !== id)
+          }
+        } else if (store[listKey] !== null && typeof store[listKey] === 'object') {
+          // 💡 بما أن السيرفر أرسل الكائن الجديد، نحدث الـ userInfo به فوراً هنا!
+          if (result.data) {
+            // 💡 نقوم بدمج البيانات الجديدة مع الحفاظ على بقية بيانات المستخدم القديمة
+            store[listKey] = { ...store[listKey], ...result.data }
+          }
         }
       }
       return true
-    } else {
-      store.errorMessage = result.message
-      return false
     }
   } catch (err) {
     store.errorMessage = err?.response?.data?.message || defaultError
@@ -51,19 +58,33 @@ export async function handleStoreEdit({
   store.successMessage = ''
   store.errorMessage = ''
   try {
-    const result = await apiCall(id, data)
+    if ((!id && !data) || !data) return null
+
+    const result = id && data ? await apiCall(id, data) : await apiCall(data)
+    console.log('الهيكل الفعلي لـ result داخل الـ Util:', result)
+
     if (result.success) {
       store.successMessage = result.message
 
       // تحديث العنصر في القائمة إن وجدت
-      if (listKey && Array.isArray(store[listKey])) {
-        const index = store[listKey].findIndex((item) => item[idKey] === id)
-        if (index !== -1) {
-          store[listKey][index] = result.data
+      // تحديث العنصر في القائمة أو الكائن إن وجد
+      if (listKey) {
+        if (Array.isArray(store[listKey])) {
+          // تحديث العنصر داخل المصفوفة (كودك الحالي سليم جداً)
+          const index = store[listKey].findIndex((item) => item[idKey] === id)
+          if (index !== -1) {
+            store[listKey][index] = result.data
+          }
+        } else if (store[listKey] !== null && typeof store[listKey] === 'object') {
+          // 💡 إذا كان كائناً مفرداً (مثل userInfo)، نقوم بدمج التعديلات الجديدة مع الحفاظ على البيانات القديمة
+          store[listKey] = { ...store[listKey], ...result.data }
+        } else {
+          // 💡 حالة احتياطية: إذا كانت القيمة الابتدائية null تماماً ولم يتم قراءتها ككائن بعد
+          store[listKey] = result.data
         }
       }
 
-      return result.data
+      return result.data !== undefined ? result.data : true
     } else {
       store.errorMessage = result.message
       return null

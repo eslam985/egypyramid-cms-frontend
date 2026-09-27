@@ -102,7 +102,7 @@ const useMediaStore = defineStore('media', {
         data,
         listKey: 'medias',
         defaultError: 'حدث خطأ اثناء انشاء الميديا',
-        force
+        force,
       })
     },
     async editMediaById(id, data, force = true) {
@@ -113,7 +113,7 @@ const useMediaStore = defineStore('media', {
         data,
         listKey: 'medias',
         defaultError: 'حدث خطأ اثناء تعديل الميديا',
-        force
+        force,
       })
     },
     async removeMediaById(id) {
@@ -135,21 +135,9 @@ const useMediaStore = defineStore('media', {
 
       this.pagination.page = 1
 
-      return await this.fetchMedias(
-        {
-          ...this.filters,
-          page: 1,
-          limit: this.pagination.limit || 20,
-          force: true,
-        },
-      )
-    },
-    async setPage(page) {
-      this.pagination.page = page
-
       return await this.fetchMedias({
         ...this.filters,
-        page: this.pagination.page,
+        page: 1,
         limit: this.pagination.limit || 20,
         force: true,
       })
@@ -161,6 +149,16 @@ const useMediaStore = defineStore('media', {
       return await this.fetchMedias({
         ...this.filters,
         page: 1,
+        limit: this.pagination.limit || 20,
+        force: true,
+      })
+    },
+    async setPage(page) {
+      this.pagination.page = page
+
+      return await this.fetchMedias({
+        ...this.filters,
+        page: this.pagination.page,
         limit: this.pagination.limit || 20,
         force: true,
       })

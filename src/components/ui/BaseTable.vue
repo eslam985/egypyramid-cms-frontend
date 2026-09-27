@@ -49,7 +49,7 @@ defineEmits(['sort', 'row-click'])
               v-for="row in rows"
               :key="row.id"
               @click="$emit('row-click', row)"
-                class="hover:bg-line/10 transition-colors"
+                class="hover:bg-line/10 transition-colors text-sub text-fluid-p"
             >
             <td
               v-for="col in columns"

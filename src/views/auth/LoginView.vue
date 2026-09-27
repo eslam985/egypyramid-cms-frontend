@@ -5,7 +5,7 @@ import { useI18n } from 'vue-i18n'
 
 import { useAuthStore } from '@/stores/authStore'
 import { useNotificationStore } from '@/stores/notificationStore'
-import { loginSchema } from '@/schemas/authSchema'
+import { loginUserSchema } from '@/schemas/authSchema'
 import { useFormValidation } from '@/composables/useFormValidation'
 
 const { t } = useI18n()
@@ -17,7 +17,7 @@ const formData = reactive({
 })
 
 // استدعاء الـ Composable وتمرين الـ Schema
-const { errors, validate } = useFormValidation(loginSchema)
+const { errors, validate } = useFormValidation(loginUserSchema)
 
 const router = useRouter()
 const authStore = useAuthStore()

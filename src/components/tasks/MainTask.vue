@@ -24,6 +24,7 @@ const columns = [
   { label: t('tasks.table.status'), key: 'status' },
   { label: t('tasks.table.progress'), key: 'progress_percent' },
   { label: t('tasks.table.systemMessage'), key: 'status_message' },
+  { label: 'updated_at', key: 'updated_at' },
   { label: t('tasks.table.createdAt'), key: 'created_at' },
   { label: t('tasks.table.actions'), key: 'actions' },
 ]
@@ -112,7 +113,13 @@ const handleBulkDelete = () => {
     </div>
 
     <!-- من غير ما تكتب اي header خالص -->
-    <BaseTable :columns="columns" :rows="taskStore.allTasks" :isLoading="taskStore.isLoading" storeKey="tasks">
+    <BaseTable
+      :columns="columns"
+      :rows="taskStore.allTasks"
+      :isLoading="taskStore.isLoading"
+      storeKey="tasks"
+      >
+
       <template #cell-status="{ value }">
         <span class="px-2 py-1 rounded border text-xs" :class="getStatusBadge(value).class">
           {{ getStatusBadge(value).label }}
@@ -134,7 +141,9 @@ const handleBulkDelete = () => {
       <template #cell-created_at="{ value }">
         {{ formatDate(value) }}
       </template>
-
+      <template #cell-updated_at="{ value }">
+        {{ formatDate(value) }}
+      </template>
       <template #cell-actions="{ row }">
         <div class="flex items-center justify-center gap-fluid-gap">
           <div @click="handleEdit(row.id)"

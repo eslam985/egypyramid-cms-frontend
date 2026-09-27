@@ -248,6 +248,7 @@ const handleSubmit = async () => {
 
         <!-- Actions Footer -->
         <div class="flex items-center justify-end gap-3 pt-4 border-t border-line">
+          
           <button type="button" @click="router.back()" class="btn-secondary">
             {{ t('tasks.form.cancelBtn') }}
           </button>
@@ -255,13 +256,16 @@ const handleSubmit = async () => {
           <button type="submit" :disabled="taskStore.isLoading" class="btn-primary">
             <span
               v-if="taskStore.isLoading"
-              class="size-4 border-2 border-on-accent border-t-transparent rounded-full animate-spin"
-            ></span>
-            <span>{{
-              route.name === 'addTask' ? t('tasks.form.saveBtn') : t('tasks.form.updateBtn')
-            }}</span>
+              class="size-4 border-2 border-on-accent border-t-transparent rounded-full animate-spin" >
+            </span>
+
+            <span>
+              {{route.name === 'addTask' ? t('tasks.form.saveBtn') : t('tasks.form.updateBtn')}}
+            </span>
+
           </button>
         </div>
+
       </form>
     </div>
   </div>

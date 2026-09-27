@@ -27,7 +27,8 @@
     "media": "Media",
     "genres": "Genres",
     "tasks": "Download Tasks",
-    "settings": "Settings"
+    "settings": "Settings",
+    "profile": "profile"
   },
   "footer": {
     "crafted": "Crafted with"
@@ -58,7 +59,7 @@
   "tasks": {
     "toolbar": {
       "searchLabel": "Search by Task Name",
-      "searchPlaceholder": "Type task name and press Enter...",
+      "searchPlaceholder": "search by ID or name and press Enter...",
       "statusLabel": "Download Status",
       "allStatuses": "All Statuses",
       "addNew": "+ Add New Task",
@@ -252,7 +253,7 @@
     "saveError": "An error occurred while saving",
     "notFound": "Genre not found!",
     "addNew": "✚ Add New Genre",
-    "searchPlaceholder": "Type genre name and press Enter...💬",
+    "searchPlaceholder": "search by ID or name & press Enter...",
     "totalGenres": "Total Genres",
     "searchMinChars": "Search field must be at least 3 characters!",
     "loading": "Loading genres...",

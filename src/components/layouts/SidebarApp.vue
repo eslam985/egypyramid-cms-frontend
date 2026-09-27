@@ -1,5 +1,5 @@
 <script setup>
-import { House, Video, ChartBarStacked, Download, PanelLeftClose, Settings } from '@lucide/vue'
+import { House, Video, ChartBarStacked, Download, PanelLeftClose, Settings, CircleUser } from '@lucide/vue'
 import { useNotificationStore } from '../../stores/notificationStore'
 import { useI18n } from 'vue-i18n'
 
@@ -63,6 +63,16 @@ const { t } = useI18n()
       <span class="text-fluid-sm">{{ t('sidebar.tasks') }}</span>
     </router-link>
 
+      <!-- profile -->
+    <router-link
+      :to="{ name: 'profile' }"
+      class="sidebar-link"
+      exact-active-class="sidebar-link-active"
+    >
+      <CircleUser class="size-5" />
+        <span class="text-fluid-sm">{{ t('sidebar.profile')}}</span>
+
+    </router-link>
     <!-- الإعدادات -->
     <router-link
       :to="{ name: 'settings' }"
@@ -72,5 +82,6 @@ const { t } = useI18n()
       <Settings class="size-5" />
       <span class="text-fluid-sm">{{ t('sidebar.settings') }}</span>
     </router-link>
+
   </aside>
 </template>

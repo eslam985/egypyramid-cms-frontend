@@ -1,5 +1,5 @@
 <script setup>
-import { House, Video, ChartBarStacked, Download, Settings } from '@lucide/vue'
+import { House, Video, ChartBarStacked, Download, Settings, CircleUser } from '@lucide/vue'
 import { useI18n } from 'vue-i18n'
 const { t } = useI18n()
 import { useRoute, useRouter } from 'vue-router'
@@ -76,6 +76,14 @@ const handleGotoTasksPage = () => {
         class="btn-secondary text-fluid-xs shrink-0 whitespace-nowrap">
         <Settings class="size-4 shrink-0" />
         <span class="text-fluid-xs md:text-fluid-p">{{ t('sidebar.settings') }}</span>
+      </router-link>
+      
+      <!-- profile -->
+      <router-link :to="{ name: 'profile' }"
+        exact-active-class="btn-outline shadow-glow/30 text-accent hover:text-slate-900 hover:bg-accent/70"
+        class="btn-secondary text-fluid-xs shrink-0 whitespace-nowrap">
+        <CircleUser class="size-4 shrink-0"/>
+        <span class="text-fluid-xs md:text-fluid-p">{{ t('sidebar.profile')}}</span>
       </router-link>
     </div>
   </nav>

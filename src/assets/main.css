@@ -26,7 +26,6 @@ html {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
-  scroll-behavior: smooth;
   scroll-padding-top: 5rem;
   color-scheme: light;
   tab-size: 4;
@@ -310,7 +309,7 @@ body[data-theme='dark'] {
   /* ===== مسافات مرنة → gap-fluid-gap / p-fluid-p / my-fluid-section ===== */
   --spacing-fluid-gap: clamp(0.8rem, 2vw, 1rem);
   --spacing-fluid-p: clamp(1rem, 3vw, 1.5rem);
-  --spacing-fluid-section: clamp(1.5rem, 5vw, 2rem);
+  --spacing-fluid-section: clamp(1rem, 5vw, 2rem);
   --spacing-fluid-lg: clamp(2rem, 6vw, 4rem);
 
   /* ===== أحجام خطوط مرنة → text-fluid-h1 ... ===== */
@@ -438,7 +437,6 @@ body[data-theme='dark'] {
   --animate-slide-down: slideDown 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
   --animate-slide-left: slideLeft 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
   --animate-float: float 6s ease-in-out infinite;
-  --animate-slow-zoom: slow-zoom 20s linear infinite alternate;
   --animate-pulse-glow: pulse-glow 2.5s ease-in-out infinite;
 }
 
@@ -458,7 +456,7 @@ body[data-theme='dark'] {
   .form-input,
   .form-select,
   .form-textarea {
-    @apply inline-flex items-center justify-center gap-2 font-semibold rounded-xl transition-all duration-200 active:scale-95 disabled:opacity-50 disabled:pointer-events-none text-fluid-xs md:text-fluid-p;
+    @apply inline-flex items-center justify-center gap-2 font-semibold rounded-xl transition-[color,background-color,border-color,opacity,transform] duration-200 active:scale-95 disabled:opacity-50 disabled:pointer-events-none text-fluid-xs md:text-fluid-p;
   }
 
   /* ===== الأزرار: الألوان والتخصيص ===== */
@@ -494,7 +492,7 @@ body[data-theme='dark'] {
   .form-input,
   .form-select,
   .form-textarea {
-    @apply w-full px-3 md:px-4 py-2.5 bg-card text-foreground placeholder:text-muted focus:ring-1 disabled:opacity-60 duration-200;
+    @apply w-full px-3 md:px-4 py-2.5 bg-card dark:bg-[#151f35] text-foreground placeholder:text-muted focus:ring-1 disabled:opacity-60 duration-200 md:p-2.5 border border-accent/20 ;
   }
 
   .form-textarea {
@@ -522,7 +520,7 @@ body[data-theme='dark'] {
 
   /* تم حل المشكلة هنا بفصل الكلاس وحذف الـ @apply لـ card */
   .card-hover:hover {
-    @apply border-accent/40 bg-card-hover -translate-y-1 transition-all duration-300;
+    @apply border-accent/40 bg-card-hover -translate-y-1 transition-[color,background-color,border-color,transform,box-shadow] duration-300;
   }
 
   .glass-card {
@@ -706,8 +704,9 @@ body[data-theme='dark'] {
     background: var(--accent);
   }
 
-  * {
+  html {
     scrollbar-color: var(--border-strong) var(--background);
+    scrollbar-width: thin;
   }
 
   .will-change-transform {
