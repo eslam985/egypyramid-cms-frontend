@@ -4,6 +4,7 @@ import { useRouter } from 'vue-router'
 
 import MainLang from '@/components/settings/lang/MainLang.vue'
 import MainTheme from '@/components/settings/theme/MainTheme.vue'
+import MainBackup from '@/components/settings/backup/MainBackup.vue'
 
 import { useAuthStore } from '@/stores/authStore'
 import { useNotificationStore } from '@/stores/notificationStore'
@@ -26,6 +27,8 @@ const handleLogout = async () => {
     <h1 class="text-2xl font-black">{{ t('settings.title') }}</h1>
     <MainLang />
     <MainTheme />
+    <MainBackup class="mt-fluid-section" />
+
     <div class="card p-fluid">
       <button @click="handleLogout" class="btn-danger w-full">{{ t('auth.logout') }}</button>
     </div>
