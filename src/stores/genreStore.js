@@ -1,5 +1,11 @@
 import { defineStore } from 'pinia'
-import { handleStoreDelete, handleStoreEdit, handleStoreAdd, handleStoreFetch } from '@/utils/store'
+import {
+  handleStoreDelete,
+  handleStoreEdit,
+  handleStoreAdd,
+  handleStoreFetch,
+  handleStoreExport,
+} from '@/utils/store'
 
 import {
   findGenreByName,
@@ -8,6 +14,7 @@ import {
   createGenre,
   updateGenreById,
   deleteGenreById,
+  handleExportGenresToCSV,
 } from '@/api/data/genres'
 
 const useGenresStore = defineStore('genre', {
@@ -26,6 +33,17 @@ const useGenresStore = defineStore('genre', {
       this.successMessage = ''
       this.errorMessage = ''
     },
+    async exportGenres() {
+      const date = new Date().toISOString().slice(0, 10)
+
+      return handleStoreExport({
+        store: this,
+        apiCall: handleExportGenresToCSV, // استدعاء دالة الـ API المصححة
+        defaultFileName: `genres-${date}.csv`,
+        defaultError: 'حدثت مشكلة أثناء تصدير الأقسام!',
+      })
+    },
+
     async fetchAllGenres(force = false) {
       return handleStoreFetch({
         store: this,

@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { handleStoreDelete, handleStoreEdit, handleStoreAdd, handleStoreFetch } from '@/utils/store'
+import { handleStoreDelete, handleStoreEdit, handleStoreAdd, handleStoreFetch, handleStoreExport } from '@/utils/store'
 
 import {
   findSeasonsByMediaId,
@@ -7,7 +7,17 @@ import {
   findSeasonById,
   updateSeasonById,
   deleteSeasonById,
+  handleFindAllSeasons,
 } from '@/api/data/seasons'
+
+import {
+  createLink,
+  updateLinkById,
+  findLinksByEpisodeId,
+  findLinkById,
+  deleteLinkById,
+  handleFindAllLinks,
+} from '@/api/data/links'
 
 import {
   createEpisode,
@@ -16,15 +26,8 @@ import {
   findEpisodesByMediaId,
   findEpisodesBySeasonId,
   deleteEpisodeById,
+  handleFindAllEpisodes,
 } from '@/api/data/episodes'
-
-import {
-  createLink,
-  updateLinkById,
-  findLinksByEpisodeId,
-  findLinkById,
-  deleteLinkById,
-} from '@/api/data/links'
 
 const useMediaContentStore = defineStore('mediaContent', {
   state: () => ({
@@ -56,6 +59,17 @@ const useMediaContentStore = defineStore('mediaContent', {
       this.currentLink = null
     },
     // --- Seasons ---
+    async exportSeasons(filters = {}) {
+      const date = new Date().toISOString().slice(0, 10)
+
+      return handleStoreExport({
+        store: this,
+        apiCall: handleFindAllSeasons,
+        args: filters, 
+        defaultFileName: `season-${date}.csv`,
+        defaultError: 'حدثت مشكلة أثناء تصدير المواسم! '
+      })
+    },
     async getSeasonsByMediaId(mediaId, force = false) {
       const data = await handleStoreFetch({
         store: this,
@@ -203,7 +217,33 @@ const useMediaContentStore = defineStore('mediaContent', {
         force,
       })
     },
+
+    // 💡 أكشن تصدير الحلقات المعتمد بالكامل على الـ Utility المشتركة
+    async exportEpisodes(filters = {}) {
+      const date = new Date().toISOString().slice(0, 10)
+
+      return handleStoreExport({
+        store: this,
+        apiCall: handleFindAllEpisodes,
+        args: filters, // تمرير الفلاتر الحالية للـ API
+        defaultFileName: `episodes-${date}.csv`,
+        defaultError: 'حدثت مشكلة أثناء تصدير الحلقات '
+      })
+    },
+
     // --- Links ---
+    // 💡 أكشن تصدير الحلقات المعتمد بالكامل على الـ Utility المشتركة
+    async exportLinks(filters = {}) {
+      const date = new Date().toISOString().slice(0, 10)
+
+      return handleStoreExport({
+        store: this,
+        apiCall: handleFindAllLinks,
+        args: filters, // تمرير الفلاتر الحالية للـ API
+        defaultFileName: `links-${date}.csv`,
+        defaultError: 'حدثت مشكلة أثناء تصدير اللينكات! '
+      })
+    },
     async getLinksByEpisodeId(episode_id, force = false) {
       const data = await handleStoreFetch({
         store: this,

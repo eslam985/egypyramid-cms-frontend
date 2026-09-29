@@ -26,4 +26,20 @@ const deleteLinkById = async (id) => {
   return result.data
 }
 
-export { createLink, updateLinkById, findLinksByEpisodeId, findLinkById, deleteLinkById }
+const handleFindAllLinks = async (params = {}) => {
+  const result = await api.get('/links', {
+    params: { ...params, export: true },
+    responseType: 'blob',
+  })
+
+  return result.data
+}
+
+export {
+  createLink,
+  updateLinkById,
+  findLinksByEpisodeId,
+  findLinkById,
+  deleteLinkById,
+  handleFindAllLinks,
+}

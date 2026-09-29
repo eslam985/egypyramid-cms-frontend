@@ -189,3 +189,50 @@ export async function handleStoreFetch({
     store.isLoading = false
   }
 }
+
+
+/**
+ * دالة عامة وموحدة لإدارة عمليات تصدير الجداول وتحميلها كملفات CSV
+ * مع إدارة حالات الـ Loading ورسائل النجاح والأخطاء للستور الممرر تلقائياً
+ */
+export async function handleStoreExport({
+  store,
+  apiCall,
+  args,
+  defaultFileName = 'export.csv',
+  defaultError = 'حدث خطأ أثناء تصدير البيانات'
+}) {
+  store.isLoading = true
+  store.successMessage = ''
+  store.errorMessage = ''
+
+  try {
+    let blobData
+    // 1. استدعاء الـ API وتمرير البارامترات (الفلاتر) إن وجدت بنفس منطق دالتك السابقة
+    if (args !== undefined) {
+      blobData = Array.isArray(args) ? await apiCall(...args) : await apiCall(args)
+    } else {
+      blobData = await apiCall()
+    }
+
+    // 2. تحويل الـ Blob إلى رابط وهمي في المتصفح والضغط عليه لبدء التحميل فوراً
+    const url = window.URL.createObjectURL(new Blob([blobData], { type: 'text/csv;charset=utf-8;' }))
+    const link = document.createElement('a')
+    link.href = url
+    link.setAttribute('download', defaultFileName)
+
+    document.body.appendChild(link)
+    link.click()
+    link.parentNode.removeChild(link)
+    window.URL.revokeObjectURL(url)
+
+    store.successMessage = 'تم تصدير وتحميل الملف بنجاح'
+    return true
+  } catch (err) {
+    store.errorMessage = err?.response?.data?.message || defaultError
+    console.error('Export Utility Error:', err)
+    return false
+  } finally {
+    store.isLoading = false
+  }
+}

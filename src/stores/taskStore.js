@@ -1,5 +1,11 @@
 import { defineStore } from 'pinia'
-import { handleStoreDelete, handleStoreEdit, handleStoreAdd, handleStoreFetch } from '@/utils/store'
+import {
+  handleStoreDelete,
+  handleStoreEdit,
+  handleStoreAdd,
+  handleStoreFetch,
+  handleStoreExport,
+} from '@/utils/store'
 
 import {
   createTask,
@@ -7,8 +13,9 @@ import {
   getAllTasks,
   findByTaskId,
   deleteTaskById,
-  deleteTasksByIds,
   deleteAllTasksFailed,
+  deleteTasksByIds,
+  exportTasksToCSV,
 } from '@/api/data/downloadTasks'
 
 const useTaskStore = defineStore('task', {
@@ -26,6 +33,19 @@ const useTaskStore = defineStore('task', {
     errorMessage: '',
   }),
   actions: {
+    // 💡 أكشن تصدير مهام التنزيل المعتمد على الفلاتر الحالية المطبقة في الـ UI
+    async exportTasks(filters = {}) {
+      const date = new Date().toISOString().slice(0, 10)
+
+      return handleStoreExport({
+        store: this,
+        apiCall: exportTasksToCSV,
+        args: filters, // تمرير نفس كائن الفلاتر (البحث، الحالة، الترتيب)
+        defaultFileName: `download-tasks-${date}.csv`,
+        defaultError: 'حدثت مشكلة أثناء تصدير مهام التنزيل!',
+      })
+    },
+
     async fetchAllTasks(data = {}, force = false) {
       // إذا تمرر boolean في البرامتر الأول اعتبره هو الـ force
       if (typeof data === 'boolean') {
@@ -38,7 +58,7 @@ const useTaskStore = defineStore('task', {
         apiCall: getAllTasks,
         args: data,
         targetKey: 'allTasks',
-        paginationKey: 'pagination', 
+        paginationKey: 'pagination',
         defaultError: 'حدث خطأ اثناء جلب البيانات!',
         force,
       })

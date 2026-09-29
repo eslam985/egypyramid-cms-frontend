@@ -1,13 +1,18 @@
 import { defineStore } from 'pinia'
 import {
   getSystemCounters,
-  getTotalBrokenAndValidAndPendingLinks, // (status)
-  getNotReadyMedias, // { page = 1, limit = 20 } = {}
-  getBrokenLinks, // { page = 1, limit = 20 } = {}
-  getMissingEpisodesByServer, // { serverName, page = 1, limit = 20 } = {}
-  getLockedTelegramLinks, // { page = 1, limit = 20 } = {}
+  getTotalBrokenAndValidAndPendingLinks,
+  getNotReadyMedias,
+  getBrokenLinks,
+  getMissingEpisodesByServer,
+  getLockedTelegramLinks,
+  handleExportNotReadyMedias,
+  handleExportBrokenLinks,
+  handleExportMissingEpisodesByServer,
+  handleExportLockedTelegramLinks,
 } from '@/api/data/analytics'
-import { handleStoreFetch } from '@/utils/store'
+
+import { handleStoreFetch, handleStoreExport } from '@/utils/store'
 
 const useAnalyticsStore = defineStore('analytics', {
   state: () => ({
@@ -35,6 +40,50 @@ const useAnalyticsStore = defineStore('analytics', {
       this.brokenLinksList = []
       this.missingLinksByServer = []
       this.telegramLocked = []
+    },
+    async exportNotReadyMedia(filters = {}) {
+      const date = new Date().toISOString().slice(0, 10)
+
+      return handleStoreExport({
+        store: this,
+        apiCall: handleExportNotReadyMedias,
+        args: filters,
+        defaultFileName: `not-ready-medias-${date}.csv`,
+        defaultError: 'حدثت مشكلة أثناء تصدير الاعمال الغير جاهزة!',
+      })
+    },
+    async exportBrokenLinks(filters = {}) {
+      const date = new Date().toISOString().slice(0, 10)
+
+      return handleStoreExport({
+        store: this,
+        apiCall: handleExportBrokenLinks,
+        args: filters,
+        defaultFileName: `export-broken-links-${date}.csv`,
+        defaultError: 'حدثت مشكلة أثناء تصدير اللينكات التالفة!',
+      })
+    },
+    async exportMissingEpisodesByServer(filters = {}) {
+      const date = new Date().toISOString().slice(0, 10)
+
+      return handleStoreExport({
+        store: this,
+        apiCall: handleExportMissingEpisodesByServer,
+        args: filters,
+        defaultFileName: `export-missing-episodes-by-server-name-${date}.csv`,
+        defaultError: 'حدثت مشكلة أثناء تصدير السرفرات المفقودة من الحلقات!',
+      })
+    },
+    async exportLockedTelegramLinks(filters = {}) {
+      const date = new Date().toISOString().slice(0, 10)
+
+      return handleStoreExport({
+        store: this,
+        apiCall: handleExportLockedTelegramLinks,
+        args: filters,
+        defaultFileName: `export-locked-telegram-links-${date}.csv`,
+        defaultError: 'حدثت مشكلة أثناء تصدير لينكات تليجرام المحجوزة!',
+      })
     },
 
     async fetchAllCounters(force = false) {

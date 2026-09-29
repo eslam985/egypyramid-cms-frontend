@@ -11,10 +11,6 @@ const findGenreById = async (id) => {
   return result.data
 }
 
-const findAllGenres = async () => {
-  const result = await api.get('/genres')
-  return result.data
-}
 
 const createGenre = async (data) => {
   const result = await api.post('/genres', data)
@@ -31,6 +27,21 @@ const deleteGenreById = async (id) => {
   return result.data
 }
 
+const findAllGenres = async () => {
+  const result = await api.get('/genres')
+  return result.data
+}
+
+const handleExportGenresToCSV = async () => {
+  const result = await api.get('/genres', {
+    params: { export: true }, // 💡 التصحيح: وضعها داخل كائن الـ params
+    responseType: 'blob'     // 💡 أساسي لكي يستقبل المتصفح الملف بشكل سليم
+  })
+
+  return result.data
+}
+
+
 export {
   findGenreByName,
   findAllGenres,
@@ -38,4 +49,5 @@ export {
   findGenreById,
   updateGenreById,
   deleteGenreById,
+  handleExportGenresToCSV
 }

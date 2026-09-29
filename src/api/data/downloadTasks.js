@@ -23,6 +23,19 @@ const getAllTasks = async ({ order = "DESC", page = 1, limit = 20, search, statu
 
   return result.data
 }
+// 💡 دالة مخصصة لتصدير الـ Tasks مع الحفاظ على نفس الفلاتر المطبقة حالياً
+const exportTasksToCSV = async (params = {}) => {
+  const result = await api.get('/tasks', {
+    params: {
+      ...params,
+      export: true
+    },
+    responseType: 'blob' 
+  })
+
+  return result.data
+}
+
 
 const findByTaskId = async (id) => {
   const result = await api.get(`/tasks/${id}`)
@@ -53,5 +66,6 @@ export {
   findByTaskId,
   deleteTaskById,
   deleteAllTasksFailed,
-  deleteTasksByIds
+  deleteTasksByIds,
+  exportTasksToCSV
 }

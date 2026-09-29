@@ -25,4 +25,20 @@ const deleteSeasonById = async (id) => {
   return result.data
 }
 
-export { findSeasonsByMediaId, createSeason, findSeasonById, updateSeasonById, deleteSeasonById }
+const handleFindAllSeasons = async (params = {}) => {
+  const result = await api.get('/seasons', {
+    params: { ...params, export: true },
+    responseType: 'blob',
+  })
+
+  return result.data
+}
+
+export {
+  findSeasonsByMediaId,
+  createSeason,
+  findSeasonById,
+  updateSeasonById,
+  deleteSeasonById,
+  handleFindAllSeasons,
+}

@@ -1,5 +1,11 @@
 import { defineStore } from 'pinia'
-import { handleStoreDelete, handleStoreEdit, handleStoreAdd, handleStoreFetch } from '@/utils/store'
+import {
+  handleStoreDelete,
+  handleStoreEdit,
+  handleStoreAdd,
+  handleStoreFetch,
+  handleStoreExport,
+} from '@/utils/store'
 
 import {
   createMedia,
@@ -8,6 +14,7 @@ import {
   findAllMedia,
   findMediaById,
   findMediaByAnyId,
+  handleExportMedia,
 } from '@/api/data/medias'
 
 const useMediaStore = defineStore('media', {
@@ -31,6 +38,17 @@ const useMediaStore = defineStore('media', {
     errorMessage: '',
   }),
   actions: {
+    async exportMedia(filters = {}) {
+      const date = new Date().toISOString().slice(0, 10)
+
+      return handleStoreExport({
+        store: this,
+        apiCall: handleExportMedia,
+        args: filters,
+        defaultFileName: `medias-${date}.csv`,
+        defaultError: 'حدثت مشكلة أثناء تصدير الاعمال!',
+      })
+    },
     async getMediaById(id, force = true) {
       const data = await handleStoreFetch({
         store: this,

@@ -43,6 +43,18 @@ const findAllMedia = async ({ category, page = 1, limit = 20, search, sortBy, so
   return result.data
 }
 
+const handleExportMedia = async (params = {}) => {
+  const result = await api.get('medias', {
+    params: {
+      ...params,
+      export: true,
+    },
+    responseType: 'blob',
+  })
+
+  return result.data
+}
+
 export {
   createMedia,
   updateMediaById,
@@ -50,4 +62,5 @@ export {
   findAllMedia,
   findMediaById,
   findMediaByAnyId,
+  handleExportMedia,
 }

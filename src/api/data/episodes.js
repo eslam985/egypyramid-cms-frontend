@@ -45,6 +45,16 @@ const deleteEpisodeById = async (id) => {
   return result.data
 }
 
+const handleFindAllEpisodes = async (params = {}) => {
+  const result = await api.get('/episodes', {
+    params: { ...params, export: 'true' }, // 💡 نمرر الفلاتر الحالية ونضيف كلمة التصدير تلقائياً
+    responseType: 'blob' // 💡 أساسي جداً لتستلم نص الـ CSV كملف جاهز
+  })
+
+  return result.data
+}
+
+
 export {
   createEpisode,
   updateEpisodeById,
@@ -52,4 +62,5 @@ export {
   findEpisodesByMediaId,
   findEpisodesBySeasonId,
   deleteEpisodeById,
+  handleFindAllEpisodes // TODO: Call this func in store first to use
 }
