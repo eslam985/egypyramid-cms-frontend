@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { Search, Loader } from '@lucide/vue'
+import { Search, Loader, Download } from '@lucide/vue'
 import { useI18n } from 'vue-i18n'
 const { t } = useI18n()
 
@@ -17,6 +17,13 @@ const router = useRouter()
 const route = useRoute()
 
 const handleRefresh = async () => {
+  router.push({
+    name: 'genresList',
+    query: {
+      page: 1,
+      limit: 20
+    }
+  })
   const data = await genresStore.fetchAllGenres(true) // force = true لتجاوز الكاش
   if (data) {
     notiStore.triggerNotification(t('common.refreshSuccess'))
@@ -43,28 +50,32 @@ const sreach = async () => {
   }
 }
 
+const handleExport = async () => {
+  const query = route.query
+  console.log(query)
+  await genresStore.exportGenres(query)
+}
 </script>
 <template>
   <!-- أدوات الفلترة والبحث والتحديث -->
   <div
-    class="grid grid-cols-1 sm:grid-cols-2 items-center gap-2 md:gap-fluid-gap md:px-6 bg-card ounded-b-lg overflow-x-auto no-scrollbar border border-line rounded-2xl p-fluid shadow-soft mb-6">
+    class="grid grid-cols-2 xs:grid-cols-3 md:grid-cols-25 gap-fluid-gap w-full bg-card border border-line rounded-2xl p-fluid shadow-soft mb-6">
 
-    <!-- left -->
-    <div class="flex md:justify-start flex-wrap justify-between items-center gap-fluid-gap flex-1 w-full">
-      <!-- حقل البحث -->
-      <div class="flex gap-2 self-center relative max-w-[145px] lg:max-w-full">
-        <input id="genre-search" type="search" v-model="searchInput" @keyup.enter="sreach"
-          :placeholder="t('genres.searchPlaceholder')"
-          class="form-input pl-8 py-fluid text-center bg-line/10 border border-accent/20 border-linerounded-xl w-full" />
+    <!-- 1111 -->
+    <!-- حقل البحث -->
+    <div class="md:col-span-6 flex self-center relative text-fluid-xs">
+      <input id="genre-search" type="search" v-model="searchInput" @keyup.enter="sreach"
+        :placeholder="t('genres.searchPlaceholder')"
+        class="form-input pl-8 py-fluid text-center bg-line/10 border border-accent/20 border-linerounded-xl w-full" />
 
-        <Search @click="sreach" class="self-center absolute left-2 text-accent" />
-      </div>
+      <Search @click="sreach" class="self-center absolute left-2 text-accent" />
+    </div>
 
-
-      <!-- صندوق إجمالي التصنيفات: تم استبدال bg-slate المباشرة بـ bg-card-hover و border-line لدعم الدارك مود -->
+    <!-- 2222 -->
+    <div class="md:col-span-4 self-center">
       <div v-if="genresStore.allGenres.length > 0" class="flex justify-center self-center ">
         <div
-          class="w-full py-3 px-fluid rounded-xl bg-line/10 border border-accent/20 border-linerounded-xl text-fluid-xs">
+          class="w-full py-3 self-center text-center rounded-xl bg-line/10 border border-accent/20 border-linerounded-xl text-fluid-xs text-nowrap">
           <span class="text-fluid-xs md:text-fluid-p text-center self-center text-sub">{{ t('genres.totalGenres')
             }}:
           </span>
@@ -72,23 +83,34 @@ const sreach = async () => {
             {{ genresStore.allGenres.length }}</span>
         </div>
       </div>
-
     </div>
 
 
-    <!-- right -->
-    <div class="flex  items-center justify-between gap-3 w-full">
-      <button @click="handleRefresh" :disabled="genresStore.isLoading" type="button"
-        class="btn-outline shadow-glow/10 text-fluid-xs p-fluid lg:text-fluid-p text-accent-dark hover:text-slate-900 hover:bg-accent/70 w-full">
-        <Loader class="size-5 text-accent" :class="{ 'animate-spin': genresStore.isLoading }" :stroke-width="2" />
-        {{ t('common.refreshData') }}
+    <!-- 3333 -->
+    <!-- Export -->
+    <div class="md:col-span-5 self-center">
+      <button type="button"
+        class="btn-outline shadow-glow/10 text-fluid-xs lg:text-fluid-p text-accent-dark hover:text-slate-900 hover:bg-accent/70"
+        @click="handleExport">
+        <Download class="size-5 text-accent" :stroke-width="2" />
+        Export
       </button>
-
-      <router-link to="/new-genre"
-        class="btn-outline shadow-glow/10 text-fluid-xs p-fluid lg:text-fluid-p text-accent-dark hover:text-slate-900 hover:bg-accent/70 w-full">
-        {{ t('genres.addNew') }}
-      </router-link>
     </div>
+
+    <!-- 4444 -->
+    <!-- refreshData -->
+    <button @click="handleRefresh" :disabled="genresStore.isLoading" type="button"
+      class="md:col-span-5 btn-outline gap-1 px-0 shadow-glow/10 text-fluid-xs lg:text-fluid-p text-accent-dark hover:text-slate-900 hover:bg-accent/70">
+      <Loader class="size-5 text-accent" :class="{ 'animate-spin': genresStore.isLoading }" :stroke-width="2" />
+      {{ t('common.refreshData') }}
+    </button>
+
+    <!-- 5555 -->
+    <!-- addNew -->
+    <router-link to="/new-genre"
+      class="md:col-span-5 btn-outline gap-1 px-0 shadow-glow/10 text-fluid-xs lg:text-fluid-p text-accent-dark hover:text-slate-900 hover:bg-accent/70">
+      {{ t('genres.addNew') }}
+    </router-link>
 
   </div>
 </template>

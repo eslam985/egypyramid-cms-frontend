@@ -7,6 +7,7 @@ import { useGenresStore } from '@/stores/genreStore'
 const genresStore = useGenresStore()
 
 onMounted(async () => {
+
   await genresStore.fetchAllGenres()
 })
 </script>

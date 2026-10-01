@@ -68,6 +68,7 @@ const handleSelectHistory = async (url) => {
     notiStore.triggerNotification(userStore.errorMessages || 'حدث خطأ أثناء التبديل')
   }
 }
+const role = () => userStore.userInfo?.roles === "5150" ? "Admin" : userStore.userInfo?.roles === "1984" ? 'Editor' : userStore.userInfo?.roles === "2001" ? 'User' : "N/A"
 </script>
 <template>
   <section>
@@ -147,7 +148,7 @@ const handleSelectHistory = async (url) => {
           <!-- info -->
           <div @click.self="isDropdownOpen ? isDropdownOpen = false : isDropdownOpen" class="flex flex-col gap-4">
             <router-link to="/profile" class="text-fluid-h3 lg:hover:text-line-strong">{{ userStore.userInfo?.username
-            }}</router-link>
+              }}</router-link>
 
             <div class="flex gap-2">
               <Mail :stroke-width="1" class="text-accent" />
@@ -182,7 +183,9 @@ const handleSelectHistory = async (url) => {
             <span class="w-2 h-2 bg-success text-center self-center rounded-full animate-pulse-glow"></span> Active
           </span>
           <span
-            class="self-center text-nowrap text-fluid-xs text-center px-3 py-1.5 rounded-full bg-accent-light/20 text-accent-dark transition-transform lg:hover:scale-105">Admin</span>
+            class="self-center text-nowrap text-fluid-xs text-center px-3 py-1.5 rounded-full bg-accent-light/20 text-accent-dark transition-transform lg:hover:scale-105">
+            {{ role() }}
+          </span>
           <p
             class="self-center text-sub text-nowrap text-fluid-xs px-3 py-2 rounded-full bg-accent-light/20  transition-transform lg:hover:scale-105 ">
             {{ userStore.sessions.length }} Active Sessions

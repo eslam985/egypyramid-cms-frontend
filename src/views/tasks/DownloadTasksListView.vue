@@ -19,9 +19,18 @@ const loadData = async () => {
 
 // 1. جلب البيانات عند فتح الصفحة بناءً على الموجود في الرابط
 onMounted(() => {
+  router.push({
+    name: 'tasksList',
+    query: {
+      ...route.query,
+      page: 1,
+      limit: 20
+    }
+  })
   if (route.name === 'tasksList') {
     loadData()
   }
+
 })
 
 // 2. مراقبة أي تغيير في الرابط (تغيير فلتر، بحث، أو صفحة) لجلب البيانات أوتوماتيكياً
@@ -52,9 +61,7 @@ const handlePageChange = async (newPage) => {
 
       <MainTask />
 
-      <AppPagination
-        :pagination="taskStore.pagination"
-        :is-loading="taskStore.isLoading"
+      <AppPagination :pagination="taskStore.pagination" :is-loading="taskStore.isLoading"
         @change-page="handlePageChange" />
     </div>
   </main>

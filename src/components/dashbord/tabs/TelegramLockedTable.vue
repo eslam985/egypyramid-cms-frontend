@@ -1,18 +1,75 @@
 <script setup>
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import { storeToRefs } from 'pinia'
-import { useAnalyticsStore } from '@/stores/analyticsStore'
-import { formatDate } from '@/utils/global'
 import { useI18n } from 'vue-i18n'
+import { Download, Loader } from '@lucide/vue'
+
+import { useAnalyticsStore } from '@/stores/analyticsStore'
+import { useNotificationStore } from '@/stores/notificationStore'
+import { formatDate } from '@/utils/global'
 
 const { t } = useI18n()
 const router = useRouter()
+const route = useRoute()
+const notiStore = useNotificationStore()
 const analyticsStore = useAnalyticsStore()
 const { telegramLocked, isLoading } = storeToRefs(analyticsStore)
+
+
+const handleExport = async () => {
+  router.push({
+    params: {}
+  })
+  const isSuccess = await analyticsStore.exportLockedTelegramLinks(route.query)
+  if (isSuccess) {
+    notiStore.triggerNotification(analyticsStore.successMessage || 'تم تحميل البيانات بنجاح!')
+  } else {
+    notiStore.triggerNotification(analyticsStore.errorMessage || 'حدث خطأ اثناء تحميل البيانات!')
+  }
+}
+
+const handleRefresh = async () => {
+  router.push({
+    params: {}
+  })
+  const data = await analyticsStore.fetchLockedTelegramLinks(true)
+  if (data) {
+    notiStore.triggerNotification(analyticsStore.successMessage || 'تم تحديث البيانات بنجاح!')
+
+  } else {
+    notiStore.triggerNotification(analyticsStore.errorMessage || 'حدث خطأ اثناء تحديث البيانات!')
+
+  }
+
+}
+
 </script>
 <template>
-  <div class="overflow-x-auto rounded-2xl border border-line bg-card shadow-soft">
-    <table class="w-full text-fluid-xs text-right">
+  <div class="overflow-x-auto p-fluid">
+    <div
+      class="flex justify-between gap-fluid-gap w-full bg-card border border-line rounded-2xl p-fluid shadow-soft mb-6">
+      <!-- 1111 -->
+      <!-- refreshData -->
+      <button @click="handleRefresh" :disabled="isLoading" type="button"
+        class="md:col-span-5 btn-outline gap-1 shadow-glow/10 text-fluid-xs lg:text-fluid-p text-accent-dark hover:text-slate-900 hover:bg-accent/70">
+        <Loader class="size-5 text-accent" :class="{ 'animate-spin': isLoading }" :stroke-width="2" />
+        {{ t('common.refreshData') }}
+      </button>
+
+      <!-- 2222 -->
+      <!-- Export -->
+      <div class="md:col-span-5 self-center flex md:justify-end">
+        <button type="button"
+          class="btn-outline shadow-glow/10 text-fluid-xs lg:text-fluid-p text-accent-dark hover:text-slate-900 hover:bg-accent/70"
+          @click="handleExport">
+          <Download class="size-5 text-accent" :stroke-width="2" />
+          Export
+        </button>
+      </div>
+
+    </div>
+
+    <table class="w-full text-fluid-xs text-right card">
       <thead class="text-sub bg-line/20 border-b border-line">
         <tr>
           <th class="p-fluid whitespace-nowrap text-center">{{ t('telegramLocked.table.titleEpisode') }}</th>
@@ -24,12 +81,8 @@ const { telegramLocked, isLoading } = storeToRefs(analyticsStore)
         </tr>
       </thead>
       <tbody class="divide-y divide-line">
-        <tr
-          v-for="item in telegramLocked"
-          :key="item.id"
-          @click="router.push(`/media/${item.media_id}/details`)"
-          class="hover:bg-line/10 transition-colors cursor-pointer"
-        >
+        <tr v-for="item in telegramLocked" :key="item.id" @click="router.push(`/media/${item.media_id}/details`)"
+          class="hover:bg-line/10 transition-colors cursor-pointer">
           <!-- اسم العمل ورقم الحلقة -->
           <td class="p-fluid whitespace-nowrap">
             <div class="font-boldmb-0.5">{{ item.title }}</div>
@@ -44,14 +97,10 @@ const { telegramLocked, isLoading } = storeToRefs(analyticsStore)
 
           <!-- النوع -->
           <td class="p-fluid whitespace-nowrap">
-            <span
-              :class="
-                item.media_type === 'series'
-                  ? 'bg-accent/10 text-accent border-accent/20'
-                  : 'bg-warning/10 text-warning border-warning/20'
-              "
-              class="px-2.5 py-0.5 rounded-lg text-fluid-xs font-semibold border inline-block"
-            >
+            <span :class="item.media_type === 'series'
+              ? 'bg-accent/10 text-accent border-accent/20'
+              : 'bg-warning/10 text-warning border-warning/20'
+              " class="px-2.5 py-0.5 rounded-lg text-fluid-xs font-semibold border inline-block">
               {{
                 item.media_type === 'series'
                   ? t('telegramLocked.series')
@@ -62,38 +111,27 @@ const { telegramLocked, isLoading } = storeToRefs(analyticsStore)
 
           <!-- السيرفر -->
           <td class="p-fluid whitespace-nowrap">
-            <span
-              class="bg-line/20border border-line px-2 py-1 rounded-lg font-mono text-fluid-xs"
-            >
+            <span class="bg-line/20border border-line px-2 py-1 rounded-lg font-mono text-fluid-xs">
               {{ item.server_name }}
             </span>
           </td>
 
           <!-- الرابط المغلَق -->
           <td class="p-fluid whitespace-nowrap">
-            <a
-              :href="item.url"
-              target="_blank"
-              dir="ltr"
-              @click.stop
-              class="text-link hover:text-link-hover underline underline-offset-2 text-fluid-xs font-mono truncate max-w-xs block"
-            >
+            <a :href="item.url" target="_blank" dir="ltr" @click.stop
+              class="text-link hover:text-link-hover underline underline-offset-2 text-fluid-xs font-mono truncate max-w-xs block">
               {{ item.url }}
             </a>
           </td>
 
           <!-- حالة العمل -->
           <td class="p-fluid whitespace-nowrap">
-            <span
-              v-if="item.is_ready === true"
-              class="text-success font-semibold bg-success/10 px-2.5 py-1 rounded-lg border border-success/20 inline-block"
-            >
+            <span v-if="item.is_ready === true"
+              class="text-success font-semibold bg-success/10 px-2.5 py-1 rounded-lg border border-success/20 inline-block">
               {{ t('telegramLocked.ready') }}
             </span>
-            <span
-              v-else
-              class="text-danger font-semibold bg-danger/10 px-2.5 py-1 rounded-lg border border-danger/20 inline-block"
-            >
+            <span v-else
+              class="text-danger font-semibold bg-danger/10 px-2.5 py-1 rounded-lg border border-danger/20 inline-block">
               {{ t('telegramLocked.notReady') }}
             </span>
           </td>

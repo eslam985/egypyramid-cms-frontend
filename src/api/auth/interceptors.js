@@ -44,7 +44,6 @@ api.interceptors.response.use(
     const originalRequest = err.config
     const status = err.response?.status
     const notiStore = useNotificationStore()
-
     // if response status 429
     if (status === 429) {
       const h = err.response.headers
@@ -58,13 +57,12 @@ api.interceptors.response.use(
     }
 
     // if response status 404
-    if(status === 404){
+    if (status === 404) {
       notiStore.triggerNotification("We couldn't find what you're looking for.", 'error')
     }
-    
+
     // 💡 التعديل الجديد: التقاظ خطأ الحجم الزائد 413 وعرض رسالة السيرفر المخصصة
     if (status === 413) {
-      // قراءة الرسالة العربية القادمة من السيرفر مباشرة، وإذا لم توجد نضع نصاً احتياطياً
       const errorMessage = err.response?.data?.message || 'حجم الملف المرفوع كبير جداً!'
 
       notiStore.triggerNotification(errorMessage, 'error')
@@ -86,9 +84,9 @@ api.interceptors.response.use(
         })
           .then((token) => {
             if (originalRequest.headers.set) {
-              originalRequest.headers.set('Authorization', `Bearer ${token}`) // استخدم newToken في الموضع الثاني
+              originalRequest.headers.set('Authorization', `Bearer ${token}`)
             } else {
-              originalRequest.headers.Authorization = `Bearer ${token}` // استخدم newToken في الموضع الثاني
+              originalRequest.headers.Authorization = `Bearer ${token}`
             }
             return api(originalRequest)
           })

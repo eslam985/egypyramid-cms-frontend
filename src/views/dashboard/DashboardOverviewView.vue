@@ -1,6 +1,7 @@
 <script setup>
 import { onMounted } from 'vue'
 import { useAnalyticsStore } from '@/stores/analyticsStore'
+import { useRouter, } from 'vue-router'
 
 import HeaderDashbord from '@/components/dashbord/HeaderDashbord.vue'
 import SystemCounters from '@/components/dashbord/SystemCounters.vue'
@@ -10,8 +11,13 @@ import MainTabs from '@/components/dashbord/tabs/MainTabs.vue'
 import ServerStatusCounters from '@/components/dashbord/ServerStatusCounters.vue'
 
 const analyticsStore = useAnalyticsStore()
+const router = useRouter()
 
 onMounted(async () => {
+  router.push({
+    name: "dashboard",
+    query: {}
+  })
   // جلب العدادات فقط عند فتح الصفحة
   await analyticsStore.fetchAllCounters()
 })

@@ -3,18 +3,22 @@ import { storeToRefs } from 'pinia'
 import { useAnalyticsStore } from '@/stores/analyticsStore'
 import { Loader } from '@lucide/vue'
 import { useI18n } from 'vue-i18n'
+import { useRouter } from 'vue-router'
 
 const { t } = useI18n()
 const analyticsStore = useAnalyticsStore()
 
 const { isLoading } = storeToRefs(analyticsStore)
 
+const router = useRouter()
 const loadDashboardData = async () => {
+  router.push({
+    name: 'dashboard',
+    query: {}
+  })
   await analyticsStore.fetchAllCounters(true)
-  await analyticsStore.fetchNotReadyMedias(true)
-  await analyticsStore.fetchBrokenLinks({ serverName: 'telegram_direct' }, true)
-  await analyticsStore.fetchLockedTelegramLinks(true)
   await analyticsStore.fetchTotalCountersStatusServers('broken', true)
+
 }
 </script>
 <template>
@@ -28,25 +32,17 @@ const loadDashboardData = async () => {
         </p>
       </div>
 
-      <button
-        @click="loadDashboardData"
+      <button @click="loadDashboardData"
         class="btn-outline shadow-glow/10 text-fluid-xs lg:text-fluid-p text-accent-dark hover:text-slate-900 hover:bg-accent/70"
-        :disabled="isLoading"
-      >
-        <Loader
-          class="size-5 text-accent"
-          :class="{ 'animate-spin': isLoading }"
-          :stroke-width="2"
-        />
+        :disabled="isLoading">
+        <Loader class="size-5 text-accent" :class="{ 'animate-spin': isLoading }" :stroke-width="2" />
         <span>{{ t('dashboard.overview.refresh') }}</span>
       </button>
     </div>
 
     <!-- رسائل الخطأ -->
-    <div
-      v-if="errorMessage"
-      class="p-fluid bg-danger/10! border border-danger/20 text-danger rounded-2xl text-fluid-xs font-medium"
-    >
+    <div v-if="errorMessage"
+      class="p-fluid bg-danger/10! border border-danger/20 text-danger rounded-2xl text-fluid-xs font-medium">
       {{ errorMessage }}
     </div>
   </main>

@@ -223,7 +223,7 @@ export async function handleStoreExport({
 
     document.body.appendChild(link)
     link.click()
-    link.parentNode.removeChild(link)
+    link.remove() // كود مباشر وبسيط ويغنيك عن parentNode
     window.URL.revokeObjectURL(url)
 
     store.successMessage = 'تم تصدير وتحميل الملف بنجاح'

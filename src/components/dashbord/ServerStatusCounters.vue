@@ -3,14 +3,21 @@ import { ref, onMounted } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useAnalyticsStore } from '@/stores/analyticsStore'
 import { useI18n } from 'vue-i18n'
+import { useRouter } from 'vue-router'
 
 const { t } = useI18n()
 const analyticsStore = useAnalyticsStore()
 const { totalCountersStatusServeres } = storeToRefs(analyticsStore)
 
 const selectedStatus = ref('broken')
+const router = useRouter()
 
 const handleStatusChange = () => {
+  router.push({
+    query: {
+      status: selectedStatus.value,
+    }
+  })
 
   analyticsStore.fetchTotalCountersStatusServers(selectedStatus.value, true)
 

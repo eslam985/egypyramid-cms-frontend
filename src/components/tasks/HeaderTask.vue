@@ -1,6 +1,6 @@
 <script setup>
 import { ref, computed } from 'vue'
-import { Search, Loader } from '@lucide/vue'
+import { Search, Loader, Download } from '@lucide/vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 
@@ -45,7 +45,15 @@ const handleRefresh = async () => {
     await taskStore.fetchAllTasks({}, true)
   } else {
     // إذا كان الرابط يحتوي على فلاتر، نقوم بتنظيفه، وهذا سيحفز الـ watch تلقائياً لجلب البيانات
-    await router.push({ name: 'tasksList', query: {} })
+    await router.push(
+      {
+        name: 'tasksList',
+        query: {
+          page: 1,
+          limit: 20
+        }
+      }
+    )
   }
 
   notiStore.triggerNotification(t('common.refreshSuccess'))
@@ -103,57 +111,74 @@ const handleDeleteFailed = async () => {
     fallbackError: t('tasks.confirm.deleteFailedError')
   })
 }
+
+const handleExport = async () => {
+  const query = route.query
+  console.log(query)
+  await taskStore.exportTasks()
+}
 </script>
 <template>
-  <div class="bg-card border border-line rounded-2xl p-fluid shadow-soft mb-6">
-    <div class="flex flex-col lg:flex-row items-end justify-between gap-fluid">
-      <!-- أدوات الفلترة والبحث والتحديث -->
-      <div class="grid grid-cols-1 md:grid-cols-12 gap-3 md:gap-12 w-full lg:w-auto flex-1">
-        <!-- left -->
-        <div class="col-span-6 grid grid-cols-8 gap-fluid gap-2">
-          <!-- حقل البحث -->
-          <div class="col-span-4 flex self-center relative">
-            <input id="task-search" type="search" v-model="searchInput"
-              :placeholder="t('tasks.toolbar.searchPlaceholder')"
-              class="form-input p-fluid text-center bg-line/10 border border-accent/20 border-linerounded-xl"
-              @keyup.enter="sreach" />
-            <Search @click="sreach" class="self-center absolute left-2 text-accent" />
-          </div>
+  <!-- أدوات الفلترة والبحث والتحديث -->
+  <div
+    class="grid grid-cols-2 xs:grid-cols-3 md:grid-cols-24 gap-fluid-gap w-full bg-card border border-line rounded-2xl p-fluid shadow-soft mb-6">
 
-          <div class="col-span-4">
-            <select id="task-status" v-model="selectState"
-              class="form-input w-full p-fluid bg-line/10 border border-accent/20 border-linerounded-xl focus:ring-2 focus:ring-accent/20 cursor-pointer"
-              @change="handleChooseState">
-              <option value="">{{ t('tasks.toolbar.allStatuses') }}</option>
-              <option value="idle">{{ t('tasks.form.statusOptions.idle') }}</option>
-              <option value="processing">{{ t('tasks.form.statusOptions.processing') }}</option>
-              <option value="failed">{{ t('tasks.form.statusOptions.failed') }}</option>
-            </select>
-          </div>
-        </div>
-
-        <!-- right -->
-        <div class="col-span-6 flex justify-around md:justify-end gap-3">
-          <button type="button"
-            class="btn-outline shadow-glow/10 text-fluid-xs! lg:text-fluid-p text-accent-dark hover:text-slate-900 hover:bg-accent/70"
-            @click="handleRefresh">
-            <Loader class="size-5 text-accent" :class="{ 'animate-spin': taskStore.isLoading }" :stroke-width="2" />
-            {{ t('common.refreshData') }}
-          </button>
-
-          <router-link to="/new-task"
-            class="btn-outline shadow-glow/10 text-fluid-xs lg:text-fluid-p text-accent-dark hover:text-slate-900 hover:bg-accent/70 ">
-            {{ t('tasks.toolbar.addNew') }}
-          </router-link>
-
-          <button v-if="failedCount > 0" @click="handleDeleteFailed" :disabled="taskStore.isLoading"
-            class="btn-danger text-fluid-xs">
-            {{ taskStore.isLoading ? t('tasks.toolbar.deleting') : t('tasks.toolbar.deleteFailed', {
-              count: failedCount
-            }) }}
-          </button>
-        </div>
-      </div>
+    <!-- 1111 -->
+    <!-- حقل البحث -->
+    <div class="md:col-span-4 flex self-center relative text-fluid-xs">
+      <input id="task-search" type="search" v-model="searchInput" :placeholder="t('tasks.toolbar.searchPlaceholder')"
+        class="form-input pl-6 pr-0 text-center bg-line/10 border border-accent/20 border-linerounded-xl text-fluid-xs"
+        @keyup.enter="sreach" />
+      <Search @click="sreach" class="self-center absolute left-2 text-accent" />
     </div>
+
+    <!-- 2222 -->
+    <!-- select -->
+    <div class="md:col-span-3 self-center">
+      <select id="task-status" v-model="selectState"
+        class="form-input w-full bg-line/10 border border-accent/20 border-linerounded-xl focus:ring-2 focus:ring-accent/20 cursor-pointer"
+        @change="handleChooseState">
+        <option value="">{{ t('tasks.toolbar.allStatuses') }}</option>
+        <option value="idle">{{ t('tasks.form.statusOptions.idle') }}</option>
+        <option value="processing">{{ t('tasks.form.statusOptions.processing') }}</option>
+        <option value="failed">{{ t('tasks.form.statusOptions.failed') }}</option>
+      </select>
+    </div>
+
+    <!-- 3333 -->
+    <!-- Export -->
+    <div class="md:col-span-5 self-center">
+      <button type="button"
+        class="btn-outline shadow-glow/10 text-fluid-xs lg:text-fluid-p text-accent-dark hover:text-slate-900 hover:bg-accent/70"
+        @click="handleExport">
+        <Download class="size-5 text-accent" :stroke-width="2" />
+        Export
+      </button>
+    </div>
+
+    <!-- 4444 -->
+    <!-- refreshData -->
+    <button type="button"
+      class="md:col-span-4 btn-outline shadow-glow/10 text-fluid-xs lg:text-fluid-p text-accent-dark hover:text-slate-900 hover:bg-accent/70"
+      @click="handleRefresh">
+      <Loader class="size-5 text-accent" :class="{ 'animate-spin': taskStore.isLoading }" :stroke-width="2" />
+      {{ t('common.refreshData') }}
+    </button>
+
+    <!-- 5555 -->
+    <!-- addNew -->
+    <router-link to="/new-task"
+      class="md:col-span-4 btn-outline shadow-glow/10 text-fluid-xs lg:text-fluid-p text-accent-dark hover:text-slate-900 hover:bg-accent/70">
+      {{ t('tasks.toolbar.addNew') }}
+    </router-link>
+
+    <!-- 6666 -->
+    <!-- deleteFailed -->
+    <button v-if="failedCount > 0" @click="handleDeleteFailed" :disabled="taskStore.isLoading"
+      class="md:col-span-4 btn-danger text-fluid-xs max-w-[150px] ">
+      {{ taskStore.isLoading ? t('tasks.toolbar.deleting') : t('tasks.toolbar.deleteFailed', {
+        count: failedCount
+      }) }}
+    </button>
   </div>
 </template>

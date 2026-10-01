@@ -63,7 +63,6 @@ export const useAuthStore = defineStore('auth', {
       this.successMessage = ''
       try {
         const result = await login(credentials)
-
         if (result.success) {
           this.setAccessToken(result.data.accessToken) // ← كان result.data
           this.refreshToken = result.data.refreshToken
@@ -73,7 +72,13 @@ export const useAuthStore = defineStore('auth', {
         }
         return false
       } catch (err) {
-        this.errorMessage = err?.response?.data?.message || 'حدث خطأ ما، يرجى المحاولة لاحقاً'
+        if (err?.response?.data?.message.includes('getaddrinfo ENOTFOUND')) {
+          this.errorMessage = 'حدث خطأ اثناء الاتصال بقاعدة البيانات!'
+        } else {
+          this.errorMessage = err?.response?.data?.message || 'حدث خطأ ما، يرجى المحاولة لاحقاً'
+        }
+
+        console.error('debug: ', err?.response?.data?.message)
         console.error(err)
         return false
       } finally {
