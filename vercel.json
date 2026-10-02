@@ -12,6 +12,10 @@
     ],
     "rewrites": [
         {
+            "source": "/api/:path*",
+            "destination": "https://egystreamer-egypyramid-cms-backend.hf.space/api/:path*"
+        },
+        {
         "source": "/(.*)",
         "destination": "/index.html"
         }
