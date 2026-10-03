@@ -11,7 +11,9 @@ import { useNotificationStore } from '@/stores/notificationStore'
 import { useMediaContentStore } from '@/stores/mediaContentStore'
 
 import { confirmAndDelete } from '@/utils/global'
+import { useAuthStore } from '@/stores/authStore'
 
+const authStore = useAuthStore()
 const router = useRouter()
 const route = useRoute()
 
@@ -97,7 +99,7 @@ const handleDeleteEpisode = (episodeId) => {
           </div>
         </div>
 
-        <button
+        <button v-if="authStore.isEditorAndAbove"
           type="button"
           @click="handleAddEpisode"
           class="btn-primary w-full sm:w-auto px-4 py-2 text-fluid-xs font-bold rounded-xl flex items-center justify-center gap-2 active:scale-95 transition-all cursor-pointer"
@@ -191,7 +193,7 @@ const handleDeleteEpisode = (episodeId) => {
           </div>
 
           <!-- الإجراءات (تعديل / حذف) -->
-          <div class="pt-2 flex items-center justify-end gap-1 border-t border-line/40">
+          <div v-if="authStore.isEditorAndAbove" class="pt-2 flex items-center justify-end gap-1 border-t border-line/40">
             <button
               type="button"
               @click="handleEditEpisode(ep.id)"
@@ -208,7 +210,7 @@ const handleDeleteEpisode = (episodeId) => {
               </svg>
             </button>
 
-            <button
+            <button v-if="authStore.isAdmin"
               type="button"
               @click="handleDeleteEpisode(ep.id)"
               class="p-1.5 rounded-lg text-sub hover:text-danger hover:bg-danger/10 transition-colors active:scale-95 cursor-pointer"

@@ -9,7 +9,9 @@ import { useNotificationStore } from '@/stores/notificationStore'
 import { formatDate, confirmAndDelete } from '@/utils/global'
 
 import BaseTable from '@/components/ui/BaseTable.vue'
+import { useAuthStore } from '@/stores/authStore'
 
+const authStore = useAuthStore()
 const { t } = useI18n()
 const taskStore = useTaskStore()
 const notiStore = useNotificationStore()
@@ -26,8 +28,12 @@ const columns = [
   { label: t('tasks.table.systemMessage'), key: 'status_message' },
   { label: 'updated_at', key: 'updated_at' },
   { label: t('tasks.table.createdAt'), key: 'created_at' },
-  { label: t('tasks.table.actions'), key: 'actions' },
+
 ]
+let action =  { label: t('tasks.table.actions'), key: 'actions' }
+if(authStore.isEditorAndAbove) {
+  columns.push(action)
+}
 
 // تحديد لون ونظر الشارة حسب الحالة
 const getStatusBadge = (status) => {
@@ -144,7 +150,7 @@ const handleBulkDelete = () => {
       <template #cell-updated_at="{ value }">
         {{ formatDate(value) }}
       </template>
-      <template #cell-actions="{ row }">
+      <template #cell-actions="{ row }" v-if="authStore.isEditorAndAbove" >
         <div class="flex items-center justify-center gap-fluid-gap">
           <div @click="handleEdit(row.id)"
             class="cursor-pointer flex gap-2 px-3 py-1.5 rounded-xl border border-line font-mediumbg-card hover:bg-line/20 transition-all active:scale-95">
@@ -152,7 +158,7 @@ const handleBulkDelete = () => {
             <span class="self-center"> {{ t('common.edit') }}</span>
           </div>
 
-          <button type="button" @click="handleDelete(row.id)" :disabled="taskStore.isLoading"
+          <button  v-if="authStore.isAdmin" type="button" @click="handleDelete(row.id)" :disabled="taskStore.isLoading"
             class="flex gap-2 px-3 py-2 rounded-xl border border-danger/20 hover:bg-danger/10 font-medium transition-all active:scale-95 disabled:opacity-50 cursor-pointer">
             <Trash class="self-center text-danger" />
             <span class="self-center">{{ t('common.delete') }}</span>

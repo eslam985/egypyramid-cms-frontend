@@ -1,9 +1,10 @@
 <script setup>
+import { onMounted } from 'vue';
+import { useUserStore } from '@/stores/userStore';
+
 import HeaderProfile from '@/components/profile/HeaderProfile.vue';
 import EditProfileDetails from '@/components/profile/EditProfileDetails.vue';
 import ShowActiveSessions from '@/components/profile/ShowActiveSessions.vue';
-import { onMounted } from 'vue';
-import { useUserStore } from '@/stores/userStore';
 
 const userStore = useUserStore()
 const sessions = () => userStore.getSessionsByUserId()

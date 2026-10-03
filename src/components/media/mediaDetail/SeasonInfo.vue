@@ -10,7 +10,9 @@ import { useMediaStore } from '@/stores/mediaStore'
 import { useNotificationStore } from '@/stores/notificationStore'
 import { useMediaContentStore } from '@/stores/mediaContentStore'
 import { confirmAndDelete } from '@/utils/global'
+import { useAuthStore } from '@/stores/authStore'
 
+const authStore = useAuthStore()
 const router = useRouter()
 const route = useRoute()
 
@@ -102,7 +104,7 @@ const handleDeleteSeason = async (seasonId) => {
           </div>
         </div>
 
-        <button type="button" @click="handleAddSeason" class="btn-ghost">
+        <button v-if="authStore.isEditorAndAbove" type="button" @click="handleAddSeason" class="btn-ghost">
           <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path
               stroke-linecap="round"
@@ -175,7 +177,7 @@ const handleDeleteSeason = async (seasonId) => {
           </div>
 
           <!-- الإجراءات (تعديل / حذف) -->
-          <div class="pt-2 flex items-center justify-end gap-1 border-t border-line/40">
+          <div v-if="authStore.isEditorAndAbove" class="pt-2 flex items-center justify-end gap-1 border-t border-line/40">
             <button
               type="button"
               @click="handleEditSeason(season.id)"
@@ -192,7 +194,7 @@ const handleDeleteSeason = async (seasonId) => {
               </svg>
             </button>
 
-            <button
+            <button v-if="authStore.isAdmin"
               type="button"
               @click="handleDeleteSeason(season.id)"
               class="p-1.5 rounded-lg text-sub hover:text-danger hover:bg-danger/10 transition-colors active:scale-95 cursor-pointer"

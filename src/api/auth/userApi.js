@@ -63,5 +63,5 @@ export {
   handleUploadAvatar,
   handleFindUserById,
   handleDeleteAvatar,
-  handleSetAvatarFromHistory // 💡 تم التصدير بنجاح
+  handleSetAvatarFromHistory
 }

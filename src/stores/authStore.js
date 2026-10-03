@@ -1,8 +1,14 @@
+
 import { defineStore } from 'pinia'
-import { login, logout, refresh } from '@/api/auth/auth'
+import { login, logout, refresh, handleRegister } from '@/api/auth/auth'
+import { handleStoreAdd } from '@/utils/store'
+import { ROLES_LIST } from '@/utils/roles_list';
+import { decodeJwt } from '@/utils/decodeJwt';
 
 export const useAuthStore = defineStore('auth', {
   state: () => ({
+    user: null,
+    userRole: null,   // هنا هيتخزن الرقم مثلاً 2001 أو 1984
     accessToken: null,
     isLoading: false,
     isInitialized: false,
@@ -12,6 +18,24 @@ export const useAuthStore = defineStore('auth', {
   }),
   getters: {
     isAuthenticated: (state) => !!state.accessToken, // return True Or False
+    // دالة بترجع true لو اليوزر أدمن
+    isAdmin: (state) => state.userRole === ROLES_LIST.Admin,
+
+    // دالة بترجع true لو اليوزر على الأقل إيديتور (يعني إيديتور أو أدمن)
+    isEditorAndAbove: (state) => state.userRole === ROLES_LIST.Editor || state.userRole === ROLES_LIST.Admin,
+
+    // دالة مرنة تديها الحد الأدنى المطلوب وتشوف اليوزر ينفع ولا لأ
+    hasRole: (state) => (requiredRole) => {
+      if (!state.userRole) return false;
+      // لو المطلوب Editor، فالأدمن (5150) والإيديتور (1984) مسموح ليهم
+      if (requiredRole === ROLES_LIST.Editor) {
+        return state.userRole === ROLES_LIST.Editor || state.userRole === ROLES_LIST.Admin;
+      }
+      if (requiredRole === ROLES_LIST.Admin) {
+        return state.userRole === ROLES_LIST.Admin;
+      }
+      return true; // الـ User العادي يشوف كلو مالم يحدد دور أعلى
+    }
   },
   actions: {
     setAccessToken(token) {
@@ -32,6 +56,13 @@ export const useAuthStore = defineStore('auth', {
         const result = await refresh()
         if (result.success) {
           this.setAccessToken(result.data)
+
+          // فك التوكن هنا مباشرة لاستخراج الـ roles والـ userId
+          const decoded = decodeJwt(result.data);
+          if (decoded) {
+            this.userRole = parseInt(decoded.roles) || null; // تخزين الـ Role كرقم
+            this.user = { id: decoded.userId }; // تعيين الـ id لو محتاجه في الفرونت
+          }
           this.successMessage = result.message || 'Access token updated successfully'
           return true
         }
@@ -51,6 +82,16 @@ export const useAuthStore = defineStore('auth', {
         this.isInitialized = true // يتم تحديدها كـ true وتظل كذلك لتجنب إعادة توجيه الـ Router
       }
     },
+    async register( data = {}) {
+      console.log(data)
+      return handleStoreAdd({
+        store: this,
+        apiCall: handleRegister,
+        data,
+        listKey: 'user',
+        defaultError: 'حدثت مشكلة اثناء إضافة المستخدم!',
+      })
+    },
     async loginUser(credentials) {
       this.isLoading = true
       this.errorMessage = ''
@@ -58,9 +99,10 @@ export const useAuthStore = defineStore('auth', {
       try {
         const result = await login(credentials)
         if (result.success) {
-          this.setAccessToken(result.data.accessToken) // ← كان result.data
-          this.refreshToken = result.data.refreshToken
-          sessionStorage.setItem('refreshToken', result.data.refreshToken)
+          this.setAccessToken(result.data.accessToken)
+          this.userRole = result.roles
+          this.user = result
+          this.user.accessToken = null // مش محتاج الاكسيس توكن  هنا ف الامن تقريبا يتشال ع طول
           this.successMessage = result.message || 'Login successful'
           return true
         }

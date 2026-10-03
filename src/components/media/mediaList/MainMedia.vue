@@ -1,6 +1,7 @@
 <script setup>
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
+import { Info, Trash } from '@lucide/vue'
 
 const { t } = useI18n()
 
@@ -8,7 +9,9 @@ import { useMediaStore } from '@/stores/mediaStore'
 import { useNotificationStore } from '@/stores/notificationStore'
 import { formatDate, confirmAndDelete } from '@/utils/global'
 import BaseTable from '@/components/ui/BaseTable.vue'
-import { Info, Trash } from '@lucide/vue'
+import { useAuthStore } from '@/stores/authStore'
+
+const authStore = useAuthStore()
 
 const mediaStore = useMediaStore()
 const notiStore = useNotificationStore()
@@ -117,7 +120,7 @@ const columns = [
             <span class="self-center">{{ t('common.edit') }}</span>
           </router-link>
 
-          <button type="button" @click="handleDelete(row.id, row.title)" :disabled="mediaStore.isLoading"
+          <button v-if="authStore.isEditorAndAbove" type="button" @click="handleDelete(row.id, row.title)" :disabled="mediaStore.isLoading"
             class="flex gap-2 px-3 py-2 rounded-xl border border-danger/20 hover:bg-danger/10 font-medium transition-all active:scale-95 disabled:opacity-50 cursor-pointer">
             <Trash class="self-center text-danger" />
             <span class="self-center">{{ t('common.delete') }}</span>

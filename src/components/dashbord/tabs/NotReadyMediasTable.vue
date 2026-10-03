@@ -10,7 +10,9 @@ import { formatDate } from '@/utils/global'
 
 import AppPagination from '@/components/utils/AppPagination.vue'
 import BaseTable from '@/components/ui/BaseTable.vue'
+import { useAuthStore } from '@/stores/authStore'
 
+const authStore = useAuthStore()
 const { t } = useI18n()
 const router = useRouter()
 const route = useRoute()
@@ -25,9 +27,11 @@ const columns = [
   { key: 'type', label: t('notReady.table.typeGenre'), sortable: false },
   { key: 'tmdb', label: t('notReady.table.tmdb'), sortable: false },
   { key: 'created_at', label: t('notReady.table.addedAt'), sortable: true },
-  { key: 'status', label: t('notReady.table.status'), sortable: false },
 ]
-
+let action =  { key: 'status', label: t('notReady.table.status'), sortable: false }
+if(authStore.isEditorAndAbove) {
+  columns.push(action)
+}
 const handlePageChange = async (newPage) => {
   await analyticsStore.fetchNotReadyMedias(newPage)
 }
@@ -67,7 +71,7 @@ const handleRefresh = async () => {
 <template>
   <div class="space-y-4">
     <div v-if="mediasNotReadyList.length > 0"
-      class="flex justify-between gap-fluid-gap w-full bg-card border border-line rounded-2xl p-fluid shadow-soft mb-6">
+      class="flex justify-between gap-fluid-gap w-full">
       <!-- 1111 -->
       <!-- refreshData -->
       <button @click="handleRefresh" :disabled="isLoading" type="button"
@@ -78,7 +82,7 @@ const handleRefresh = async () => {
 
       <!-- 2222 -->
       <!-- Export -->
-      <div class="md:col-span-5 self-center flex md:justify-end">
+      <div v-if="authStore.isEditorAndAbove" class="md:col-span-5 self-center flex md:justify-end">
         <button type="button"
           class="btn-outline shadow-glow/10 text-fluid-xs lg:text-fluid-p text-accent-dark hover:text-slate-900 hover:bg-accent/70"
           @click="handleExport">

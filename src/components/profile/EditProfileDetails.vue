@@ -5,6 +5,9 @@ import { useUserStore } from '@/stores/userStore';
 import { useFormValidation } from '@/composables/useFormValidation'
 import { updateUserByIdSchema, changePasswordSchema } from '@/schemas/authSchema'
 import { useNotificationStore } from '@/stores/notificationStore'
+import AddNewUser from '@/components/profile/AddNewUser.vue';
+import { useAuthStore } from '@/stores/authStore';
+const authStore = useAuthStore()
 
 const userStore = useUserStore()
 const { validate: validateProfile, errors: profileErrors } = useFormValidation(updateUserByIdSchema)
@@ -12,12 +15,14 @@ const { validate: validatePassword, errors: passwordErrors } = useFormValidation
 
 const notiStore = useNotificationStore()
 
-const userInfo = () => userStore.getUserById()
+const userInfo = async () => await userStore.getUserById()
+
 
 let formData = ref({
   username: '',
   email: '',
   avatar_url: '',
+  roles: '',
 })
 
 let formPasswordData = ref({
@@ -30,6 +35,8 @@ const data = () => {
   formData.value.username = userStore.userInfo?.username ?? ''
   formData.value.email = userStore.userInfo?.email ?? ''
   formData.value.avatar_url = userStore.userInfo?.avatar_url ?? ''
+  formData.value.roles = userStore.userInfo?.roles ?? ''
+
 }
 
 const utilsSubmit = async (formData, validateSchema, apiCall) => {
@@ -81,8 +88,8 @@ onMounted(async () => {
 </script>
 <template>
   <!-- container -->
-  <section
-    class="grid grid-cols-1 gap-fluid-gap md:grid-cols-2 space-y-6 max-w-6xl mx-auto mb-8 w-full min-w-0 overflow-x-hidden">
+  <section :class="authStore.isEditorAndAbove ? 'md:grid-cols-3' : 'md:grid-cols-2'"
+    class="grid grid-cols-1 gap-3 space-y-6 max-w-6xl mx-auto mb-8 w-full min-w-0 overflow-x-hidden">
     <!-- left -->
     <div>
       <!-- form edit  -->
@@ -91,7 +98,7 @@ onMounted(async () => {
         <div>
           <div class="flex gap-2">
             <SquarePen :stroke-width="1" class="text-accent" />
-            <span class="text-fluid-h2">Edit Profile</span>
+            <span class="text-fluid-h3">Edit Profile</span>
           </div>
           <p class="text-fluid-xs text-sub">Update your personal information</p>
         </div>
@@ -113,7 +120,14 @@ onMounted(async () => {
             {{ profileErrors.email }}
           </p>
         </div>
-
+        <div>
+          <label for="roles" class="roles">Roles</label>
+          <input id="roles" type="text" class="form-input text-link"
+            placeholder="2001" v-model="formData.roles" />
+          <p v-if="profileErrors?.roles" class="form-error">
+            {{ profileErrors.roles }}
+          </p>
+        </div>
         <div>
           <label for="avatarUrl" class="form-label">Avatar Url</label>
           <input id="avatarUrl" type="text" class="form-input text-link"
@@ -140,12 +154,12 @@ onMounted(async () => {
     <!-- right -->
     <div>
       <!-- form edit  -->
-      <form @submit.prevent="handleSubmitFormPasswordData" class="max-w-xl card space-y-5">
+      <form @submit.prevent="handleSubmitFormPasswordData" class="max-w-xl card space-y-5 px-2 lg:px-4">
         <!-- header h2 & P -->
         <div>
-          <div class="flex gap-2">
+          <div class="flex gap-0.5 lg:gap-2 ">
             <ShieldLock :stroke-width="1" class="text-accent" />
-            <span class="text-fluid-h2">Change Password</span>
+            <span class="text-fluid-h3  text-nowrap">Change Password</span>
           </div>
           <p class="text-fluid-xs text-sub">Update your personal password</p>
         </div>
@@ -189,5 +203,7 @@ onMounted(async () => {
         </div>
       </form>
     </div>
+    <AddNewUser />
+
   </section>
 </template>

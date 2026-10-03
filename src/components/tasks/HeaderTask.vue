@@ -7,7 +7,9 @@ import { useI18n } from 'vue-i18n'
 import { useNotificationStore } from '@/stores/notificationStore'
 import { useTaskStore } from '@/stores/taskStore'
 import { confirmAndDelete } from '@/utils/global'
+import { useAuthStore } from '@/stores/authStore'
 
+const authStore = useAuthStore()
 
 const { t } = useI18n()
 
@@ -27,6 +29,8 @@ const handleChooseState = async () => {
       page: 1 // دائماً عند تغيير الفلتر نعود للصفحة الأولى
     }
   })
+  await taskStore.fetchAllTasks(route.query, true)
+
   // 2. معالجة الإشعارات
   if (!selectState.value) {
     notiStore.triggerNotification(t('tasks.toolbar.allStatusesShown'))
@@ -120,8 +124,8 @@ const handleExport = async () => {
 </script>
 <template>
   <!-- أدوات الفلترة والبحث والتحديث -->
-  <div
-    class="grid grid-cols-2 xs:grid-cols-3 md:grid-cols-24 gap-fluid-gap w-full bg-card border border-line rounded-2xl p-fluid shadow-soft mb-6">
+  <div :class="authStore.isEditorAndAbove ? 'grid grid-cols-2 xs:grid-cols-3 md:grid-cols-25' : 'flex '"
+    class="gap-fluid-gap p-fluid">
 
     <!-- 1111 -->
     <!-- حقل البحث -->
@@ -147,7 +151,7 @@ const handleExport = async () => {
 
     <!-- 3333 -->
     <!-- Export -->
-    <div class="md:col-span-5 self-center">
+    <div  v-if="authStore.isEditorAndAbove" class="md:col-span-5 self-center">
       <button type="button"
         class="btn-outline shadow-glow/10 text-fluid-xs lg:text-fluid-p text-accent-dark hover:text-slate-900 hover:bg-accent/70"
         @click="handleExport">
@@ -167,14 +171,14 @@ const handleExport = async () => {
 
     <!-- 5555 -->
     <!-- addNew -->
-    <router-link to="/new-task"
+    <router-link  v-if="authStore.isEditorAndAbove" to="/new-task"
       class="md:col-span-4 btn-outline shadow-glow/10 text-fluid-xs lg:text-fluid-p text-accent-dark hover:text-slate-900 hover:bg-accent/70">
       {{ t('tasks.toolbar.addNew') }}
     </router-link>
 
     <!-- 6666 -->
     <!-- deleteFailed -->
-    <button v-if="failedCount > 0" @click="handleDeleteFailed" :disabled="taskStore.isLoading"
+    <button v-if="failedCount > 0 && authStore.isAdmin" @click="handleDeleteFailed" :disabled="taskStore.isLoading"
       class="md:col-span-4 btn-danger text-fluid-xs max-w-[150px] ">
       {{ taskStore.isLoading ? t('tasks.toolbar.deleting') : t('tasks.toolbar.deleteFailed', {
         count: failedCount

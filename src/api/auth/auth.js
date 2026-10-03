@@ -1,7 +1,7 @@
 // 3-  create (login, refresh, logout): "/auth.js"
 import api from './interceptors'
 
-export const login = async (userData) => {
+export const login = async (userData = {}) => {
   const result = await api.post('/auth/login', userData)
 
   return result.data
@@ -14,5 +14,11 @@ export const refresh = async () => {
 
 export const logout = async () => {
   const result = await api.post('/auth/logout')
+  return result.data
+}
+
+export const handleRegister = async (userData = {}) => {
+  const result = await api.post('/auth/register', userData)
+
   return result.data
 }

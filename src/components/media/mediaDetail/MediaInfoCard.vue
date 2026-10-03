@@ -8,6 +8,9 @@ const { t } = useI18n()
 import { useMediaStore } from '@/stores/mediaStore'
 import { useNotificationStore } from '@/stores/notificationStore'
 import { confirmAndDelete } from '@/utils/global'
+import { useAuthStore } from '@/stores/authStore'
+
+const authStore = useAuthStore()
 const router = useRouter()
 
 const mediaStore = useMediaStore()
@@ -180,7 +183,7 @@ const handleDeleteMedia = () => {
 
       <!-- action / footer -->
       <!-- أزرار الإجراءات -->
-      <div class="flex items-center gap-fluid-gap self-end md:self-auto shrink-0">
+      <div v-if="authStore.isEditorAndAbove" class="flex items-center gap-fluid-gap self-end md:self-auto shrink-0">
         <button type="button" @click="handleEditMedia" class="btn-secondary">
           <svg class="w-4 h-4 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -189,7 +192,7 @@ const handleDeleteMedia = () => {
           <span>{{ t('common.edit') }}</span>
         </button>
 
-        <button type="button" @click="handleDeleteMedia"
+        <button v-if="authStore.isAdmin" type="button" @click="handleDeleteMedia"
           class="flex gap-2 px-3 py-2 rounded-xl border border-danger/20 hover:bg-danger/10 font-medium transition-all active:scale-95 disabled:opacity-50 cursor-pointer">
           <svg class="w-4 h-4 text-danger" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"

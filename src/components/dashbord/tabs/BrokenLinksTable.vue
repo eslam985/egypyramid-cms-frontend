@@ -10,7 +10,9 @@ import { formatDate } from '@/utils/global'
 
 import AppPagination from '@/components/utils/AppPagination.vue'
 import BaseTable from '@/components/ui/BaseTable.vue'
+import { useAuthStore } from '@/stores/authStore'
 
+const authStore = useAuthStore()
 const { t } = useI18n()
 const route = useRoute()
 const router = useRouter()
@@ -59,7 +61,6 @@ const loadBrokenLinks = (page = 1) => {
       serverName: selectedServer.value,
       page: page,
     },
-    true,
   )
   query({ serverName: selectedServer.value, })
 
@@ -68,10 +69,7 @@ const loadBrokenLinks = (page = 1) => {
 const handleRowClick = (row) => {
   router.push(`/media/${row.media_id}/details`)
 }
-onMounted(() => {
-  query({ serverName: 'mixdrop', })
-  loadBrokenLinks()
-})
+
 
 const handleServerChange = () => {
 
@@ -91,13 +89,19 @@ const handleExport = async () => {
 const handleRefresh = async () => {
   loadBrokenLinks()
 }
+
+onMounted(() => {
+    query({ serverName: 'mixdrop', })
+    loadBrokenLinks()
+
+})
 </script>
 
 <template>
   <div class="space-y-4">
     <!-- قائمة اختيار السيرفر -->
-    <div
-      class="grid grid-cols-2 xs:grid-cols-3 md:grid-cols-15 gap-fluid-gap w-full bg-card border border-line rounded-2xl p-fluid shadow-soft">
+    <div :class="useAuthStore.isEditorAndAbove ? 'xs:grid-cols-3 md:grid-cols-15' : 'xs:grid-cols-2 md:grid-cols-30'"
+      class="grid grid-cols-2 gap-fluid-gap w-full ">
       <!-- 1111 -->
       <!-- refreshData -->
       <button @click="handleRefresh" :disabled="isLoading" type="button"
@@ -117,7 +121,7 @@ const handleRefresh = async () => {
 
       <!-- 3333 -->
       <!-- Export -->
-      <div class="md:col-span-5 self-center flex md:justify-end">
+      <div v-if="authStore.isAdmin" class="md:col-span-5 self-center flex md:justify-end">
         <button type="button"
           class="btn-outline shadow-glow/10 text-fluid-xs lg:text-fluid-p text-accent-dark hover:text-slate-900 hover:bg-accent/70"
           @click="handleExport">
@@ -130,13 +134,8 @@ const handleRefresh = async () => {
 
     </div>
     <!-- الجدول -->
-    <BaseTable
-      :columns="columns"
-      :rows="brokenLinksList"
-      :isLoading="isLoading"
-      storeKey="brokenLinks"
-      @row-click="handleRowClick"
-      >
+    <BaseTable :columns="columns" :rows="brokenLinksList" :isLoading="isLoading" storeKey="brokenLinks"
+      @row-click="handleRowClick">
 
       <!-- title, season_number, episode_number -->
       <template #cell-title="{ value, row }">
@@ -159,7 +158,8 @@ const handleRefresh = async () => {
         <span :class="row.media_type === 'series'
           ? 'bg-accent/10 text-accent border-accent/20'
           : 'bg-warning/10 text-warning border-warning/20'
-          " class="px-2.5 py-0.5 rounded-lg text-fluid-xs font-semibold border inline-block whitespace-nowrap cursor-pointer">
+          "
+          class="px-2.5 py-0.5 rounded-lg text-fluid-xs font-semibold border inline-block whitespace-nowrap cursor-pointer">
           {{
             row.media_type === 'series' ? t('brokenLinks.series') : t('brokenLinks.movie')
           }}
@@ -195,7 +195,7 @@ const handleRefresh = async () => {
           </span>
           <span class="text-[10px] text-sub mt-1 block ">{{
             t('brokenLinks.checkedCount', { count: row.check_count })
-            }}</span>
+          }}</span>
         </div>
       </template>
 

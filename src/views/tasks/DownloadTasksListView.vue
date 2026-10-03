@@ -14,7 +14,7 @@ const taskStore = useTaskStore()
 // دالة موحدة تقرأ الرابط الحالي (مهما كان فيه) وتجلب البيانات على أساسه
 const loadData = async () => {
   // تمرير route.query مباشرة للـ Store، و true لجلب الداتا من السيرفر فوراً
-  await taskStore.fetchAllTasks(route.query, true)
+  await taskStore.fetchAllTasks(route.query)
 }
 
 // 1. جلب البيانات عند فتح الصفحة بناءً على الموجود في الرابط

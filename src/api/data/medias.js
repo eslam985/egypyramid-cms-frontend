@@ -44,7 +44,7 @@ const findAllMedia = async ({ category, page = 1, limit = 20, search, sortBy, so
 }
 
 const handleExportMedia = async (params = {}) => {
-  const result = await api.get('medias', {
+  const result = await api.get('/medias/export', {
     params: {
       ...params,
       export: true,

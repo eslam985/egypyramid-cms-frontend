@@ -5,11 +5,14 @@ import { nameRe } from '@/utils/regex'
 const baseUserSchema = z.object({
   username: z.string().trim().min(3).max(30).regex(nameRe),
   email: z.string().trim().lowercase().email(),
-  avatar_url: z.string().url("يجب أن يكون رابط صورة صالح").nullish().or(z.literal(''))
+  avatar_url: z.string().url("يجب أن يكون رابط صورة صالح").nullish().or(z.literal('')),
+  roles: z.enum(["5150", "1984", "2001"], {
+    errorMap: () => ({ message: "roles must be only [ 5150, 1984, 2001 ]" })
+  }).default("2001").optional()
 });
 
 const createUserSchema =  baseUserSchema.extend({
-        password: z.string().trim().min(6).max(100),
+    password: z.string().trim().min(6).max(100),
   })
 
 

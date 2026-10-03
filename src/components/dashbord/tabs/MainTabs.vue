@@ -52,7 +52,7 @@ const switchTab = async (tab) => {
 
   } else if (tab === 'telegram' && !telegramLocked.value.length) {
     query()
-    await analyticsStore.fetchLockedTelegramLinks(true)
+    await analyticsStore.fetchLockedTelegramLinks()
   } else if (tab === 'missing') {
     // الكومبوننت سيقوم بالجلب بنفسه مع تحديد السيرفر
   }
@@ -62,7 +62,7 @@ const switchTab = async (tab) => {
 <template>
   <div class="rounded-2xl mb-6 md:p-fluid space-y-4 shadow-soft">
     <!-- أزرار التبويبات -->
-    <div class="grid grid-cols-2 md:flex items-center gap-fluid-gap py-fluid">
+    <div class="grid grid-cols-2 md:flex items-center gap-fluid-gap py-fluid card">
       <!-- الأعمال غير الجاهزة -->
       <button @click="switchTab('notReady')"
         class="flex items-center justify-center gap-2 py-fluid md:px-4 rounded-xl text-fluid-xs font-semibold transition-all duration-200 cursor-pointer active:scale-95 select-none"

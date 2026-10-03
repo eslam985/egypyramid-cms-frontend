@@ -7,7 +7,9 @@ import { Download, Loader } from '@lucide/vue'
 import { useAnalyticsStore } from '@/stores/analyticsStore'
 import { useNotificationStore } from '@/stores/notificationStore'
 import { formatDate } from '@/utils/global'
+import { useAuthStore } from '@/stores/authStore'
 
+const authStore = useAuthStore()
 const { t } = useI18n()
 const router = useRouter()
 const route = useRoute()
@@ -45,9 +47,9 @@ const handleRefresh = async () => {
 
 </script>
 <template>
-  <div class="overflow-x-auto p-fluid">
+  <div class="overflow-x-auto">
     <div
-      class="flex justify-between gap-fluid-gap w-full bg-card border border-line rounded-2xl p-fluid shadow-soft mb-6">
+      class="flex justify-between gap-fluid-gap w-full mb-4">
       <!-- 1111 -->
       <!-- refreshData -->
       <button @click="handleRefresh" :disabled="isLoading" type="button"
@@ -58,7 +60,7 @@ const handleRefresh = async () => {
 
       <!-- 2222 -->
       <!-- Export -->
-      <div class="md:col-span-5 self-center flex md:justify-end">
+      <div v-if="authStore.isEditorAndAbove"  class="md:col-span-5 self-center flex md:justify-end">
         <button type="button"
           class="btn-outline shadow-glow/10 text-fluid-xs lg:text-fluid-p text-accent-dark hover:text-slate-900 hover:bg-accent/70"
           @click="handleExport">

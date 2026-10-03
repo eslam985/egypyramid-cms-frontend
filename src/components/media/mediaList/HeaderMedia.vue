@@ -10,7 +10,10 @@ import { useNotificationStore } from '@/stores/notificationStore'
 import SearchMedia from '@/components/media/mediaList/searchMedia.vue'
 import { Loader, Plus, Download } from '@lucide/vue'
 import { useRoute, useRouter } from 'vue-router'
+import { useAuthStore } from '@/stores/authStore'
 
+// authStore
+const authStore = useAuthStore()
 const mediaStore = useMediaStore()
 const notiStore = useNotificationStore()
 const route = useRoute()
@@ -69,10 +72,11 @@ const handleExport = async () => {
   console.log(query)
   await mediaStore.exportMedia(query)
 }
+
 </script>
 <template>
-  <div
-    class="grid grid-cols-2 xs:grid-cols-3 md:grid-cols-25 gap-fluid-gap w-full bg-card border border-line rounded-2xl p-fluid shadow-soft mb-6">
+  <div :class="authStore.isEditorAndAbove ? 'grid grid-cols-2 xs:grid-cols-3 md:grid-cols-25' : 'flex '"
+    class="gap-fluid-gap p-fluid">
 
     <!-- 1111 -->
     <!-- حقل البحث -->
@@ -84,7 +88,7 @@ const handleExport = async () => {
     <!-- تصفية حسب التصنيف -->
     <div class="md:col-span-4 self-center">
       <select id="media-category" v-model="selectedCategory"
-        class="form-input w-full bg-line/10 border border-accent/20 border-linerounded-xl p-2.5 text-fluid-xs focus:ring-2 focus:ring-accent/20 cursor-pointer"
+        class="form-input w-full bg-line/10 border border-accent/20 border-linerounded-xl py-4 text-fluid-xs focus:ring-2 focus:ring-accent/20 cursor-pointer"
         @change="handleCategoryChange">
         <option class="text-fluid-xs" value="">{{ t('media.filter.allCategories') }}</option>
         <option class="text-fluid-xs" value="movie">{{ t('media.filter.movies') }}</option>
@@ -94,7 +98,7 @@ const handleExport = async () => {
 
     <!-- 3333 -->
     <!-- Export -->
-    <div class="md:col-span-5 self-center">
+    <div v-if="authStore.isEditorAndAbove" class="md:col-span-5 self-center">
       <button type="button"
         class="btn-outline shadow-glow/10 text-fluid-xs lg:text-fluid-p text-accent-dark hover:text-slate-900 hover:bg-accent/70"
         @click="handleExport">
@@ -106,7 +110,7 @@ const handleExport = async () => {
     <!-- 4444 -->
     <!-- refreshData -->
     <button type="button"
-      class="md:col-span-5 btn-outline gap-1 px-0 shadow-glow/10 text-fluid-xs lg:text-fluid-p text-accent-dark hover:text-slate-900 hover:bg-accent/70"
+      class="md:col-span-5 btn-outline gap-1 shadow-glow/10 text-fluid-xs lg:text-fluid-p text-accent-dark hover:text-slate-900 hover:bg-accent/70"
       @click="handleRefresh" :disabled="mediaStore.isLoading">
       <Loader class="size-4 text-accent" :class="{ 'animate-spin': mediaStore.isLoading }" :stroke-width="2" />
       <span class="text-fluid-xs">{{ t('media.toolbar.refreshData') }}</span>
@@ -114,7 +118,7 @@ const handleExport = async () => {
 
     <!-- 5555 -->
     <!-- addNewMedia -->
-    <router-link to="/new-media"
+    <router-link v-if="authStore.isEditorAndAbove" to="/new-media"
       class="md:col-span-5 btn-outline gap-1 px-0 shadow-glow/10 text-fluid-xs lg:text-fluid-p text-accent-dark hover:text-slate-900 hover:bg-accent/70">
       <Plus class="max-w-4" />
       <span class="text-fluid-xs">{{ t('media.toolbar.addNewMedia') }}</span>

@@ -7,7 +7,9 @@ import { useMediaContentStore } from '@/stores/mediaContentStore'
 import { confirmAndDelete, formatDate } from '@/utils/global'
 import BaseTable from '@/components/ui/BaseTable.vue'
 import { Link2, Plus, Pencil, Trash2 } from '@lucide/vue'
+import { useAuthStore } from '@/stores/authStore'
 
+const authStore = useAuthStore()
 const router = useRouter()
 const { t } = useI18n()
 const mediaContentStore = useMediaContentStore()
@@ -21,9 +23,11 @@ const columns = [
   { key: 'url', label: t('media.linksInfo.table.directUrl') },
   { key: 'check_count', label: t('media.linksInfo.table.checks') },
   { key: 'error_message', label: t('media.linksInfo.table.errorMessage') },
-  { key: 'actions', label: t('media.linksInfo.table.actions') },
 ]
-
+let action = { key: 'actions', label: t('media.linksInfo.table.actions') }
+if (authStore.isEditorAndAbove) {
+  columns.push(action)
+}
 const handleAddLink = (episodeId) => router.push({ name: 'addLink', params: { episode_id: episodeId } })
 const handleEditLink = (linkId) => router.push({ name: 'editLink', params: { id: linkId } })
 const handleDeleteLink = async (linkId) => {
@@ -37,7 +41,7 @@ const handleDeleteLink = async (linkId) => {
 </script>
 
 <template>
-  <div class=" bg-card rounded-2xl border border-line p-fluid shadow-soft space-y-4 my-6 overflow-hidden">
+  <div v-if=" mediaContentStore.currentEpisode"  class=" bg-card rounded-2xl border border-line p-fluid shadow-soft space-y-4 overflow-hidden">
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-fluid pb-4 border-b border-line">
       <div class="flex items-center gap-3">
         <div class="p-2.5 rounded-xl bg-accent/10 text-accent border border-accent/20">
@@ -52,7 +56,9 @@ const handleDeleteLink = async (linkId) => {
           <p class="text-fluid-xs text-sub">{{ t('media.linksInfo.manageDesc') }}</p>
         </div>
       </div>
-      <button v-if="mediaContentStore.currentEpisode?.id || mediaContentStore.links?.[0]?.episode_id" type="button"
+      <button
+        v-if="(mediaContentStore.currentEpisode?.id || mediaContentStore.links?.[0]?.episode_id) && authStore.isAdmin"
+        type="button"
         @click="handleAddLink(mediaContentStore.currentEpisode?.id || mediaContentStore.links[0].episode_id)"
         class="btn-primary w-full sm:w-auto px-4 py-2 text-fluid-xs font-bold rounded-xl flex items-center justify-center gap-2 active:scale-95 cursor-pointer">
         <Plus class="w-4 h-4" />
@@ -95,13 +101,13 @@ const handleDeleteLink = async (linkId) => {
       <template #cell-error_message="{ value }"><span :class="value ? 'text-danger' : 'text-sub'"
           class="truncate max-w- block">{{ value || '-' }}</span></template>
 
-      <template #cell-actions="{ row }">
+      <template #cell-actions="{ row }" v-if="authStore.isEditorAndAbove">
         <div class="flex items-center justify-center gap-1" @click.stop>
           <button @click="handleEditLink(row.id)"
             class="p-1.5 rounded-lg hover:bg-accent/10 text-sub hover:text-accent cursor-pointer">
             <Pencil class="w-4 h-4" />
           </button>
-          <button @click="handleDeleteLink(row.id)"
+          <button v-if="authStore.isAdmin" @click="handleDeleteLink(row.id)"
             class="p-1.5 rounded-lg hover:bg-danger/10 text-sub hover:text-danger cursor-pointer">
             <Trash2 class="w-4 h-4" />
           </button>

@@ -3,13 +3,15 @@ import { useRouter, useRoute } from 'vue-router'
 import { ref, onMounted } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useI18n } from 'vue-i18n'
-import { useAnalyticsStore } from '@/stores/analyticsStore'
-import { useNotificationStore } from '@/stores/notificationStore'
 import { Download, Loader } from '@lucide/vue'
 
+import { useAnalyticsStore } from '@/stores/analyticsStore'
+import { useNotificationStore } from '@/stores/notificationStore'
 import BaseTable from '@/components/ui/BaseTable.vue'
 import AppPagination from '@/components/utils/AppPagination.vue'
+import { useAuthStore } from '@/stores/authStore'
 
+const authStore = useAuthStore()
 const { t } = useI18n()
 const route = useRoute()
 const router = useRouter()
@@ -51,7 +53,7 @@ const query = ({ page = 1, limit = 20, serverName }) => {
 const loadMissingEpisodes = async () => {
   if (selectedServer.value) {
     query({ serverName: selectedServer.value })
-    await analyticsStore.fetchMissingEpisodesByServer({ serverName: selectedServer.value }, true)
+    await analyticsStore.fetchMissingEpisodesByServer({ serverName: selectedServer.value })
   }
 }
 
@@ -68,10 +70,6 @@ const handleRowClick = (row) => {
   router.push(`/media/${row.media_id}/details`)
 }
 
-onMounted(() => {
-  query({ serverName: "telegram_direct" })
-  loadMissingEpisodes()
-})
 
 
 const handleExport = async () => {
@@ -94,14 +92,20 @@ const handleRefresh = async () => {
   }
 
 }
+
+onMounted(() => {
+  query({ serverName: "telegram_direct" })
+  loadMissingEpisodes()
+})
+
 </script>
 
 <template>
   <div class="space-y-4">
     <!-- فلتر اختيار السيرفر -->
     <!-- قائمة اختيار السيرفر -->
-    <div
-      class="grid grid-cols-2 xs:grid-cols-3 md:grid-cols-15 gap-fluid-gap w-full bg-card border border-line rounded-2xl p-fluid shadow-soft">
+    <div :class="useAuthStore.isEditorAndAbove ? 'xs:grid-cols-3 md:grid-cols-15' : 'xs:grid-cols-2 md:grid-cols-30'"
+      class="grid grid-cols-2 gap-fluid-gap w-full ">
       <!-- 1111 -->
       <!-- refreshData -->
       <button @click="handleRefresh" :disabled="isLoading" type="button"
@@ -121,7 +125,7 @@ const handleRefresh = async () => {
 
       <!-- 3333 -->
       <!-- Export -->
-      <div class="md:col-span-5 self-center flex md:justify-end">
+      <div v-if="authStore.isEditorAndAbove"  class="md:col-span-5 self-center flex md:justify-end">
         <button type="button"
           class="btn-outline shadow-glow/10 text-fluid-xs lg:text-fluid-p text-accent-dark hover:text-slate-900 hover:bg-accent/70"
           @click="handleExport">

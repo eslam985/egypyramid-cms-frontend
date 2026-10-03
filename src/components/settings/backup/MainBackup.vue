@@ -4,7 +4,9 @@ import { useBackupStore } from '@/stores/backupStore'
 import { useNotificationStore } from '@/stores/notificationStore'
 // 💡 أضفنا Loader2 و Download للتحسين البصري
 import { ShieldLock, SaveCheck, KeyRound, Loader2, Download } from '@lucide/vue'
+import { useAuthStore } from '@/stores/authStore'
 
+const authStore = useAuthStore()
 const backupStore = useBackupStore()
 const notiStore = useNotificationStore()
 
@@ -49,7 +51,7 @@ const triggerBackupDownload = async () => {
 </script>
 
 <template>
-  <div class="bg-card border border-line rounded-card p-fluid-p shadow-soft max-w-2xl transition-all duration-300">
+  <div v-if="authStore.isAdmin" class="bg-card border border-line rounded-card p-fluid-p shadow-soft max-w-2xl transition-all duration-300">
     <!-- العنوان والوصف مع أيقونة الـ ShieldLock -->
     <div class="mb-5">
       <h3 class="text-fluid-h3 text-title font-bold mb-2 flex items-center gap-2">
