@@ -120,7 +120,7 @@ onMounted(async () => {
             {{ profileErrors.email }}
           </p>
         </div>
-        <div>
+        <div v-if="authStore.isAdmin">
           <label for="roles" class="roles">Roles</label>
           <input id="roles" type="text" class="form-input text-link"
             placeholder="2001" v-model="formData.roles" />

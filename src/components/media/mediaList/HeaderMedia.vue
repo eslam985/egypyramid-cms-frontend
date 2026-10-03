@@ -75,20 +75,20 @@ const handleExport = async () => {
 
 </script>
 <template>
-  <div :class="authStore.isEditorAndAbove ? 'grid grid-cols-2 xs:grid-cols-3 md:grid-cols-25' : 'flex '"
-    class="gap-fluid-gap p-fluid">
+  <div :class="authStore.isEditorAndAbove ? 'grid grid-cols-2 xs:grid-cols-3 md:grid-cols-25' : 'flex flex-wrap md:gap-fluid-gap'"
+    class="gap-2 my-3">
 
     <!-- 1111 -->
     <!-- حقل البحث -->
-    <div class="md:col-span-6 flex self-center relative text-fluid-xs">
-      <SearchMedia />
+    <div class="md:col-span-6 flex self-center relative text-fluid-xs ">
+      <SearchMedia class="w-[150px] md:w-[400px]"/>
     </div>
 
     <!-- 2222 -->
     <!-- تصفية حسب التصنيف -->
     <div class="md:col-span-4 self-center">
       <select id="media-category" v-model="selectedCategory"
-        class="form-input w-full bg-line/10 border border-accent/20 border-linerounded-xl py-4 text-fluid-xs focus:ring-2 focus:ring-accent/20 cursor-pointer"
+        class="w-full p-fluid self-center text-center rounded-xl bg-line/10 border border-accent/20 border-linerounded-xl text-fluid-xs text-nowrap"
         @change="handleCategoryChange">
         <option class="text-fluid-xs" value="">{{ t('media.filter.allCategories') }}</option>
         <option class="text-fluid-xs" value="movie">{{ t('media.filter.movies') }}</option>
@@ -98,9 +98,9 @@ const handleExport = async () => {
 
     <!-- 3333 -->
     <!-- Export -->
-    <div v-if="authStore.isEditorAndAbove" class="md:col-span-5 self-center">
+    <div v-if="authStore.isEditorAndAbove" class="md:col-span-5 self-center flex justify-end">
       <button type="button"
-        class="btn-outline shadow-glow/10 text-fluid-xs lg:text-fluid-p text-accent-dark hover:text-slate-900 hover:bg-accent/70"
+        class="px-fluid btn-outline shadow-glow/10 text-fluid-xs lg:text-fluid-p text-accent-dark hover:text-slate-900 hover:bg-accent/70"
         @click="handleExport">
         <Download class="size-5 text-accent" :stroke-width="2" />
         Export

@@ -2,9 +2,9 @@
 import { Mail, CalendarDays, Link, Camera, Trash2, History, ImagePlus } from '@lucide/vue'
 
 import { ref } from 'vue'
-import { useUserStore } from '@/stores/userStore';
 import { formatDate, confirmAndDelete } from '@/utils/global'
 import { useNotificationStore } from '@/stores/notificationStore'
+import { useUserStore } from '@/stores/userStore';
 
 
 const userStore = useUserStore()
@@ -16,6 +16,7 @@ const avatarPreview = ref(null)      // لتخزين رابط المعاينة �
 // متغيرات التحكم في فتح وإغلاق الواجهات
 const isDropdownOpen = ref(false)  // التحكم في قائمة الخيارات
 const isModalOpen = ref(false)     // التحكم في نافذة السجل القديم
+const DEFAULT_AVATAR = 'https://res.cloudinary.com/dbahqgo8j/image/upload/blogger/iaeclevshfanh5j6x9ew.webp';
 
 // دالة التقاط الملف وتوليد المعاينة
 const handleFileChange = (event) => {
@@ -92,7 +93,7 @@ const role = () => userStore.userInfo?.roles === "5150" ? "Admin" : userStore.us
               <label class="block w-full h-full rounded-full overflow-hidden cursor-pointer">
                 <!-- الـ src هنا ذكي: يعرض المعاينة المؤقتة أولاً، وإذا لم توجد يعرض صورة المستخدم الفعلية أو صورة افتراضية -->
                 <img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                  :src="avatarPreview || userStore.userInfo?.avatar_url" alt="profile" fetchpriority="high"
+                  :src="avatarPreview || userStore.userInfo?.avatar_url || DEFAULT_AVATAR" alt="profile" fetchpriority="high"
                   loading="eager" decoding="async">
 
                 <!-- ربط حدث التغيير بالـ input -->

@@ -1,12 +1,13 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { useAuthStore } from '@/stores/authStore'
 import MainLayout from '@/layouts/MainLayout.vue'
+
 const routes = [
   {
     path: '/login',
     name: 'login',
     component: () => import('@/views/auth/LoginView.vue'),
-    meta: { guestOnly: true }, // للزوار فقط (لو مسجل دخول يتم توجيهه للداشبورد)
+    meta: { guestOnly: true },
   },
   {
     path: '/',
@@ -17,117 +18,110 @@ const routes = [
         path: '/profile',
         name: 'profile',
         component: () => import('@/views/profile/ProfileView.vue'),
-        meta: { requiresAuth: true },
       },
       {
         path: '/settings',
         name: 'settings',
         component: () => import('@/views/settings/SettingsView.vue'),
-        meta: { requiresAuth: true },
       },
       {
         path: '/',
         name: 'dashboard',
         component: () => import('@/views/dashboard/DashboardOverviewView.vue'),
-        meta: { requiresAuth: true }, // صفحة محمية تتطلب تسجيل دخول
       },
       {
         path: '/media',
         name: 'mediaList',
         component: () => import('@/views/media/MediaListView.vue'),
-        meta: { requiresAuth: true },
       },
       {
         path: '/media/:id/details',
         name: 'mediaDetails',
-        component: () => import('@/views/media/MediaDetailView.vue'), // لعرض مواسم وحلقات وروابط عمل محدد
-        meta: { requiresAuth: true },
+        component: () => import('@/views/media/MediaDetailView.vue'),
       },
       {
         path: '/new-media',
         name: 'addMedia',
         component: () => import('@/views/media/MediaFormView.vue'),
-        meta: { requiresAuth: true }, // صفحة محمية تتطلب تسجيل دخول
+        meta: { requiresAdmin: true }, // البارنت أصلاً عليه requiresAuth فمش لازم تكررها هنا
       },
       {
         path: '/edit-media/:id',
         name: 'editMedia',
         component: () => import('@/views/media/MediaFormView.vue'),
-        meta: { requiresAuth: true }, // صفحة محمية تتطلب تسجيل دخول
+        meta: { requiresAdmin: true },
       },
       // genres
       {
         path: '/genres',
         name: 'genresList',
         component: () => import('@/views/genres/GenresListView.vue'),
-        meta: { requiresAuth: true },
       },
       {
         path: '/new-genre',
         name: 'addGenre',
         component: () => import('@/views/media/MediaFormView.vue'),
-        meta: { requiresAuth: true }, // صفحة محمية تتطلب تسجيل دخول
+        meta: { requiresAdmin: true },
       },
       {
         path: '/edit-genre/:id',
         name: 'editGenre',
         component: () => import('@/views/media/MediaFormView.vue'),
-        meta: { requiresAuth: true }, // صفحة محمية تتطلب تسجيل دخول
+        meta: { requiresAdmin: true },
       },
       {
         path: '/media/:media_id/new-season',
         name: 'addSeason',
         component: () => import('@/views/media/MediaFormView.vue'),
-        meta: { requiresAuth: true }, // صفحة محمية تتطلب تسجيل دخول
+        meta: { requiresAdmin: true },
       },
       {
         path: '/edit-season/:id',
         name: 'editSeason',
         component: () => import('@/views/media/MediaFormView.vue'),
-        meta: { requiresAuth: true }, // صفحة محمية تتطلب تسجيل دخول
+        meta: { requiresAdmin: true },
       },
       {
         path: '/media/:media_id/new-episode',
         name: 'addEpisode',
         component: () => import('@/views/media/MediaFormView.vue'),
-        meta: { requiresAuth: true }, // صفحة محمية تتطلب تسجيل دخول
+        meta: { requiresAdmin: true },
       },
       {
         path: '/edit-episode/:id',
         name: 'editEpisode',
         component: () => import('@/views/media/MediaFormView.vue'),
-        meta: { requiresAuth: true }, // صفحة محمية تتطلب تسجيل دخول
+        meta: { requiresAdmin: true },
       },
       {
         path: '/episode/:episode_id/new-link',
         name: 'addLink',
         component: () => import('@/views/media/MediaFormView.vue'),
-        meta: { requiresAuth: true }, // صفحة محمية تتطلب تسجيل دخول
+        meta: { requiresAdmin: true },
       },
       {
         path: '/edit-link/:id',
         name: 'editLink',
         component: () => import('@/views/media/MediaFormView.vue'),
-        meta: { requiresAuth: true }, // صفحة محمية تتطلب تسجيل دخول
+        meta: { requiresAdmin: true },
       },
       // DownloadTask
       {
         path: '/tasks',
         name: 'tasksList',
         component: () => import('@/views/tasks/DownloadTasksListView.vue'),
-        meta: { requiresAuth: true },
       },
       {
         path: '/new-task',
         name: 'addTask',
         component: () => import('@/views/tasks/DownloadTaskFormView.vue'),
-        meta: { requiresAuth: true }, // صفحة محمية تتطلب تسجيل دخول
+        meta: { requiresAdmin: true },
       },
       {
         path: '/edit-task/:id',
         name: 'editTask',
         component: () => import('@/views/tasks/DownloadTaskFormView.vue'),
-        meta: { requiresAuth: true }, // صفحة محمية تتطلب تسجيل دخول
+        meta: { requiresAdmin: true },
       },
     ],
   },
@@ -145,6 +139,7 @@ const router = createRouter({
 
 // حارس المسارات (Navigation Guard)
 router.beforeEach(async (to, from, next) => {
+  // ✅ استدعاء الـ Store هنا جوا الدالة سليم 100% ويمنع مشاكل التحميل
   const authStore = useAuthStore()
 
   // 1. استرجاع الجلسة عند فتح التطبيق أول مرة أو عند Refresh
@@ -160,8 +155,9 @@ router.beforeEach(async (to, from, next) => {
 
   const isAuthenticated = authStore.isAuthenticated
 
-  // 2. حماية الصفحات الخاصة بالمستخدمين المسجلين
-  if (to.meta.requiresAuth && !isAuthenticated) {
+  // 2. حماية الصفحات الخاصة بالمستخدمين المسجلين (يقحص المسار أو الأبناء)
+  const requiresAuth = to.matched.some(record => record.meta.requiresAuth)
+  if (requiresAuth && !isAuthenticated) {
     return next({ name: 'login' })
   }
 
@@ -170,6 +166,13 @@ router.beforeEach(async (to, from, next) => {
     return next({ name: 'dashboard' })
   }
 
+  // 4. حماية المسارات الخاصة بالأدمن/الإيديتور
+  const requiresAdmin = to.matched.some(record => record.meta.requiresAdmin)
+  if (requiresAdmin && !authStore.isEditorAndAbove) {
+    return next({ name: 'NotFound' })
+  }
+
   next()
 })
+
 export default router

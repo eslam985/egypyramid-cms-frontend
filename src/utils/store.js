@@ -141,16 +141,26 @@ export async function handleStoreFetch({
   targetKey,
   paginationKey = 'pagination',
   defaultError = 'حدث خطأ أثناء جلب البيانات',
-  force = false, // خيار لتجاوز الكاش وإجبار الريكويست عند الحاجة
+  force = false,
 }) {
-  // 1. فحص الكاش: إذا لم يتم طلب التحديث الإجباري وكانت البيانات موجودة مسبقاً
-  if (!force && targetKey && store[targetKey] !== null && store[targetKey] !== undefined) {
+  // 1️⃣ تحويل الـ args الحالية لنص (String) لسهولة مقارنتها
+  const currentArgsStr = args ? JSON.stringify(args) : '';
+
+  // 2️⃣ فحص الكاش المطور:
+  // مش هيرجع كاش إلا لو: مش force + الداتا موجودة + الكويري الجديدة هي نفس الكويري القديمة بالظبط!
+  if (
+    !force &&
+    targetKey &&
+    store[targetKey] !== null &&
+    store[targetKey] !== undefined &&
+    store._lastFetchArgs === currentArgsStr // 💡 شرط ذكي: التأكد أن الفلاتر لم تتغير
+  ) {
     const hasData = Array.isArray(store[targetKey])
       ? store[targetKey].length > 0
       : Object.keys(store[targetKey]).length > 0
 
     if (hasData) {
-      return store[targetKey]
+      return store[targetKey] // يرجع الكاش بأمان لأن الفلاتر متطابقة
     }
   }
 
@@ -176,6 +186,9 @@ export async function handleStoreFetch({
         store[paginationKey] = result.pagination
       }
 
+      // 3️⃣ حفظ الكويري الحالية في الستور كـ "آخر كويري ناجحة" عشان المقارنة الجاية
+      store._lastFetchArgs = currentArgsStr;
+
       return result.data
     } else {
       store.errorMessage = result.message
@@ -189,6 +202,7 @@ export async function handleStoreFetch({
     store.isLoading = false
   }
 }
+
 
 
 /**

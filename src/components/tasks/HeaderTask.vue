@@ -9,6 +9,7 @@ import { useTaskStore } from '@/stores/taskStore'
 import { confirmAndDelete } from '@/utils/global'
 import { useAuthStore } from '@/stores/authStore'
 
+
 const authStore = useAuthStore()
 
 const { t } = useI18n()
@@ -18,25 +19,28 @@ const notiStore = useNotificationStore()
 const router = useRouter()
 const route = useRoute()
 
-let selectState = ref('')
+
+// 💡 جعل القيمة الابتدائية تقرأ من الرابط مباشرة عند التحميل (الـ Reload)
+const selectState = ref(route.query.status || '') 
 let searchInput = ref('')
-const handleChooseState = async () => {
-  // 1. نقوم بتحديث الرابط فقط (مع الاحتفاظ بأي بحث سابق في الرابط إن وجد)
-  await router.push({
+
+const handleChooseState =  async () => {
+    // 1. نقوم بتحديث الرابط فقط (مع الاحتفاظ بأي بحث سابق في الرابط إن وجد)
+  router.push({
     query: {
       ...route.query, // نحافظ على باقي البرامترز مثل search
       status: selectState.value || undefined, // سيتم إزالة الـ status من الرابط إذا كان فارغاً
-      page: 1 // دائماً عند تغيير الفلتر نعود للصفحة الأولى
-    }
+      page: 1, // دائماً عند تغيير الفلتر نعود للصفحة الأولى
+    },
   })
-  await taskStore.fetchAllTasks(route.query, true)
+  const isSuccess = await taskStore.fetchAllTasks({ status: selectState.value}, true)
 
   // 2. معالجة الإشعارات
-  if (!selectState.value) {
-    notiStore.triggerNotification(t('tasks.toolbar.allStatusesShown'))
+  if (isSuccess) {
+    notiStore.triggerNotification( t('tasks.toolbar.allStatusesShown'))
   } else {
     // يمكنك هنا ترك رسالة نجاح عامة للفلترة
-    notiStore.triggerNotification(t('tasks.toolbar.filterSuccess'))
+    notiStore.triggerNotification( t('tasks.toolbar.filterSuccess'))
   }
 }
 
@@ -44,21 +48,13 @@ const handleRefresh = async () => {
   searchInput.value = ''
   selectState.value = ''
 
-  // إذا كان الرابط لا يحتوي على فلاتر أو بحث مسبق، قم بعمل ريفريش إجباري من السيرفر
-  if (Object.keys(route.query).length === 0) {
-    await taskStore.fetchAllTasks({}, true)
-  } else {
-    // إذا كان الرابط يحتوي على فلاتر، نقوم بتنظيفه، وهذا سيحفز الـ watch تلقائياً لجلب البيانات
-    await router.push(
-      {
-        name: 'tasksList',
-        query: {
-          page: 1,
-          limit: 20
-        }
-      }
-    )
-  }
+  router.push({
+      name: 'tasksList',
+      query: {}
+  })
+
+  await taskStore.fetchAllTasks({}, true)
+    console.trace(route.query)
 
   notiStore.triggerNotification(t('common.refreshSuccess'))
 }

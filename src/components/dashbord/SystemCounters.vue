@@ -10,31 +10,38 @@ const { t } = useI18n()
 const analyticsStore = useAnalyticsStore()
 const { systemCounters } = storeToRefs(analyticsStore)
 
-const handleGotoFailedTasks = () => {
-  if (route.name !== 'tasksList') {
+const handleGotoFailedTasks = async () => {
+    const updatedQuery = {
+      ...route.query,
+      status: 'failed',
+      page: 1,
+      limit: 20,
+    };
+
+    // 💡 وظيفته الوحيدة الانتقال فقط بالـ Query الجديدة
     router.push({
       name: 'tasksList',
-      query: {
-        ...route.query,
-        status: 'failed',
-        page: 1
-      }
-    })
-  }
+      query: updatedQuery
+    });
 }
-const handleGotoProcessingTasks = () => {
-  if (route.name !== 'tasksList') {
+
+const handleGotoProcessingTasks = async () => {
+    const updatedQuery = {
+      ...route.query,
+      status: 'processing',
+      page: 1,
+      limit: 20,
+    };
+
+    // 💡 وظيفته الوحيدة الانتقال فقط بالـ Query الجديدة
     router.push({
       name: 'tasksList',
-      query: {
-        ...route.query,
-        status: 'processing',
-        page: 1,
-        limit: 20,
-      }
-    })
-  }
+      query: updatedQuery
+    });
 }
+
+
+
 // category, page = 1, limit = 20, search, sortBy, sortOrder
 const handleGotoMediaList = () => {
   if (route.name !== 'mediaList') {

@@ -29,8 +29,8 @@ const handleLogout = async () => {
     <MainTheme />
     <MainBackup class="mt-fluid-section" />
 
-    <div class="card p-fluid">
-      <button @click="handleLogout" class="btn-danger w-full">{{ t('auth.logout') }}</button>
+    <div class="card p-fluid  flex justify-center">
+      <button @click="handleLogout" class="btn-danger w-full max-w-[150px]">{{ t('auth.logout') }}</button>
     </div>
   </div>
 </template>
