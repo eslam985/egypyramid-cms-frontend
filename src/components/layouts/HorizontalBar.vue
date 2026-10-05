@@ -2,41 +2,11 @@
 import { House, Video, ChartBarStacked, Download, Settings, CircleUser } from '@lucide/vue'
 import { useI18n } from 'vue-i18n'
 const { t } = useI18n()
-import { useRoute, useRouter } from 'vue-router'
-
-const route = useRoute()
-const router = useRouter()
-
-const handleGotoMediaList = () => {
-  if (route.name !== 'mediaList') {
-    router.push({
-      name: 'mediaList',
-      query: {
-        ...route.query,
-        page: 1,
-        limit: 20,
-      }
-    })
-  }
-}
-
-const handleGotoTasksPage = () => {
-  if (route.name !== 'tasksList') {
-    router.push({
-      name: 'tasksList',
-      query: {
-        ...route.query,
-        page: 1,
-        limit: 20,
-      }
-    })
-  }
-}
 </script>
 
 <template>
   <nav class="flex justify-center mb-4 w-full">
-    <div
+    <router-link
       class="flex flex-nowrap items-center gap-2 md:gap-fluid-gap p-fluid md:px-6 bg-card border border-line rounded-b-lg shadow-soft overflow-x-auto max-w-full no-scrollbar">
       <!-- الرئيسية -->
       <router-link :to="{ name: 'dashboard' }"
@@ -47,12 +17,12 @@ const handleGotoTasksPage = () => {
       </router-link>
 
       <!-- الأعمال -->
-      <div @click="handleGotoMediaList"
+      <router-link :to="{ name: 'mediaList' }"
         exact-active-class="btn-outline shadow-glow/30 text-accent hover:text-slate-900 hover:bg-accent/70"
         class="btn-secondary text-fluid-xs shrink-0 whitespace-nowrap">
         <Video class="size-4 shrink-0" />
         <span class="text-fluid-xs md:text-fluid-p">{{ t('sidebar.media') }}</span>
-      </div>
+      </router-link>
 
       <!-- التصنيفات -->
       <router-link :to="{ name: 'genresList' }"
@@ -63,12 +33,12 @@ const handleGotoTasksPage = () => {
       </router-link>
 
       <!-- مهام التحميل -->
-      <div @click="handleGotoTasksPage"
+      <router-link :to="{ name: 'tasksList' }"
         exact-active-class="cursor-pointer btn-outline shadow-glow/30 text-accent hover:text-slate-900 hover:bg-accent/70"
         class="btn-secondary text-fluid-xs shrink-0 whitespace-nowrap">
         <Download class="size-4 shrink-0" />
         <span class="text-fluid-xs md:text-fluid-p">{{ t('sidebar.tasks') }}</span>
-      </div>
+      </router-link>
 
       <!-- الإعدادات -->
       <router-link :to="{ name: 'settings' }"
@@ -77,7 +47,7 @@ const handleGotoTasksPage = () => {
         <Settings class="size-4 shrink-0" />
         <span class="text-fluid-xs md:text-fluid-p">{{ t('sidebar.settings') }}</span>
       </router-link>
-      
+
       <!-- profile -->
       <router-link :to="{ name: 'profile' }"
         exact-active-class="btn-outline shadow-glow/30 text-accent hover:text-slate-900 hover:bg-accent/70"
@@ -85,6 +55,6 @@ const handleGotoTasksPage = () => {
         <CircleUser class="size-4 shrink-0"/>
         <span class="text-fluid-xs md:text-fluid-p">{{ t('sidebar.profile')}}</span>
       </router-link>
-    </div>
+    </router-link>
   </nav>
 </template>
