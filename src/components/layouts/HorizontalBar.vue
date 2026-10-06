@@ -6,7 +6,7 @@ const { t } = useI18n()
 
 <template>
   <nav class="flex justify-center mb-4 w-full">
-    <router-link
+    <div
       class="flex flex-nowrap items-center gap-2 md:gap-fluid-gap p-fluid md:px-6 bg-card border border-line rounded-b-lg shadow-soft overflow-x-auto max-w-full no-scrollbar">
       <!-- الرئيسية -->
       <router-link :to="{ name: 'dashboard' }"
@@ -55,6 +55,6 @@ const { t } = useI18n()
         <CircleUser class="size-4 shrink-0"/>
         <span class="text-fluid-xs md:text-fluid-p">{{ t('sidebar.profile')}}</span>
       </router-link>
-    </router-link>
+    </div>
   </nav>
 </template>
