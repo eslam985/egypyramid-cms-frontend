@@ -57,17 +57,17 @@ const switchTab = async (tab) => {
     // الكومبوننت سيقوم بالجلب بنفسه مع تحديد السيرفر
   }
 }
-
+// btn-outline shadow-glow/10 text-fluid-xs lg:text-fluid-p text-accent-dark hover:text-slate-900 hover:bg-accent/70
 </script>
 <template>
-  <div class="rounded-2xl mb-6 md:p-fluid space-y-4 shadow-soft">
+  <div class="rounded-2xl space-y-4 shadow-soft">
     <!-- أزرار التبويبات -->
-    <div class="grid grid-cols-2 md:flex items-center gap-fluid-gap py-fluid card">
+    <div class="grid grid-cols-2 md:flex items-center gap-3">
       <!-- الأعمال غير الجاهزة -->
       <button @click="switchTab('notReady')"
         class="flex items-center justify-center gap-2 py-fluid md:px-4 rounded-xl text-fluid-xs font-semibold transition-all duration-200 cursor-pointer active:scale-95 select-none"
         :class="activeTab === 'notReady'
-          ? 'bg-danger! text-white! shadow-soft hover:brightness-110'
+          ? 'btn-outline shadow-glow/10 text-fluid-xs lg:text-fluid-p text-accent-dark hover:text-slate-900 hover:bg-accent/70'
           : 'bg-line/20 border border-line text-sub hover:text-main hover:bg-line/40'
           ">
         <span class="text-fluid-xs md:text-fluid-p">{{ t('dashboard.tabs.notReady', {
@@ -80,7 +80,7 @@ const switchTab = async (tab) => {
       <button @click="switchTab('broken')"
         class="flex items-center justify-center gap-2 py-fluid md:px-4 rounded-xl text-fluid-xs font-semibold transition-all duration-200 cursor-pointer active:scale-95 select-none"
         :class="activeTab === 'broken'
-          ? 'bg-danger! text-white! shadow-soft hover:brightness-110'
+          ? 'btn-outline shadow-glow/10 text-fluid-xs lg:text-fluid-p text-accent-dark hover:text-slate-900 hover:bg-accent/70'
           : 'bg-line/20 border border-line text-sub hover:text-main hover:bg-line/40'
           ">
         <span class="text-fluid-xs md:text-fluid-p">{{ t('dashboard.tabs.broken', { count: brokenLinksList.length })
@@ -92,7 +92,7 @@ const switchTab = async (tab) => {
       <button @click="switchTab('telegram')"
         class="flex items-center justify-center gap-2 py-fluid md:px-4 rounded-xl text-fluid-xs font-semibold transition-all duration-200 cursor-pointer active:scale-95 select-none"
         :class="activeTab === 'telegram'
-          ? 'bg-danger! text-white! shadow-soft hover:brightness-110'
+          ? 'btn-outline shadow-glow/10 text-fluid-xs lg:text-fluid-p text-accent-dark hover:text-slate-900 hover:bg-accent/70'
           : 'bg-line/20 border border-line text-sub hover:text-main hover:bg-line/40'
           ">
         <span class="text-fluid-xs md:text-fluid-p">{{ t('dashboard.tabs.telegram', { count: telegramLocked.length })
@@ -104,7 +104,7 @@ const switchTab = async (tab) => {
       <button @click="switchTab('missing')"
         class="flex items-center justify-center gap-2 py-fluid md:px-4 rounded-xl text-fluid-xs font-semibold transition-all duration-200 cursor-pointer active:scale-95 select-none"
         :class="activeTab === 'missing'
-          ? 'bg-danger! text-white! shadow-soft hover:brightness-110'
+          ? 'btn-outline shadow-glow/10 text-fluid-xs lg:text-fluid-p text-accent-dark hover:text-slate-900 hover:bg-accent/70'
           : 'bg-line/20 border border-line text-sub hover:text-main hover:bg-line/40'
           ">
         <span class="text-fluid-xs md:text-fluid-p">{{ t('dashboard.tabs.missing', {
