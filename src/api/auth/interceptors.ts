@@ -1,13 +1,23 @@
+import type { InternalAxiosRequestConfig } from 'axios'
 import api from './client'
 import { useAuthStore } from '@/stores/authStore'
 import router from '@/router' // تأكد من مسار الـ router الصحيح لديك
 import { useNotificationStore } from '@/stores/notificationStore'
 
-let isRefreshing = false
-let failedQueue = []
+interface RefreshQueueItem {
+  resolve: (value: string | null) => void
+  reject: (reason?: unknown) => void
+}
 
-const processQueue = (error, token = null) => {
-  failedQueue.forEach((prom) => {
+interface RetriedRequestConfig extends InternalAxiosRequestConfig {
+  _retry?: boolean
+}
+
+let isRefreshing: boolean = false
+let failedQueue: RefreshQueueItem[] = []
+
+const processQueue = (error: unknown, token: string | null = null): void => {
+  failedQueue.forEach((prom: RefreshQueueItem) => {
     if (error) {
       prom.reject(error)
     } else {
@@ -41,31 +51,33 @@ api.interceptors.response.use(
   (response) => response,
   async (err) => {
     const authStore = useAuthStore()
-    const originalRequest = err.config
+    const originalRequest = err.config as RetriedRequestConfig | undefined
+
     const status = err.response?.status
     const notiStore = useNotificationStore()
     // if response status 429
     if (status === 429) {
-      const h = err.response.headers
-      const raw = h.get('Retry-After') || h.get('retry-after') || h.get('RateLimit-Reset')
-      const retryAfter = parseInt(raw, 10) || 60
+      const h = err.response?.headers
+      const raw = h ? (h.get('Retry-After') || h.get('retry-after') || h.get('RateLimit-Reset')) : null
+      const retryAfter = parseInt(raw || '60', 10) || 60
+
       const mins = Math.ceil(retryAfter / 60)
 
-      notiStore.triggerNotification(`Too many requests - Try again after ${mins}`, 'error')
+      notiStore.triggerNotification(`Too many requests - Try again after ${mins}`)
 
       return Promise.reject(err)
     }
 
     // if response status 404
     if (status === 404) {
-      notiStore.triggerNotification("We couldn't find what you're looking for.", 'error')
+      notiStore.triggerNotification("We couldn't find what you're looking for.")
     }
 
     // 💡 التعديل الجديد: التقاظ خطأ الحجم الزائد 413 وعرض رسالة السيرفر المخصصة
     if (status === 413) {
       const errorMessage = err.response?.data?.message || 'حجم الملف المرفوع كبير جداً!'
 
-      notiStore.triggerNotification(errorMessage, 'error')
+      notiStore.triggerNotification(errorMessage)
 
       return Promise.reject(err) // نمرر الـ reject لكي ينتهي الطلب برمجياً بشكل صحيح
     }
@@ -76,20 +88,23 @@ api.interceptors.response.use(
 
     const isErrorStatus = status === 401 || status === 403
 
-    if (isErrorStatus && !isAuthEndpoint && !originalRequest._retry) {
+    if (isErrorStatus && !isAuthEndpoint && originalRequest && !originalRequest._retry) {
+
       // إذا كان التجديد قيد التشغيل بالفعل، جمّد الطلبات الجديدة في طابور الانتظار
       if (isRefreshing) {
         return new Promise(function (resolve, reject) {
           failedQueue.push({ resolve, reject })
         })
           .then((token) => {
-            if (originalRequest.headers.set) {
-              originalRequest.headers.set('Authorization', `Bearer ${token}`)
-            } else {
-              originalRequest.headers.Authorization = `Bearer ${token}`
+            // ✅ حماية الـ headers والـ token من أي قيم undefined خفية وقت تشغيل الطابور
+            if (originalRequest.headers?.set) {
+              originalRequest.headers.set('Authorization', `Bearer ${token || ''}`)
+            } else if (originalRequest.headers) {
+              originalRequest.headers.Authorization = `Bearer ${token || ''}`
             }
             return api(originalRequest)
           })
+
           .catch((err) => {
             return Promise.reject(err)
           })
@@ -105,11 +120,12 @@ api.interceptors.response.use(
           const newToken = authStore.accessToken
           processQueue(null, newToken)
 
-          if (originalRequest.headers.set) {
-            originalRequest.headers.set('Authorization', `Bearer ${newToken}`)
-          } else {
-            originalRequest.headers.Authorization = `Bearer ${newToken}`
+          if (originalRequest.headers?.set) {
+            originalRequest.headers.set('Authorization', `Bearer ${newToken || ''}`)
+          } else if (originalRequest.headers) {
+            originalRequest.headers.Authorization = `Bearer ${newToken || ''}`
           }
+
           return api(originalRequest)
         } else {
           processQueue(new Error('Session expired'))

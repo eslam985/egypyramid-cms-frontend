@@ -1,0 +1,49 @@
+{
+  "extends": "@vue/tsconfig/tsconfig.json",
+  "compilerOptions": {
+    // 📂 تنظيم المجلدات والمسارات
+    "rootDir": "./src",
+    "outDir": "./dist",
+    "allowJs": true, // سحري للتحويل التدريجي دون إيقاف مشروعك
+
+    // 🌐 إعدادات البيئة المتوافقة 100% مع Vite و Vue 3
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "target": "esnext",
+    "lib": ["esnext", "dom"],
+    "esModuleInterop": true,
+    "types": ["vite/client"],
+
+    // 🛠️ خيارات المخرجات (تضمين خياراتك المفضلة)
+    "sourceMap": true,
+    "declaration": true,
+    "declarationMap": true,
+    "removeComments": true, // لحذف التعليقات تماماً وتخفيف ملفات الـ JS الناتجة
+
+    // 🔒 خيارات الفحص الصارم والأمان (Strict & Style Options)
+    "strict": true,
+    "noImplicitAny": true,
+    "noImplicitReturns": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+    "allowUnreachableCode": false,
+
+    // ⚡ إعدادات التوافق الإضافية الموصى بها
+    "jsx": "preserve", // مهم جداً لـ Vue ليترك معالجة الـ JSX لـ Vite بدلاً من React
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noUncheckedSideEffectImports": true,
+    "moduleDetection": "force",
+    "skipLibCheck": true,
+    
+    // 🔗 اختصار المسارات الخاص بمشروعك
+    "ignoreDeprecations": "6.0",
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  },
+  "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue", "src/utils/global.ts"]
+}

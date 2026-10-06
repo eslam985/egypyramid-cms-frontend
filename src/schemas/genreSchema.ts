@@ -10,3 +10,10 @@ const updateGenreByIdSchema = createGenreSchema.refine((data) => Object.keys(dat
 })
 
 export { createGenreSchema, updateGenreByIdSchema }
+
+// ==============================================================
+//  export Types
+// ==============================================================
+
+export type CreateGenreSchemaType = z.infer<typeof createGenreSchema>
+export type UpdateGenreByIdSchemaType = z.infer<typeof updateGenreByIdSchema>

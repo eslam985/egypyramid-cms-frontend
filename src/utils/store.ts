@@ -1,3 +1,12 @@
+import type {
+  ExportStoreParams,
+  StoreFetchParams,
+  StoreAddParams,
+  StoreEditParams,
+  StoreDeleteParams
+} from '@/types/globalTypes'
+
+
 export async function handleStoreDelete({
   store,
   apiCall,
@@ -5,45 +14,53 @@ export async function handleStoreDelete({
   listKey,
   idKey = 'id',
   defaultError = 'حدث خطأ أثناء الحذف',
-  filterFn = null, // هنضيف ده
-}) {
-  store.isLoading = true
-  store.successMessage = ''
-  store.errorMessage = ''
+  filterFn = null,
+}: StoreDeleteParams): Promise<boolean> { // ✅ أضفنا نوع المخرجات الصريح للدالة
+
+  if (!store) throw new Error('store is undefined or null');
+
+  store.isLoading = true;
+  store.successMessage = '';
+  store.errorMessage = '';
+
   try {
-    const result = id !== undefined ? await apiCall(id) : await apiCall()
-    if (result.success) {
-      store.successMessage = result.message
+    const result = id !== undefined ? await apiCall(id) : await apiCall();
+
+    if (result && result.success) {
+      store.successMessage = result.message;
 
       if (listKey) {
         if (Array.isArray(store[listKey])) {
-          // كود المصفوفات الحالي الخاص بك (سليم 100%)
           if (filterFn) {
-            store[listKey] = filterFn(store[listKey])
+            store[listKey] = filterFn(store[listKey]);
           } else if (Array.isArray(id)) {
-            const idsSet = new Set(id)
-            store[listKey] = store[listKey].filter((item) => !idsSet.has(item[idKey]))
+            const idsSet = new Set(id);
+            store[listKey] = store[listKey].filter((item: any) => !idsSet.has(item[idKey]));
           } else {
-            store[listKey] = store[listKey].filter((item) => item[idKey] !== id)
+            store[listKey] = store[listKey].filter((item: any) => item[idKey] !== id);
           }
         } else if (store[listKey] !== null && typeof store[listKey] === 'object') {
-          // 💡 بما أن السيرفر أرسل الكائن الجديد، نحدث الـ userInfo به فوراً هنا!
           if (result.data) {
-            // 💡 نقوم بدمج البيانات الجديدة مع الحفاظ على بقية بيانات المستخدم القديمة
-            store[listKey] = { ...store[listKey], ...result.data }
+            store[listKey] = { ...store[listKey], ...result.data };
           }
         }
       }
-      return true
+      return true;
     }
+
+    // ✅ التعديل: في حال عودة result ولكن success بـ false نضع حقل الـ errorMessage ونرجع false
+    store.errorMessage = result?.message || defaultError;
+    return false;
+
   } catch (err) {
-    store.errorMessage = err?.response?.data?.message || defaultError
-    console.error(err)
-    return false
+    store.errorMessage = (err as any)?.response?.data?.message || defaultError;
+    console.error(err);
+    return false;
   } finally {
-    store.isLoading = false
+    store.isLoading = false;
   }
 }
+
 
 export async function handleStoreEdit({
   store,
@@ -53,44 +70,46 @@ export async function handleStoreEdit({
   listKey,
   idKey = 'id',
   defaultError = 'حدث خطأ اثناء التعديل!',
-}) {
+}: StoreEditParams): Promise<any> {
+  // ✅ التعديل: أضفنا نوع المخرجات الصريح Promise<any>
+
+  if (!store) throw new Error('store is undefined or null')
+
   store.isLoading = true
   store.successMessage = ''
   store.errorMessage = ''
+
   try {
+    // ✅ التعديل: تأكدنا أن id و data موجودين يقيناً لتضييق الأنواع (Type Narrowing)
     if ((!id && !data) || !data) return null
 
-    const result = id && data ? await apiCall(id, data) : await apiCall(data)
+    const result = await apiCall(id, data)
     console.log('الهيكل الفعلي لـ result داخل الـ Util:', result)
 
-    if (result.success) {
+    if (result && result.success) {
       store.successMessage = result.message
 
-      // تحديث العنصر في القائمة إن وجدت
-      // تحديث العنصر في القائمة أو الكائن إن وجد
       if (listKey) {
         if (Array.isArray(store[listKey])) {
-          // تحديث العنصر داخل المصفوفة (كودك الحالي سليم جداً)
-          const index = store[listKey].findIndex((item) => item[idKey] === id)
+          // التايب سكريبت هنا يضمن 100% أن id ليس undefined بفضل شرط الحماية بالأعلى
+          const index = store[listKey].findIndex((item: any) => item[idKey] === id)
           if (index !== -1) {
             store[listKey][index] = result.data
           }
         } else if (store[listKey] !== null && typeof store[listKey] === 'object') {
-          // 💡 إذا كان كائناً مفرداً (مثل userInfo)، نقوم بدمج التعديلات الجديدة مع الحفاظ على البيانات القديمة
           store[listKey] = { ...store[listKey], ...result.data }
         } else {
-          // 💡 حالة احتياطية: إذا كانت القيمة الابتدائية null تماماً ولم يتم قراءتها ككائن بعد
           store[listKey] = result.data
         }
       }
 
       return result.data !== undefined ? result.data : true
     } else {
-      store.errorMessage = result.message
+      store.errorMessage = result?.message || defaultError
       return null
     }
   } catch (err) {
-    store.errorMessage = err?.response?.data?.message || defaultError
+    store.errorMessage = (err as any)?.response?.data?.message || defaultError
     console.error(err)
     return null
   } finally {
@@ -105,13 +124,15 @@ export async function handleStoreAdd({
   data,
   listKey,
   defaultError = 'حدث خطأ اثناء الإضافة!',
-}) {
+}: StoreAddParams): Promise<any> {
+  if (!store) throw new Error('store is undefined or null')
+
   store.isLoading = true
   store.successMessage = ''
   store.errorMessage = ''
   try {
-    // فحص ما إذا كان هناك id ممرر أم نرسل data فقط
-    const result = id !== undefined ? await apiCall(id, data) : await apiCall(data)
+    const result =
+      id !== undefined && data !== undefined ? await apiCall(id, data) : await apiCall(data ?? {})
 
     if (result.success) {
       store.successMessage = result.message
@@ -126,7 +147,7 @@ export async function handleStoreAdd({
       return null
     }
   } catch (err) {
-    store.errorMessage = err?.response?.data?.message || defaultError
+    store.errorMessage = (err as any)?.response?.data?.message || defaultError
     console.error(err)
     return null
   } finally {
@@ -142,31 +163,33 @@ export async function handleStoreFetch({
   paginationKey = 'pagination',
   defaultError = 'حدث خطأ أثناء جلب البيانات',
   force = false,
-}) {
-  // 1️⃣ تحويل الـ args الحالية لنص (String) لسهولة مقارنتها
-  const currentArgsStr = args ? JSON.stringify(args) : '';
+}: StoreFetchParams): Promise<any> {
+  // ✅ أضفنا نوع المخرجات الصريح للدالة
 
-  // 2️⃣ فحص الكاش المطور:
-  // مش هيرجع كاش إلا لو: مش force + الداتا موجودة + الكويري الجديدة هي نفس الكويري القديمة بالظبط!
+  const currentArgsStr = args ? JSON.stringify(args) : ''
+  if (!store) throw new Error('store is undefined or null')
+
+  // ✅ التعديل: تأكدنا أولاً أن targetKey ممرر وله قيمة (targetKey && ...) لتجنب أخطاء المفاتيح الفارغة
   if (
     !force &&
     targetKey &&
     store[targetKey] !== null &&
     store[targetKey] !== undefined &&
-    store._lastFetchArgs === currentArgsStr // 💡 شرط ذكي: التأكد أن الفلاتر لم تتغير
+    store._lastFetchArgs === currentArgsStr
   ) {
     const hasData = Array.isArray(store[targetKey])
       ? store[targetKey].length > 0
       : Object.keys(store[targetKey]).length > 0
 
     if (hasData) {
-      return store[targetKey] // يرجع الكاش بأمان لأن الفلاتر متطابقة
+      return store[targetKey]
     }
   }
 
   store.isLoading = true
   store.successMessage = ''
   store.errorMessage = ''
+
   try {
     let result
     if (args !== undefined) {
@@ -175,7 +198,7 @@ export async function handleStoreFetch({
       result = await apiCall()
     }
 
-    if (result.success) {
+    if (result && result.success) {
       store.successMessage = result.message
 
       if (targetKey) {
@@ -186,24 +209,21 @@ export async function handleStoreFetch({
         store[paginationKey] = result.pagination
       }
 
-      // 3️⃣ حفظ الكويري الحالية في الستور كـ "آخر كويري ناجحة" عشان المقارنة الجاية
-      store._lastFetchArgs = currentArgsStr;
-
+      store._lastFetchArgs = currentArgsStr
       return result.data
     } else {
-      store.errorMessage = result.message
+      store.errorMessage = result?.message || defaultError
       return null
     }
   } catch (err) {
-    store.errorMessage = err?.response?.data?.message || defaultError
+    // ✅ التعديل: تحويل err إلى any لقراءة الـ response بأمان تحت الوضع الصارم
+    store.errorMessage = (err as any)?.response?.data?.message || defaultError
     console.error(err)
     return null
   } finally {
     store.isLoading = false
   }
 }
-
-
 
 /**
  * دالة عامة وموحدة لإدارة عمليات تصدير الجداول وتحميلها كملفات CSV
@@ -214,36 +234,40 @@ export async function handleStoreExport({
   apiCall,
   args,
   defaultFileName = 'export.csv',
-  defaultError = 'حدث خطأ أثناء تصدير البيانات'
-}) {
+  defaultError = 'حدث خطأ أثناء تصدير البيانات',
+}: ExportStoreParams): Promise<boolean> {
+  // أضفنا نوع المخرجات الصريح : Promise<boolean>
+
+  if (!store) throw new Error('store is undefined or null')
+
   store.isLoading = true
   store.successMessage = ''
   store.errorMessage = ''
 
   try {
     let blobData
-    // 1. استدعاء الـ API وتمرير البارامترات (الفلاتر) إن وجدت بنفس منطق دالتك السابقة
     if (args !== undefined) {
       blobData = Array.isArray(args) ? await apiCall(...args) : await apiCall(args)
     } else {
       blobData = await apiCall()
     }
 
-    // 2. تحويل الـ Blob إلى رابط وهمي في المتصفح والضغط عليه لبدء التحميل فوراً
-    const url = window.URL.createObjectURL(new Blob([blobData], { type: 'text/csv;charset=utf-8;' }))
-    const link = document.createElement('a')
+    const url: string = window.URL.createObjectURL(
+      new Blob([blobData], { type: 'text/csv;charset=utf-8;' }),
+    )
+    const link: HTMLAnchorElement = document.createElement('a')
     link.href = url
     link.setAttribute('download', defaultFileName)
 
     document.body.appendChild(link)
     link.click()
-    link.remove() // كود مباشر وبسيط ويغنيك عن parentNode
+    link.remove()
     window.URL.revokeObjectURL(url)
 
     store.successMessage = 'تم تصدير وتحميل الملف بنجاح'
     return true
   } catch (err) {
-    store.errorMessage = err?.response?.data?.message || defaultError
+    store.errorMessage = (err as any)?.response?.data?.message || defaultError
     console.error('Export Utility Error:', err)
     return false
   } finally {

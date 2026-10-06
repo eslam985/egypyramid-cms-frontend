@@ -1,10 +1,11 @@
+// /src/schemas/downloadTaskSchema.js
 import { z } from 'zod'
 
 const baseTaskSchema = z.object({
-  task_name: z.string().trim().min(2).max(50),
-  source_url: z.string().trim().url('رابط المصدر غير صحيح'),
+  task_name: z.string().trim().min(2).max(100),
+  source_url: z.string().trim().pipe(z.url('رابط المصدر غير صحيح')),
   status: z.enum(['idle', 'processing', 'failed'], {
-    errorMap: () => ({ message: 'status must be only [ idle, processing, failed ]' }),
+    message: 'status must be only [ idle, processing, failed ]',
   }),
   progress_percent: z.number().int().min(0).max(100),
   download_speed: z.string().trim(),
@@ -12,9 +13,9 @@ const baseTaskSchema = z.object({
   is_cancelled: z.boolean(),
   trailer_url: z.preprocess(
     (val) => (val === '' ? null : val),
-    z.string().trim().url('رابط العرض غير صحيح').nullish(),
+    z.string().trim().pipe(z.url('رابط المصدر غير صحيح')).nullish(),
   ),
-  fallback_urls: z.array(z.string().trim().url('رابط غير صحيح')).nullable().optional(),
+  fallback_urls: z.array(z.string().trim().pipe(z.url('رابط المصدر غير صحيح'))).nullable().optional(),
 })
 
 // سكيما إنشاء التاسك (تضيف القيم الافتراضية على الـ Base Schema)
@@ -34,3 +35,13 @@ const UpdateTaskByIdSchema = baseTaskSchema
   })
 
 export { createTaskSchema, UpdateTaskByIdSchema }
+
+
+// ==============================================================
+//  استخراج Types
+// ==============================================================
+
+export type BaseTaskInputsType = z.infer<typeof baseTaskSchema>;
+export type CreateTaskInputsType = z.infer<typeof createTaskSchema>;
+export type UpdateTaskInputsType = z.infer<typeof UpdateTaskByIdSchema>;
+

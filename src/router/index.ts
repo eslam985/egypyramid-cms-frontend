@@ -1,8 +1,20 @@
-import { createRouter, createWebHistory } from 'vue-router'
+// /src/router/index.ts
+import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
 import { useAuthStore } from '@/stores/authStore'
 import MainLayout from '@/layouts/MainLayout.vue'
 
-const routes = [
+// 1️⃣ أولاً: توثيق وتوسيع حقول الـ meta المخصصة (Module Augmentation)
+// لكي يفهم VS Code الـ Auto-complete لحقول الـ meta في أي صفحة
+declare module 'vue-router' {
+  interface RouteMeta {
+    requiresAuth?: boolean
+    guestOnly?: boolean
+    requiresAdmin?: boolean
+  }
+}
+
+// 2️⃣ ثانياً: تقييد المصفوفة بنوع الموجه القياسي RouteRecordRaw لـ Vue Router
+const routes: RouteRecordRaw[] = [
   {
     path: '/login',
     name: 'login',
@@ -43,7 +55,7 @@ const routes = [
         path: '/new-media',
         name: 'addMedia',
         component: () => import('@/views/media/MediaFormView.vue'),
-        meta: { requiresAdmin: true }, // البارنت أصلاً عليه requiresAuth فمش لازم تكررها هنا
+        meta: { requiresAdmin: true },
       },
       {
         path: '/edit-media/:id',
@@ -51,7 +63,6 @@ const routes = [
         component: () => import('@/views/media/MediaFormView.vue'),
         meta: { requiresAdmin: true },
       },
-      // genres
       {
         path: '/genres',
         name: 'genresList',
@@ -105,7 +116,6 @@ const routes = [
         component: () => import('@/views/media/MediaFormView.vue'),
         meta: { requiresAdmin: true },
       },
-      // DownloadTask
       {
         path: '/tasks',
         name: 'tasksList',
@@ -137,9 +147,8 @@ const router = createRouter({
   routes,
 })
 
-// حارس المسارات (Navigation Guard)
-router.beforeEach(async (to, from, next) => {
-  // ✅ استدعاء الـ Store هنا جوا الدالة سليم 100% ويمنع مشاكل التحميل
+// 3️⃣ ثالثاً: تقييد دالة حارس المسارات (Navigation Guard) بالأنواع الصريحة لـ Vue Router
+router.beforeEach(async (to, _from, next) => {
   const authStore = useAuthStore()
 
   // 1. استرجاع الجلسة عند فتح التطبيق أول مرة أو عند Refresh
@@ -153,10 +162,10 @@ router.beforeEach(async (to, from, next) => {
     }
   }
 
-  const isAuthenticated = authStore.isAuthenticated
+  const isAuthenticated: boolean = authStore.isAuthenticated
 
-  // 2. حماية الصفحات الخاصة بالمستخدمين المسجلين (يقحص المسار أو الأبناء)
-  const requiresAuth = to.matched.some(record => record.meta.requiresAuth)
+  // 2. حماية الصفحات الخاصة بالمستخدمين المسجلين
+  const requiresAuth: boolean = to.matched.some(record => record.meta.requiresAuth)
   if (requiresAuth && !isAuthenticated) {
     return next({ name: 'login' })
   }
@@ -167,7 +176,7 @@ router.beforeEach(async (to, from, next) => {
   }
 
   // 4. حماية المسارات الخاصة بالأدمن/الإيديتور
-  const requiresAdmin = to.matched.some(record => record.meta.requiresAdmin)
+  const requiresAdmin: boolean = to.matched.some(record => record.meta.requiresAdmin)
   if (requiresAdmin && !authStore.isEditorAndAbove) {
     return next({ name: 'NotFound' })
   }

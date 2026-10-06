@@ -13,3 +13,9 @@ const updateSeasonSchema = createSeasonSchema
   })
 
 export { createSeasonSchema, updateSeasonSchema }
+
+// ==============================================================
+//  ✅ export Types automatically
+// ==============================================================
+export type CreateSeasonSchemaType = z.infer<typeof createSeasonSchema>
+export type UpdateSeasonSchemaType = z.infer<typeof updateSeasonSchema>

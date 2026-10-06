@@ -1,17 +1,17 @@
-// /frontend/vue-dashbord/src/schemas/mediaSchema.js
+// /src/schemas/mediaSchema.ts
 import { z } from 'zod'
 import { durationIsoRegex, labelRe } from '@/utils/regex'
-// تحويل النص الفارغ إلى null حتى يتجاوز Zod الشروط عند ترك الخانة فارغة
-const emptyToNull = (schema) =>
+
+
+const emptyToNull = <T>(zodField: z.ZodType<T>) =>
   z.preprocess(
     (val) => (typeof val === 'string' && val.trim() === '' ? null : val),
-    schema.nullable().optional(),
+    zodField.nullable().optional(),
   )
 
 export const createMediaSchema = z.object({
-  // استبدل التعريفات القديمة لهذه الحقول بما يلي:
   tmdb_id: emptyToNull(z.string().trim().min(3).max(20)),
-  poster_url: emptyToNull(z.string().trim().url('رابط البوستر غير صالح')),
+  poster_url: emptyToNull(z.string().trim().pipe(z.url('رابط البوستر غير صالح'))),
   story: emptyToNull(z.string().trim().min(8).max(500)),
   rating: emptyToNull(z.string().trim().min(1).max(8)),
   runtime: emptyToNull(z.string().trim().min(3).max(30)),
@@ -31,12 +31,12 @@ export const createMediaSchema = z.object({
     .default(false),
   genres: z.array(z.coerce.number().int().positive()).optional(),
 
-  category: z.enum(['movie', 'tv'], {
-    errorMap: () => ({ message: 'النوع يجب أن يكون movie أو tv' }),
+  category: z.enum(['movie', 'tv'] as const, {
+    message: 'النوع يجب أن يكون movie أو tv',
   }),
 
-  media_type: z.enum(['movie', 'series'], {
-    errorMap: () => ({ message: 'النوع يجب أن يكون movie أو series' }),
+  media_type: z.enum(['movie', 'series'] as const, {
+    message: 'النوع يجب أن يكون movie أو series',
   }),
 })
 
@@ -54,3 +54,10 @@ export const getMediasQuerySchema = z.object({
     category: z.enum(['movie', 'tv']).optional(),
   }),
 })
+
+// ==============================================================
+//  ✅ استخراج Types التلقائي بـ Best Practices
+// ==============================================================
+export type CreateMediaInputsType = z.infer<typeof createMediaSchema>;
+export type UpdateMediaInputsType = z.infer<typeof updateMediaSchema>;
+export type GetMediasQueryInputsType = z.infer<typeof getMediasQuerySchema>;

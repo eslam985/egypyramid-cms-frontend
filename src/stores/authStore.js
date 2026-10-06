@@ -2,7 +2,7 @@
 import { defineStore } from 'pinia'
 import { login, logout, refresh, handleRegister } from '@/api/auth/auth'
 import { handleStoreAdd } from '@/utils/store'
-import { ROLES_LIST } from '@/utils/roles_list';
+import { RolesList } from '@/utils/roles_list';
 import { decodeJwt } from '@/utils/decodeJwt';
 
 export const useAuthStore = defineStore('auth', {
@@ -19,20 +19,20 @@ export const useAuthStore = defineStore('auth', {
   getters: {
     isAuthenticated: (state) => !!state.accessToken, // return True Or False
     // دالة بترجع true لو اليوزر أدمن
-    isAdmin: (state) => state.userRole === ROLES_LIST.Admin,
+    isAdmin: (state) => state.userRole === RolesList.Admin,
 
     // دالة بترجع true لو اليوزر على الأقل إيديتور (يعني إيديتور أو أدمن)
-    isEditorAndAbove: (state) => state.userRole === ROLES_LIST.Editor || state.userRole === ROLES_LIST.Admin,
+    isEditorAndAbove: (state) => state.userRole === RolesList.Editor || state.userRole === RolesList.Admin,
 
     // دالة مرنة تديها الحد الأدنى المطلوب وتشوف اليوزر ينفع ولا لأ
     hasRole: (state) => (requiredRole) => {
       if (!state.userRole) return false;
       // لو المطلوب Editor، فالأدمن (5150) والإيديتور (1984) مسموح ليهم
-      if (requiredRole === ROLES_LIST.Editor) {
-        return state.userRole === ROLES_LIST.Editor || state.userRole === ROLES_LIST.Admin;
+      if (requiredRole === RolesList.Editor) {
+        return state.userRole === RolesList.Editor || state.userRole === RolesList.Admin;
       }
-      if (requiredRole === ROLES_LIST.Admin) {
-        return state.userRole === ROLES_LIST.Admin;
+      if (requiredRole === RolesList.Admin) {
+        return state.userRole === RolesList.Admin;
       }
       return true; // الـ User العادي يشوف كلو مالم يحدد دور أعلى
     }

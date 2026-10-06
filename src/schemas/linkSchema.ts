@@ -3,7 +3,7 @@ import { z } from 'zod'
 // createLink(episode_id, data = {})
 const createLinkSchema = z.object({
   server_name: z.string().trim().min(2).max(50),
-  url: z.string().trim().url(),
+  url: z.string().trim().pipe(z.url('بريد إلكتروني غير صالح')),
   is_fixed: z.boolean().optional(),
   check_count: z.number().int().nonnegative().optional(),
   last_check_status: z.enum(['pending', 'valid', 'broken']).optional(),
@@ -19,3 +19,11 @@ const updateLinkByIdSchema = createLinkSchema
   })
 
 export { createLinkSchema, updateLinkByIdSchema }
+
+
+// ==============================================================
+//  export Types
+// ==============================================================
+
+export type CreateLinkSchemaType = z.infer<typeof createLinkSchema>
+export type UpdateLinkByIdSchemaType = z.infer<typeof updateLinkByIdSchema>

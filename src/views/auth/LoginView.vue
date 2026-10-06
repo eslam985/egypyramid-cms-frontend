@@ -1,22 +1,20 @@
-<script setup>
+<script setup lang="ts">
 import { useRouter } from 'vue-router'
 import { reactive } from 'vue'
 import { useI18n } from 'vue-i18n'
 
-import { useAuthStore } from '@/stores/authStore'
-import { useNotificationStore } from '@/stores/notificationStore'
-import { loginUserSchema } from '@/schemas/authSchema'
-import { useFormValidation } from '@/composables/useFormValidation'
+import { useAuthStore } from '../../stores/authStore'
+import { useNotificationStore } from '../../stores/notificationStore'
+import { loginUserSchema } from '../../schemas/authSchema'
+import { useFormValidation } from '../../composables/useFormValidation'
 
 const { t } = useI18n()
 
-// تجميع الحقول في كائن reactive واحد
 const formData = reactive({
   email: '',
   password: '',
 })
 
-// استدعاء الـ Composable وتمرين الـ Schema
 const { errors, validate } = useFormValidation(loginUserSchema)
 
 const router = useRouter()
@@ -26,9 +24,8 @@ const notiStore = useNotificationStore()
 const handleSubmit = async () => {
   authStore.successMessage = ''
 
-  // فحص البيانات باستخدام Zod
   const { isValid, data } = validate(formData)
-  if (!isValid) return // إيقاف التنفيذ إذا توجد أخطاء مدخلات
+  if (!isValid || !data) return
 
   authStore.isLoading = true
 
@@ -47,7 +44,7 @@ const handleSubmit = async () => {
 
 <template>
   <div
-    class="min-h-screen bg-background flex items-center justify-center p-fluidsm:p-6 select-none relative"
+    class="min-h-screen bg-background flex items-center justify-center p-6 sm:p-6 select-none relative"
   >
     <!-- صندوق تسجيل الدخول -->
     <div

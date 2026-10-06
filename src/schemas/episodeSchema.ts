@@ -33,3 +33,10 @@ const updateEpisodeSchema = createEpisodeSchema
   })
 
 export { createEpisodeSchema, updateEpisodeSchema }
+
+// ==============================================================
+//  استخراج Types
+// ==============================================================
+
+export type CreateEpisodeSchemaType = z.infer<typeof createEpisodeSchema>
+export type UpdateEpisodeSchemaType = z.infer<typeof updateEpisodeSchema>
