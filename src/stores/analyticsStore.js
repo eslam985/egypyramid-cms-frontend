@@ -1,163 +1,163 @@
 import { defineStore } from 'pinia'
 import {
-  getSystemCounters,
-  getTotalBrokenAndValidAndPendingLinks,
-  getNotReadyMedias,
-  getBrokenLinks,
-  getMissingEpisodesByServer,
-  getLockedTelegramLinks,
-  handleExportNotReadyMedias,
-  handleExportBrokenLinks,
-  handleExportMissingEpisodesByServer,
-  handleExportLockedTelegramLinks,
+    getSystemCounters,
+    getTotalBrokenAndValidAndPendingLinks,
+    getNotReadyMedias,
+    getBrokenLinks,
+    getMissingEpisodesByServer,
+    getLockedTelegramLinks,
+    handleExportNotReadyMedias,
+    handleExportBrokenLinks,
+    handleExportMissingEpisodesByServer,
+    handleExportLockedTelegramLinks,
 } from '@/api/data/analytics'
 
 import { handleStoreFetch, handleStoreExport } from '@/utils/store'
 
 const useAnalyticsStore = defineStore('analytics', {
-  state: () => ({
-    systemCounters: {},
-    totalCountersStatusServeres: [],
-    mediasNotReadyList: [],
-    brokenLinksList: [],
-    missingLinksByServer: [],
-    telegramLocked: [],
-    pagination: {
-      total: 0,
-      page: 1,
-      limit: 20,
-      totalPage: 0,
-    },
-    isLoading: false,
-    successMessage: '',
-    errorMessage: '',
-  }),
-  actions: {
-    resetContentState() {
-      this.systemCounters = {}
-      this.totalCountersStatusServeres = []
-      this.mediasNotReadyList = []
-      this.brokenLinksList = []
-      this.missingLinksByServer = []
-      this.telegramLocked = []
-    },
-    async exportNotReadyMedia(filters = {}) {
-      const date = new Date().toISOString().slice(0, 10)
+    state: () => ({
+        systemCounters: {},
+        totalCountersStatusServeres: [],
+        mediasNotReadyList: [],
+        brokenLinksList: [],
+        missingLinksByServer: [],
+        telegramLocked: [],
+        pagination: {
+            total: 0,
+            page: 1,
+            limit: 20,
+            totalPage: 0,
+        },
+        isLoading: false,
+        successMessage: '',
+        errorMessage: '',
+    }),
+    actions: {
+        resetContentState() {
+            this.systemCounters = {}
+            this.totalCountersStatusServeres = []
+            this.mediasNotReadyList = []
+            this.brokenLinksList = []
+            this.missingLinksByServer = []
+            this.telegramLocked = []
+        },
+        async exportNotReadyMedia(filters = {}) {
+            const date = new Date().toISOString().slice(0, 10)
 
-      return handleStoreExport({
-        store: this,
-        apiCall: handleExportNotReadyMedias,
-        args: filters,
-        defaultFileName: `not-ready-medias-${date}.csv`,
-        defaultError: 'حدثت مشكلة أثناء تصدير الاعمال الغير جاهزة!',
-      })
-    },
-    async exportBrokenLinks(filters = {}) {
-      const date = new Date().toISOString().slice(0, 10)
+            return handleStoreExport({
+                store: this,
+                apiCall: handleExportNotReadyMedias,
+                args: filters,
+                defaultFileName: `not-ready-medias-${date}.csv`,
+                defaultError: 'حدثت مشكلة أثناء تصدير الاعمال الغير جاهزة!',
+            })
+        },
+        async exportBrokenLinks(filters = {}) {
+            const date = new Date().toISOString().slice(0, 10)
 
-      return handleStoreExport({
-        store: this,
-        apiCall: handleExportBrokenLinks,
-        args: filters,
-        defaultFileName: `export-broken-links-${date}.csv`,
-        defaultError: 'حدثت مشكلة أثناء تصدير اللينكات التالفة!',
-      })
-    },
-    async exportMissingEpisodesByServer(filters = {}) {
-      const date = new Date().toISOString().slice(0, 10)
+            return handleStoreExport({
+                store: this,
+                apiCall: handleExportBrokenLinks,
+                args: filters,
+                defaultFileName: `export-broken-links-${date}.csv`,
+                defaultError: 'حدثت مشكلة أثناء تصدير اللينكات التالفة!',
+            })
+        },
+        async exportMissingEpisodesByServer(filters = {}) {
+            const date = new Date().toISOString().slice(0, 10)
 
-      return handleStoreExport({
-        store: this,
-        apiCall: handleExportMissingEpisodesByServer,
-        args: filters,
-        defaultFileName: `export-missing-episodes-by-server-name-${date}.csv`,
-        defaultError: 'حدثت مشكلة أثناء تصدير السرفرات المفقودة من الحلقات!',
-      })
-    },
-    async exportLockedTelegramLinks(filters = {}) {
-      const date = new Date().toISOString().slice(0, 10)
+            return handleStoreExport({
+                store: this,
+                apiCall: handleExportMissingEpisodesByServer,
+                args: filters,
+                defaultFileName: `export-missing-episodes-by-server-name-${date}.csv`,
+                defaultError: 'حدثت مشكلة أثناء تصدير السرفرات المفقودة من الحلقات!',
+            })
+        },
+        async exportLockedTelegramLinks(filters = {}) {
+            const date = new Date().toISOString().slice(0, 10)
 
-      return handleStoreExport({
-        store: this,
-        apiCall: handleExportLockedTelegramLinks,
-        args: filters,
-        defaultFileName: `export-locked-telegram-links-${date}.csv`,
-        defaultError: 'حدثت مشكلة أثناء تصدير لينكات تليجرام المحجوزة!',
-      })
-    },
+            return handleStoreExport({
+                store: this,
+                apiCall: handleExportLockedTelegramLinks,
+                args: filters,
+                defaultFileName: `export-locked-telegram-links-${date}.csv`,
+                defaultError: 'حدثت مشكلة أثناء تصدير لينكات تليجرام المحجوزة!',
+            })
+        },
 
-    async fetchAllCounters(force = false) {
-      return handleStoreFetch({
-        store: this,
-        apiCall: getSystemCounters,
-        targetKey: 'systemCounters',
-        defaultError: 'حدث خطا أثناء جلب العدادات!',
-        force,
-      })
+        async fetchAllCounters(force = false) {
+            return handleStoreFetch({
+                store: this,
+                apiCall: getSystemCounters,
+                targetKey: 'systemCounters',
+                defaultError: 'حدث خطا أثناء جلب العدادات!',
+                force,
+            })
+        },
+        async fetchMissingEpisodesByServer(params = {}, force = false) {
+            return handleStoreFetch({
+                store: this,
+                apiCall: getMissingEpisodesByServer,
+                args: params,
+                targetKey: 'missingLinksByServer',
+                defaultError: 'حدث خطا أثناء جلب السرفرات المفقودة!',
+                force,
+            })
+        },
+        async fetchTotalCountersStatusServers(status = 'broken', force = false) {
+            return handleStoreFetch({
+                store: this,
+                apiCall: getTotalBrokenAndValidAndPendingLinks,
+                args: status,
+                targetKey: 'totalCountersStatusServeres',
+                defaultError: 'حدث خطا أثناء جلب الحالات!',
+                force,
+            })
+        },
+        async fetchNotReadyMedias(params = {}, force = false) {
+            if (typeof params === 'boolean') {
+                params = {}
+                force = true
+            }
+            return handleStoreFetch({
+                store: this,
+                apiCall: getNotReadyMedias,
+                args: params,
+                targetKey: 'mediasNotReadyList',
+                defaultError: 'حدث خطا أثناء جلب الاعمال الغير جاهزة!',
+                force,
+            })
+        },
+        async fetchBrokenLinks(params = {}, force = false) {
+            if (params.serverName === undefined) {
+                params.serverName = 'telegram_direct'
+                force = true
+            }
+            return handleStoreFetch({
+                store: this,
+                apiCall: getBrokenLinks,
+                args: params,
+                targetKey: 'brokenLinksList',
+                defaultError: 'حدث خطا أثناء جلب اللينكات المكسورة!',
+                force,
+            })
+        },
+        async fetchLockedTelegramLinks(params = {}, force = false) {
+            if (typeof params === 'boolean') {
+                params = {}
+                force = true
+            }
+            return handleStoreFetch({
+                store: this,
+                apiCall: getLockedTelegramLinks,
+                args: params,
+                targetKey: 'telegramLocked',
+                defaultError: 'حدث خطا أثناء جلب اللينكات المحجوزة!',
+                force,
+            })
+        },
     },
-    async fetchMissingEpisodesByServer(params = {}, force = false) {
-      return handleStoreFetch({
-        store: this,
-        apiCall: getMissingEpisodesByServer,
-        args: params,
-        targetKey: 'missingLinksByServer',
-        defaultError: 'حدث خطا أثناء جلب السرفرات المفقودة!',
-        force,
-      })
-    },
-    async fetchTotalCountersStatusServers(status = 'broken', force = false) {
-      return handleStoreFetch({
-        store: this,
-        apiCall: getTotalBrokenAndValidAndPendingLinks,
-        args: status,
-        targetKey: 'totalCountersStatusServeres',
-        defaultError: 'حدث خطا أثناء جلب الحالات!',
-        force,
-      })
-    },
-    async fetchNotReadyMedias(params = {}, force = false) {
-      if (typeof params === 'boolean') {
-        params = {}
-        force = true
-      }
-      return handleStoreFetch({
-        store: this,
-        apiCall: getNotReadyMedias,
-        args: params,
-        targetKey: 'mediasNotReadyList',
-        defaultError: 'حدث خطا أثناء جلب الاعمال الغير جاهزة!',
-        force,
-      })
-    },
-    async fetchBrokenLinks(params = {}, force = false) {
-      if (params.serverName === undefined) {
-        params.serverName = 'telegram_direct'
-        force = true
-      }
-      return handleStoreFetch({
-        store: this,
-        apiCall: getBrokenLinks,
-        args: params,
-        targetKey: 'brokenLinksList',
-        defaultError: 'حدث خطا أثناء جلب اللينكات المكسورة!',
-        force,
-      })
-    },
-    async fetchLockedTelegramLinks(params = {}, force = false) {
-      if (typeof params === 'boolean') {
-        params = {}
-        force = true
-      }
-      return handleStoreFetch({
-        store: this,
-        apiCall: getLockedTelegramLinks,
-        args: params,
-        targetKey: 'telegramLocked',
-        defaultError: 'حدث خطا أثناء جلب اللينكات المحجوزة!',
-        force,
-      })
-    },
-  },
 })
 
 export { useAnalyticsStore }

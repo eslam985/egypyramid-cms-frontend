@@ -1,7 +1,7 @@
 <script setup>
 import { onMounted } from 'vue'
 import { useAnalyticsStore } from '@/stores/analyticsStore'
-import { useRouter, } from 'vue-router'
+import { useRouter } from 'vue-router'
 
 import HeaderDashbord from '@/components/dashbord/HeaderDashbord.vue'
 import SystemCounters from '@/components/dashbord/SystemCounters.vue'
@@ -14,21 +14,21 @@ const analyticsStore = useAnalyticsStore()
 const router = useRouter()
 
 onMounted(async () => {
-  router.push({
-    name: "dashboard",
-    query: {}
-  })
-  // جلب العدادات فقط عند فتح الصفحة
-  await analyticsStore.fetchAllCounters()
+    router.push({
+        name: 'dashboard',
+        query: {},
+    })
+    // جلب العدادات فقط عند فتح الصفحة
+    await analyticsStore.fetchAllCounters()
 })
 </script>
 
 <template>
-  <!-- حالة جاري التحميل -->
-  <div class="space-y-6 max-w-7xl mx-auto w-full min-w-0 overflow-x-hidden">
-    <HeaderDashbord />
-    <SystemCounters />
-    <ServerStatusCounters />
-    <MainTabs />
-  </div>
+    <!-- حالة جاري التحميل -->
+    <div class="space-y-6 max-w-7xl mx-auto w-full min-w-0 overflow-x-hidden">
+        <HeaderDashbord />
+        <SystemCounters />
+        <ServerStatusCounters />
+        <MainTabs />
+    </div>
 </template>

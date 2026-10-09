@@ -17,62 +17,66 @@ const notiStore = useNotificationStore()
 const router = useRouter()
 
 const columns = [
-  { label: t('genres.table.id'), key: 'id' },
-  { label: t('genres.table.name'), key: 'name' },
-  { label: t('genres.table.slug'), key: 'slug' },
-  { label: t('genres.table.createdAt'), key: 'created_at' },
+    { label: t('genres.table.id'), key: 'id' },
+    { label: t('genres.table.name'), key: 'name' },
+    { label: t('genres.table.slug'), key: 'slug' },
+    { label: t('genres.table.createdAt'), key: 'created_at' },
 ]
 let action = { label: t('genres.table.actions'), key: 'actions' }
-if(authStore.isEditorAndAbove) {
-  columns.push(action)
+if (authStore.isEditorAndAbove) {
+    columns.push(action)
 }
 
 // التعامل مع حذف تاسك
 const handleDelete = async (id) => {
-  if (!id) {
-    notiStore.triggerNotification(t('genres.noGenreToDelete'))
-    return
-  }
+    if (!id) {
+        notiStore.triggerNotification(t('genres.noGenreToDelete'))
+        return
+    }
 
-  confirmAndDelete({
-    message: t('genres.confirmDelete'),
-    action: () => genresStore.removeGenreById(id),
-    store: genresStore,
-    notiStore,
-    onSuccess: () => router.push({ name: 'genresList' }),
-  })
+    confirmAndDelete({
+        message: t('genres.confirmDelete'),
+        action: () => genresStore.removeGenreById(id),
+        store: genresStore,
+        notiStore,
+        onSuccess: () => router.push({ name: 'genresList' }),
+    })
 }
-
-
 </script>
 <template>
-  <div>
-    <BaseTable
-    :columns="columns"
-    :rows="genresStore.allGenres"
-    :isLoading="genresStore.isLoading"
-    storeKey="genres"
-    >
+    <div>
+        <BaseTable
+            :columns="columns"
+            :rows="genresStore.allGenres"
+            :isLoading="genresStore.isLoading"
+            storeKey="genres"
+        >
+            <template #cell-created_at="{ value }">
+                {{ formatDate(value) }}
+            </template>
 
-    <template #cell-created_at="{ value }">
-      {{ formatDate(value) }}
-    </template>
+            <template #cell-actions="{ row }" v-if="authStore.isEditorAndAbove">
+                <div class="flex items-center justify-center gap-fluid-gap">
+                    <router-link
+                        :to="`/edit-genre/${row.id}`"
+                        class="cursor-pointer flex gap-2 px-3 py-1.5 rounded-xl border border-line font-mediumbg-card hover:bg-line/20 transition-all active:scale-95"
+                    >
+                        <Info class="self-center text-accent" />
+                        <span class="self-center"> {{ t('common.edit') }}</span>
+                    </router-link>
 
-        <template #cell-actions="{ row }" v-if="authStore.isEditorAndAbove" >
-          <div class="flex items-center justify-center gap-fluid-gap">
-            <router-link :to="`/edit-genre/${row.id}`"
-              class="cursor-pointer flex gap-2 px-3 py-1.5 rounded-xl border border-line font-mediumbg-card hover:bg-line/20 transition-all active:scale-95">
-              <Info class="self-center text-accent" />
-              <span class="self-center"> {{ t('common.edit') }}</span>
-            </router-link>
-
-            <button v-if="authStore.isAdmin"  type="button" @click="handleDelete(row.id)" :disabled="genresStore .isLoading"
-              class="flex gap-2 px-3 py-2 rounded-xl border border-danger/20 hover:bg-danger/10 font-medium transition-all active:scale-95 disabled:opacity-50 cursor-pointer">
-              <Trash class="self-center text-danger" />
-              <span class="self-center">{{ t('common.delete') }}</span>
-            </button>
-          </div>
-      </template>
-    </BaseTable>
-  </div>
+                    <button
+                        v-if="authStore.isAdmin"
+                        type="button"
+                        @click="handleDelete(row.id)"
+                        :disabled="genresStore.isLoading"
+                        class="flex gap-2 px-3 py-2 rounded-xl border border-danger/20 hover:bg-danger/10 font-medium transition-all active:scale-95 disabled:opacity-50 cursor-pointer"
+                    >
+                        <Trash class="self-center text-danger" />
+                        <span class="self-center">{{ t('common.delete') }}</span>
+                    </button>
+                </div>
+            </template>
+        </BaseTable>
+    </div>
 </template>

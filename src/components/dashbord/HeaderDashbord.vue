@@ -12,38 +12,45 @@ const { isLoading } = storeToRefs(analyticsStore)
 
 const router = useRouter()
 const loadDashboardData = async () => {
-  router.push({
-    name: 'dashboard',
-    query: {}
-  })
-  await analyticsStore.fetchAllCounters(true)
-  await analyticsStore.fetchTotalCountersStatusServers('broken', true)
-
+    router.push({
+        name: 'dashboard',
+        query: {},
+    })
+    await analyticsStore.fetchAllCounters(true)
+    await analyticsStore.fetchTotalCountersStatusServers('broken', true)
 }
 </script>
 <template>
-  <main class="space-y-6">
-    <!-- عنوان الصفحة -->
-    <div class="flex items-center justify-between flex-wrap gap-3">
-      <div>
-        <h1 class="text-fluid-h3 font-bold">{{ t('dashboard.overview.title') }}</h1>
-        <p class="text-[9px] md:text-fluid-p text-sub mt-1 ">
-          {{ t('dashboard.overview.subtitle') }}
-        </p>
-      </div>
+    <main class="space-y-6">
+        <!-- عنوان الصفحة -->
+        <div class="flex items-center justify-between flex-wrap gap-3">
+            <div>
+                <h1 class="text-fluid-h3 font-bold">{{ t('dashboard.overview.title') }}</h1>
+                <p class="text-[9px] md:text-fluid-p text-sub mt-1">
+                    {{ t('dashboard.overview.subtitle') }}
+                </p>
+            </div>
 
-      <button @click="loadDashboardData"
-        class="btn-outline shadow-glow/10 text-fluid-xs lg:text-fluid-p text-accent-dark hover:text-slate-900 hover:bg-accent/70"
-        :disabled="isLoading">
-        <Loader class="size-5 text-accent" :class="{ 'animate-spin': isLoading }" :stroke-width="2" />
-        <span>{{ t('dashboard.overview.refresh') }}</span>
-      </button>
-    </div>
+            <button
+                @click="loadDashboardData"
+                class="btn-outline shadow-glow/10 text-fluid-xs lg:text-fluid-p text-accent-dark hover:text-slate-900 hover:bg-accent/70"
+                :disabled="isLoading"
+            >
+                <Loader
+                    class="size-5 text-accent"
+                    :class="{ 'animate-spin': isLoading }"
+                    :stroke-width="2"
+                />
+                <span>{{ t('dashboard.overview.refresh') }}</span>
+            </button>
+        </div>
 
-    <!-- رسائل الخطأ -->
-    <div v-if="errorMessage"
-      class="p-fluid bg-danger/10! border border-danger/20 text-danger rounded-2xl text-fluid-xs font-medium">
-      {{ errorMessage }}
-    </div>
-  </main>
+        <!-- رسائل الخطأ -->
+        <div
+            v-if="errorMessage"
+            class="p-fluid bg-danger/10! border border-danger/20 text-danger rounded-2xl text-fluid-xs font-medium"
+        >
+            {{ errorMessage }}
+        </div>
+    </main>
 </template>

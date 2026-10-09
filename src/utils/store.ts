@@ -1,276 +1,338 @@
 import type {
-  ExportStoreParams,
-  StoreFetchParams,
-  StoreAddParams,
-  StoreEditParams,
-  StoreDeleteParams
+    BaseApiResponse,
+    BaseStore,
+    ExportStoreParams,
+    StoreFetchParams,
+    StoreAddParams,
+    StoreEditParams,
+    StoreDeleteParams,
 } from '@/types/globalTypes'
 
+export async function handleStoreDelete<
+    TData = unknown,
+    TId extends number | string | (number | string)[] = number | string,
+    TStore extends BaseStore = BaseStore,
+>({
+    store,
+    apiCall,
+    id,
+    listKey,
+    idKey = 'id' as keyof TData,
+    defaultError = 'حدث خطأ أثناء الحذف',
+    filterFn,
+}: StoreDeleteParams<TData, TId, TStore>): Promise<boolean> {
+    if (!store) throw new Error('store is undefined or null')
 
-export async function handleStoreDelete({
-  store,
-  apiCall,
-  id,
-  listKey,
-  idKey = 'id',
-  defaultError = 'حدث خطأ أثناء الحذف',
-  filterFn = null,
-}: StoreDeleteParams): Promise<boolean> { // ✅ أضفنا نوع المخرجات الصريح للدالة
+    store.isLoading = true
+    store.successMessage = ''
+    store.errorMessage = ''
 
-  if (!store) throw new Error('store is undefined or null');
+    try {
+        const result =
+            id !== undefined && id !== null
+                ? await (apiCall as (id: TId) => Promise<BaseApiResponse<TData | null>>)(id)
+                : await (apiCall as () => Promise<BaseApiResponse<TData | null>>)()
 
-  store.isLoading = true;
-  store.successMessage = '';
-  store.errorMessage = '';
+        if (result && result.success) {
+            store.successMessage = result.message
+            if (listKey) {
+                if (Array.isArray(store[listKey])) {
+                    if (filterFn) {
+                        ;(store[listKey] as TData[]) = filterFn(store[listKey] as TData[])
+                    } else if (Array.isArray(id)) {
+                        const idsSet = new Set<unknown>(id)
 
-  try {
-    const result = id !== undefined ? await apiCall(id) : await apiCall();
-
-    if (result && result.success) {
-      store.successMessage = result.message;
-
-      if (listKey) {
-        if (Array.isArray(store[listKey])) {
-          if (filterFn) {
-            store[listKey] = filterFn(store[listKey]);
-          } else if (Array.isArray(id)) {
-            const idsSet = new Set(id);
-            store[listKey] = store[listKey].filter((item: any) => !idsSet.has(item[idKey]));
-          } else {
-            store[listKey] = store[listKey].filter((item: any) => item[idKey] !== id);
-          }
-        } else if (store[listKey] !== null && typeof store[listKey] === 'object') {
-          if (result.data) {
-            store[listKey] = { ...store[listKey], ...result.data };
-          }
+                        ;(store[listKey] as TData[]) = (store[listKey] as TData[]).filter(
+                            (item: TData) =>
+                                !idsSet.has((item as Record<string, unknown>)[idKey as string]),
+                        )
+                    } else {
+                        ;(store[listKey] as TData[]) = (store[listKey] as TData[]).filter(
+                            (item: TData) =>
+                                (item as Record<string, unknown>)[idKey as string] !== id,
+                        )
+                    }
+                } else if (store[listKey] !== null && typeof store[listKey] === 'object') {
+                    if (result.data) {
+                        store[listKey] = { ...store[listKey], ...result.data }
+                    }
+                }
+            }
+            return true
         }
-      }
-      return true;
+
+        store.errorMessage = result?.message || defaultError
+        return false
+    } catch (err) {
+        store.errorMessage = (err as any)?.response?.data?.message || defaultError
+        console.error(err)
+        return false
+    } finally {
+        store.isLoading = false
     }
-
-    // ✅ التعديل: في حال عودة result ولكن success بـ false نضع حقل الـ errorMessage ونرجع false
-    store.errorMessage = result?.message || defaultError;
-    return false;
-
-  } catch (err) {
-    store.errorMessage = (err as any)?.response?.data?.message || defaultError;
-    console.error(err);
-    return false;
-  } finally {
-    store.isLoading = false;
-  }
 }
 
+export async function handleStoreEdit<
+    TData = unknown,
+    TInput = unknown,
+    TId extends number | string = number | string,
+    TStore extends BaseStore = BaseStore,
+>({
+    store,
+    apiCall,
+    id,
+    data,
+    listKey,
+    idKey = 'id' as keyof TData,
+    defaultError = 'حدث خطأ اثناء التعديل!',
+}: StoreEditParams<TData, TInput, TId, TStore>): Promise<TData | null> {
+    if (!store) throw new Error('store is undefined or null')
 
-export async function handleStoreEdit({
-  store,
-  apiCall,
-  id,
-  data,
-  listKey,
-  idKey = 'id',
-  defaultError = 'حدث خطأ اثناء التعديل!',
-}: StoreEditParams): Promise<any> {
-  // ✅ التعديل: أضفنا نوع المخرجات الصريح Promise<any>
+    store.isLoading = true
+    store.successMessage = ''
+    store.errorMessage = ''
 
-  if (!store) throw new Error('store is undefined or null')
+    try {
+        if (data === undefined || data === null) {
+            throw new Error('data argument is required for handleStoreEdit')
+        }
 
-  store.isLoading = true
-  store.successMessage = ''
-  store.errorMessage = ''
+        const result =
+            id !== undefined && id !== null
+                ? await (
+                      apiCall as (id: TId, data: TInput) => Promise<BaseApiResponse<TData | null>>
+                  )(id, data)
+                : await (apiCall as (data: TInput) => Promise<BaseApiResponse<TData | null>>)(data)
 
-  try {
-    // ✅ التعديل: تأكدنا أن id و data موجودين يقيناً لتضييق الأنواع (Type Narrowing)
-    if ((!id && !data) || !data) return null
+        if (result && result.success) {
+            store.successMessage = result.message
 
-    const result = await apiCall(id, data)
-    console.log('الهيكل الفعلي لـ result داخل الـ Util:', result)
+            if (listKey) {
+                const targetList = store[listKey]
 
-    if (result && result.success) {
-      store.successMessage = result.message
+                if (Array.isArray(targetList)) {
+                    const keyToCompare = (idKey || 'id') as keyof TData
+                    const searchId =
+                        id !== undefined
+                            ? id
+                            : (data as Record<string, unknown>)?.[keyToCompare as string]
 
-      if (listKey) {
-        if (Array.isArray(store[listKey])) {
-          // التايب سكريبت هنا يضمن 100% أن id ليس undefined بفضل شرط الحماية بالأعلى
-          const index = store[listKey].findIndex((item: any) => item[idKey] === id)
-          if (index !== -1) {
-            store[listKey][index] = result.data
-          }
-        } else if (store[listKey] !== null && typeof store[listKey] === 'object') {
-          store[listKey] = { ...store[listKey], ...result.data }
+                    const index = (targetList as TData[]).findIndex(
+                        (item: TData) =>
+                            (item as Record<string, unknown>)[keyToCompare as string] === searchId,
+                    )
+                    if (index !== -1 && result.data) {
+                        targetList[index] = result.data
+                    }
+                } else if (targetList !== null && typeof targetList === 'object') {
+                    store[listKey] = { ...targetList, ...result.data }
+                } else {
+                    ;(store[listKey] as TData | null) = result.data
+                }
+            }
+
+            return result.data !== undefined ? result.data : null
         } else {
-          store[listKey] = result.data
+            store.errorMessage = result?.message || defaultError
+            return null
         }
-      }
-
-      return result.data !== undefined ? result.data : true
-    } else {
-      store.errorMessage = result?.message || defaultError
-      return null
+    } catch (err) {
+        store.errorMessage = (err as any)?.response?.data?.message || defaultError
+        console.error(err)
+        return null
+    } finally {
+        store.isLoading = false
     }
-  } catch (err) {
-    store.errorMessage = (err as any)?.response?.data?.message || defaultError
-    console.error(err)
-    return null
-  } finally {
-    store.isLoading = false
-  }
 }
 
-export async function handleStoreAdd({
-  store,
-  apiCall,
-  id,
-  data,
-  listKey,
-  defaultError = 'حدث خطأ اثناء الإضافة!',
-}: StoreAddParams): Promise<any> {
-  if (!store) throw new Error('store is undefined or null')
+export async function handleStoreAdd<
+    TData = unknown,
+    TInput = unknown,
+    TStore extends BaseStore = BaseStore,
+>({
+    store,
+    apiCall,
+    id,
+    data,
+    listKey,
+    defaultError = 'حدث خطأ اثناء الإضافة!',
+}: StoreAddParams<TData, TInput, TStore>): Promise<TData | null> {
+    if (!store) throw new Error('store is undefined or null')
 
-  store.isLoading = true
-  store.successMessage = ''
-  store.errorMessage = ''
-  try {
-    const result =
-      id !== undefined && data !== undefined ? await apiCall(id, data) : await apiCall(data ?? {})
+    store.isLoading = true
+    store.successMessage = ''
+    store.errorMessage = ''
 
-    if (result.success) {
-      store.successMessage = result.message
+    try {
+        if (data === undefined || data === null)
+            throw new Error('data argument is required for handleStoreAdd')
 
-      if (listKey && Array.isArray(store[listKey])) {
-        store[listKey].push(result.data)
-      }
+        const result =
+            id !== undefined && id !== null
+                ? await (
+                      apiCall as (
+                          id: string | number,
+                          data: TInput,
+                      ) => Promise<BaseApiResponse<TData>>
+                  )(id, data)
+                : await (apiCall as (data: TInput) => Promise<BaseApiResponse<TData>>)(data)
 
-      return result.data
-    } else {
-      store.errorMessage = result.message
-      return null
+        if (result.success) {
+            store.successMessage = result.message
+
+            // إذا كان هناك listKey والـ store يحتوي على هذه القائمة
+            if (listKey && Array.isArray(store[listKey])) {
+                ;(store[listKey] as TData[]).push(result.data)
+            }
+
+            return result.data // TypeScript أصبح يعلم أن result.data نوعها TData!
+        } else {
+            store.errorMessage = result.message
+            return null
+        }
+    } catch (err: any) {
+        store.errorMessage = err?.response?.data?.message || defaultError
+        console.error(err)
+        return null
+    } finally {
+        store.isLoading = false
     }
-  } catch (err) {
-    store.errorMessage = (err as any)?.response?.data?.message || defaultError
-    console.error(err)
-    return null
-  } finally {
-    store.isLoading = false
-  }
 }
 
-export async function handleStoreFetch({
-  store,
-  apiCall,
-  args,
-  targetKey,
-  paginationKey = 'pagination',
-  defaultError = 'حدث خطأ أثناء جلب البيانات',
-  force = false,
-}: StoreFetchParams): Promise<any> {
-  // ✅ أضفنا نوع المخرجات الصريح للدالة
+export async function handleStoreFetch<
+    TData = unknown,
+    TInput = unknown,
+    TStore extends BaseStore = BaseStore,
+>({
+    store,
+    apiCall,
+    args,
+    targetKey,
+    paginationKey = 'pagination' as keyof TStore,
+    defaultError = 'حدث خطأ أثناء جلب البيانات',
+    force = false,
+}: StoreFetchParams<TData, TInput, TStore>): Promise<TData | null> {
+    const currentArgsStr = args ? JSON.stringify(args) : ''
+    if (!store) throw new Error('store is undefined or null')
 
-  const currentArgsStr = args ? JSON.stringify(args) : ''
-  if (!store) throw new Error('store is undefined or null')
+    if (
+        !force &&
+        targetKey &&
+        store[targetKey] !== null &&
+        store[targetKey] !== undefined &&
+        store._lastFetchArgs === currentArgsStr
+    ) {
+        const targetVal = store[targetKey]
+        const hasData = Array.isArray(targetVal)
+            ? targetVal.length > 0
+            : targetVal && typeof targetVal === 'object'
+              ? Object.keys(targetVal).length > 0
+              : Boolean(targetVal)
 
-  // ✅ التعديل: تأكدنا أولاً أن targetKey ممرر وله قيمة (targetKey && ...) لتجنب أخطاء المفاتيح الفارغة
-  if (
-    !force &&
-    targetKey &&
-    store[targetKey] !== null &&
-    store[targetKey] !== undefined &&
-    store._lastFetchArgs === currentArgsStr
-  ) {
-    const hasData = Array.isArray(store[targetKey])
-      ? store[targetKey].length > 0
-      : Object.keys(store[targetKey]).length > 0
-
-    if (hasData) {
-      return store[targetKey]
-    }
-  }
-
-  store.isLoading = true
-  store.successMessage = ''
-  store.errorMessage = ''
-
-  try {
-    let result
-    if (args !== undefined) {
-      result = Array.isArray(args) ? await apiCall(...args) : await apiCall(args)
-    } else {
-      result = await apiCall()
+        if (hasData) {
+            return store[targetKey] as TData
+        }
     }
 
-    if (result && result.success) {
-      store.successMessage = result.message
+    store.isLoading = true
+    store.successMessage = ''
+    store.errorMessage = ''
 
-      if (targetKey) {
-        store[targetKey] = result.data
-      }
+    try {
+        let result
+        if (Array.isArray(args) && args.length > 1) {
+            const firstArg = args[0] as TInput
+            const secondArg = args[1] as TInput
 
-      if (paginationKey && result.pagination !== undefined) {
-        store[paginationKey] = result.pagination
-      }
+            result = await (
+                apiCall as (arg1: TInput, arg2: TInput) => Promise<BaseApiResponse<TData>>
+            )(firstArg, secondArg)
+        } else if (Array.isArray(args) && args.length === 1) {
+            result = await (apiCall as (data: TInput) => Promise<BaseApiResponse<TData>>)(
+                args[0] as TInput,
+            )
+        } else if (args !== undefined && !Array.isArray(args)) {
+            result = await (apiCall as (data: TInput) => Promise<BaseApiResponse<TData>>)(args)
+        } else {
+            result = await (apiCall as () => Promise<BaseApiResponse<TData>>)()
+        }
 
-      store._lastFetchArgs = currentArgsStr
-      return result.data
-    } else {
-      store.errorMessage = result?.message || defaultError
-      return null
+        if (result && result.success) {
+            store.successMessage = result.message
+
+            if (targetKey) {
+                store[targetKey] = result.data as TStore[keyof TStore]
+            }
+
+            if (paginationKey && result.pagination !== undefined) {
+                store[paginationKey] = result.pagination as TStore[keyof TStore]
+            }
+
+            store._lastFetchArgs = currentArgsStr
+            return result.data
+        } else {
+            store.errorMessage = result?.message || defaultError
+            return null
+        }
+    } catch (err) {
+        store.errorMessage = (err as any)?.response?.data?.message || defaultError
+        console.error(err)
+        return null
+    } finally {
+        store.isLoading = false
     }
-  } catch (err) {
-    // ✅ التعديل: تحويل err إلى any لقراءة الـ response بأمان تحت الوضع الصارم
-    store.errorMessage = (err as any)?.response?.data?.message || defaultError
-    console.error(err)
-    return null
-  } finally {
-    store.isLoading = false
-  }
 }
 
 /**
  * دالة عامة وموحدة لإدارة عمليات تصدير الجداول وتحميلها كملفات CSV
  * مع إدارة حالات الـ Loading ورسائل النجاح والأخطاء للستور الممرر تلقائياً
  */
-export async function handleStoreExport({
-  store,
-  apiCall,
-  args,
-  defaultFileName = 'export.csv',
-  defaultError = 'حدث خطأ أثناء تصدير البيانات',
-}: ExportStoreParams): Promise<boolean> {
-  // أضفنا نوع المخرجات الصريح : Promise<boolean>
+export async function handleStoreExport<TInput = unknown, TStore extends BaseStore = BaseStore>({
+    store,
+    apiCall,
+    args,
+    defaultFileName = 'export.csv',
+    defaultError = 'حدث خطأ أثناء تصدير البيانات',
+}: ExportStoreParams<TInput, TStore>): Promise<boolean> {
+    if (!store) throw new Error('store is undefined or null')
 
-  if (!store) throw new Error('store is undefined or null')
+    store.isLoading = true
+    store.successMessage = ''
+    store.errorMessage = ''
 
-  store.isLoading = true
-  store.successMessage = ''
-  store.errorMessage = ''
+    try {
+        // استدعاء الـ API بمرونة (سواء ممرر args أم لا)
+        const response = args !== undefined ? await apiCall(args) : await apiCall()
 
-  try {
-    let blobData
-    if (args !== undefined) {
-      blobData = Array.isArray(args) ? await apiCall(...args) : await apiCall(args)
-    } else {
-      blobData = await apiCall()
+        // استخراج الداتا الحقيقية (سواء كانت response.data من أكسيوس أو Blob مباشر)
+        const blobData =
+            typeof response === 'object' && response !== null && 'data' in response
+                ? (response as { data: BlobPart }).data
+                : (response as BlobPart)
+
+        // التأكد من تحويل البيانات لـ Blob صالح للـ CSV
+        const blob =
+            blobData instanceof Blob
+                ? blobData
+                : new Blob([blobData as BlobPart], { type: 'text/csv;charset=utf-8;' })
+
+        const url = window.URL.createObjectURL(blob)
+        const link = document.createElement('a')
+        link.href = url
+        link.setAttribute('download', defaultFileName)
+
+        document.body.appendChild(link)
+        link.click()
+        link.remove()
+        window.URL.revokeObjectURL(url)
+
+        store.successMessage = 'تم تصدير وتحميل الملف بنجاح'
+        return true
+    } catch (err) {
+        store.errorMessage = (err as any)?.response?.data?.message || defaultError
+        console.error('Export Utility Error:', err)
+        return false
+    } finally {
+        store.isLoading = false
     }
-
-    const url: string = window.URL.createObjectURL(
-      new Blob([blobData], { type: 'text/csv;charset=utf-8;' }),
-    )
-    const link: HTMLAnchorElement = document.createElement('a')
-    link.href = url
-    link.setAttribute('download', defaultFileName)
-
-    document.body.appendChild(link)
-    link.click()
-    link.remove()
-    window.URL.revokeObjectURL(url)
-
-    store.successMessage = 'تم تصدير وتحميل الملف بنجاح'
-    return true
-  } catch (err) {
-    store.errorMessage = (err as any)?.response?.data?.message || defaultError
-    console.error('Export Utility Error:', err)
-    return false
-  } finally {
-    store.isLoading = false
-  }
 }

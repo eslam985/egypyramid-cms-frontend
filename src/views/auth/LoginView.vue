@@ -11,8 +11,8 @@ import { useFormValidation } from '../../composables/useFormValidation'
 const { t } = useI18n()
 
 const formData = reactive({
-  email: '',
-  password: '',
+    email: '',
+    password: '',
 })
 
 const { errors, validate } = useFormValidation(loginUserSchema)
@@ -22,105 +22,111 @@ const authStore = useAuthStore()
 const notiStore = useNotificationStore()
 
 const handleSubmit = async () => {
-  authStore.successMessage = ''
+    authStore.successMessage = ''
 
-  const { isValid, data } = validate(formData)
-  if (!isValid || !data) return
+    const { isValid, data } = validate(formData)
+    if (!isValid || !data) return
 
-  authStore.isLoading = true
+    authStore.isLoading = true
 
-  const isSuccess = await authStore.loginUser(data)
+    const isSuccess = await authStore.loginUser(data)
 
-  authStore.isLoading = false
+    authStore.isLoading = false
 
-  if (isSuccess) {
-    notiStore.triggerNotification(authStore.successMessage)
-    router.push('/')
-  } else {
-    notiStore.triggerNotification(authStore.errorMessage)
-  }
+    if (isSuccess) {
+        notiStore.triggerNotification(authStore.successMessage)
+        router.push('/')
+    } else {
+        notiStore.triggerNotification(authStore.errorMessage)
+    }
 }
 </script>
 
 <template>
-  <div
-    class="min-h-screen bg-background flex items-center justify-center p-6 sm:p-6 select-none relative"
-  >
-    <!-- صندوق تسجيل الدخول -->
     <div
-      class="w-full max-w-md bg-card rounded-2xl border border-custom-border shadow-xl p-8 space-y-6"
+        class="min-h-screen bg-background flex items-center justify-center p-6 sm:p-6 select-none relative"
     >
-      <!-- شعار ومقدمة ترحيبية -->
-      <div class="text-center space-y-2">
+        <!-- صندوق تسجيل الدخول -->
         <div
-          class="inline-flex w-12 h-12 bg-accent rounded-2xl items-center justify-center text-white font-black text-lg shadow-lg shadow-accent/20 mb-2"
+            class="w-full max-w-md bg-card rounded-2xl border border-custom-border shadow-xl p-8 space-y-6"
         >
-          D
+            <!-- شعار ومقدمة ترحيبية -->
+            <div class="text-center space-y-2">
+                <div
+                    class="inline-flex w-12 h-12 bg-accent rounded-2xl items-center justify-center text-white font-black text-lg shadow-lg shadow-accent/20 mb-2"
+                >
+                    D
+                </div>
+                <h2 class="text-2xl font-bold text-title tracking-tight">
+                    {{ t('auth.welcomeBack') }}
+                </h2>
+                <p class="text-sub text-sm">{{ t('auth.pleaseEnterDetails') }}</p>
+            </div>
+
+            <!-- استمارة تسجيل الدخول -->
+            <form @submit.prevent="handleSubmit" class="space-y-4">
+                <!-- حقل اسم المستخدم -->
+                <div class="flex flex-col gap-1.5">
+                    <label for="username" class="form-label">{{ t('auth.username') }}</label>
+                    <div class="relative">
+                        <input
+                            id="username"
+                            type="text"
+                            :placeholder="t('auth.usernamePlaceholder')"
+                            v-model="formData.email"
+                            :class="[
+                                errors.email ? 'border-red-500 focus:ring-red-100' : '',
+                                'form-input pl-11!',
+                            ]"
+                        />
+
+                        <!-- رسالة الخطأ الخاص بالحقل -->
+                        <p v-if="errors.email" class="text-fluid-xs text-red-500 mt-1">
+                            {{ errors.email }}
+                        </p>
+                    </div>
+                </div>
+
+                <!-- حقل كلمة المرور -->
+                <div class="flex flex-col gap-1.5">
+                    <div class="flex justify-between items-center">
+                        <label for="password" class="form-label mb-0">{{
+                            t('auth.password')
+                        }}</label>
+                        <a
+                            href="#"
+                            class="text-fluid-xs font-semibold text-accent hover:text-accent-dark transition-colors"
+                            >{{ t('auth.forgotPassword') }}</a
+                        >
+                    </div>
+                    <div class="relative">
+                        <input
+                            id="password"
+                            type="password"
+                            placeholder="••••••••"
+                            v-model="formData.password"
+                            :class="[
+                                errors.password ? 'border-red-500 focus:ring-red-100' : '',
+                                'form-input pl-11',
+                            ]"
+                        />
+
+                        <!-- رسالة الخطأ الخاص بالحقل -->
+                        <p v-if="errors.password" class="text-fluid-xs text-red-500 mt-1">
+                            {{ errors.password }}
+                        </p>
+                    </div>
+                </div>
+
+                <!-- زر تسجيل الدخول -->
+                <button
+                    type="submit"
+                    class="btn-primary w-full mt-4 flex items-center justify-center gap-2"
+                    :disabled="authStore.isLoading"
+                >
+                    <span>{{ authStore.isLoading ? t('auth.signingIn') : t('auth.signIn') }}</span>
+                </button>
+            </form>
         </div>
-        <h2 class="text-2xl font-bold text-title tracking-tight">{{ t('auth.welcomeBack') }}</h2>
-        <p class="text-sub text-sm">{{ t('auth.pleaseEnterDetails') }}</p>
-      </div>
-
-      <!-- استمارة تسجيل الدخول -->
-      <form @submit.prevent="handleSubmit" class="space-y-4">
-        <!-- حقل اسم المستخدم -->
-        <div class="flex flex-col gap-1.5">
-          <label for="username" class="form-label">{{ t('auth.username') }}</label>
-          <div class="relative">
-            <input
-              id="username"
-              type="text"
-              :placeholder="t('auth.usernamePlaceholder')"
-              v-model="formData.email"
-              :class="[
-                errors.email ? 'border-red-500 focus:ring-red-100' : '',
-                'form-input pl-11!',
-              ]"
-            />
-
-            <!-- رسالة الخطأ الخاص بالحقل -->
-            <p v-if="errors.email" class="text-fluid-xs text-red-500 mt-1">{{ errors.email }}</p>
-          </div>
-        </div>
-
-        <!-- حقل كلمة المرور -->
-        <div class="flex flex-col gap-1.5">
-          <div class="flex justify-between items-center">
-            <label for="password" class="form-label mb-0">{{ t('auth.password') }}</label>
-            <a
-              href="#"
-              class="text-fluid-xs font-semibold text-accent hover:text-accent-dark transition-colors"
-              >{{ t('auth.forgotPassword') }}</a
-            >
-          </div>
-          <div class="relative">
-            <input
-              id="password"
-              type="password"
-              placeholder="••••••••"
-              v-model="formData.password"
-              :class="[
-                errors.password ? 'border-red-500 focus:ring-red-100' : '',
-                'form-input pl-11',
-              ]"
-            />
-
-            <!-- رسالة الخطأ الخاص بالحقل -->
-            <p v-if="errors.password" class="text-fluid-xs text-red-500 mt-1">
-              {{ errors.password }}
-            </p>
-          </div>
-        </div>
-
-        <!-- زر تسجيل الدخول -->
-        <button
-          type="submit"
-          class="btn-primary w-full mt-4 flex items-center justify-center gap-2"
-          :disabled="authStore.isLoading"
-        >
-          <span>{{ authStore.isLoading ? t('auth.signingIn') : t('auth.signIn') }}</span>
-        </button>
-      </form>
     </div>
-  </div>
 </template>
