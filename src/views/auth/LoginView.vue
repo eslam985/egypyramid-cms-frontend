@@ -5,11 +5,12 @@ import { useI18n } from 'vue-i18n'
 
 import { useAuthStore } from '../../stores/authStore'
 import { loginUserSchema } from '../../schemas/authSchema'
+import type { LoginUserInputsType } from '../../schemas/authSchema'
 import { useFormValidation } from '../../composables/useFormValidation'
 
 const { t } = useI18n()
 
-const formData = reactive({
+const formData = reactive<LoginUserInputsType>({
     email: '',
     password: '',
 })
@@ -17,10 +18,9 @@ const formData = reactive({
 const { errors, validate } = useFormValidation(loginUserSchema)
 
 const router = useRouter()
-// const authStore = useAuthStore()
 const authStore = useAuthStore()
 
-const handleSubmit = async () => {
+const handleSubmit = async (): Promise<void> => {
     const { isValid, data } = validate(formData)
     if (!isValid || !data) return
 
@@ -57,10 +57,10 @@ const handleSubmit = async () => {
             <form @submit.prevent="handleSubmit" class="space-y-4">
                 <!-- حقل اسم المستخدم -->
                 <div class="flex flex-col gap-1.5">
-                    <label for="username" class="form-label">{{ t('auth.username') }}</label>
+                    <label for="email" class="form-label">email</label>
                     <div class="relative">
                         <input
-                            id="username"
+                            id="email"
                             type="text"
                             :placeholder="t('auth.usernamePlaceholder')"
                             v-model="formData.email"

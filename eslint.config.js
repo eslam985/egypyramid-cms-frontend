@@ -4,11 +4,25 @@ import js from '@eslint/js'
 import pluginVue from 'eslint-plugin-vue'
 import pluginOxlint from 'eslint-plugin-oxlint'
 import skipFormatting from 'eslint-config-prettier/flat'
+import vueParser from 'vue-eslint-parser'
+import tseslint from 'typescript-eslint'
 
 export default defineConfig([
     {
         name: 'app/files-to-lint',
-        files: ['**/*.{vue,js,mjs,jsx}'],
+        // 👈 تم إضافة ملفات الـ .ts و .tsx لتشملها عملية الفحص والتحليل
+        files: ['**/*.{ts,tsx,vue,js,mjs,jsx}'],
+        languageOptions: {
+            parser: vueParser,
+            parserOptions: {
+                parser: tseslint.parser,
+                sourceType: 'module',
+                ecmaVersion: 'latest',
+            },
+            globals: {
+                ...globals.browser,
+            },
+        },
         rules: {
             'no-unused-vars': 'off',
             'vue/no-unused-vars': 'off',
@@ -16,14 +30,6 @@ export default defineConfig([
     },
 
     globalIgnores(['**/dist/**', '**/dist-ssr/**', '**/coverage/**']),
-
-    {
-        languageOptions: {
-            globals: {
-                ...globals.browser,
-            },
-        },
-    },
 
     js.configs.recommended,
     ...pluginVue.configs['flat/essential'],

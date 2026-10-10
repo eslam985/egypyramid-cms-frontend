@@ -1,11 +1,12 @@
-<script setup>
+<script setup lang="ts">
+
 import { useAuthStore } from '@/stores/authStore'
 import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
 const authStore = useAuthStore()
 
-const handleRetry = async () => {
+const handleRetry = async (): Promise<void> => {
     try {
         await authStore.restoreSession()
         authStore.isServerError = false

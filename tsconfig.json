@@ -18,25 +18,19 @@
     "noUnusedParameters": true,
     "noUncheckedIndexedAccess": true,
     "allowUnreachableCode": false,
-  "exactOptionalPropertyTypes": false,
+    "exactOptionalPropertyTypes": false,
     // ⚡ إعدادات التوافق مع Vite
     "jsx": "preserve",
     "resolveJsonModule": true,
     "isolatedModules": true,
     "moduleDetection": "force",
     "skipLibCheck": true,
-    
+
     // 🔗 اختصار المسارات المباشر بدون baseUrl
     "paths": {
       "@/*": ["./src/*"]
     }
   },
-  "include": [
-    "src/**/*.ts",
-    "src/**/*.d.ts",
-    "src/**/*.tsx",
-    "src/**/*.vue",
-    "vite.config.ts"
-  ],
+  "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue", "vite.config.ts"],
   "exclude": ["node_modules", "dist"]
 }

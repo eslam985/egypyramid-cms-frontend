@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { onMounted } from 'vue'
 import HeaderGenre from '@/components/genre/genreList/HeaderGenre.vue'
 import MainGenre from '@/components/genre/genreList/MainGenre.vue'
