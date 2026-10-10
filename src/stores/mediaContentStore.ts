@@ -34,9 +34,39 @@ import {
     deleteEpisodeById,
     handleFindAllEpisodes,
 } from '@/api/data/episodes'
+import { sortByProperty } from '@/utils/global'
+import type { CreateSeasonSchemaType, UpdateSeasonSchemaType } from '@/schemas/seasonSchema'
+import type { CreateEpisodeSchemaType, UpdateEpisodeSchemaType } from '@/schemas/episodeSchema'
+import type { CreateLinkSchemaType, UpdateLinkByIdSchemaType } from '@/schemas/linkSchema'
+import type {
+    BaseStore,
+    SeasonsResponse,
+    SeasonQueryRequest,
+    EpisodeResponse,
+    BaseQueryRequest,
+    EpisodeQueryRequest,
+    LinksResponse,
+    LinksQueryRequest,
+} from '@/types/globalTypes'
+
+export interface MediaContentState extends BaseStore {
+    seasons: SeasonsResponse[] | null
+    episodes: EpisodeResponse[] | null
+    links: LinksResponse[]
+    currentSeason: SeasonsResponse | null
+    currentEpisode: EpisodeResponse | null
+    currentEpisodeId: number | string | null
+    currentLink: LinksResponse | null
+    pagination: {
+        total: number
+        page: number
+        limit: number
+        totalPage: number
+    }
+}
 
 const useMediaContentStore = defineStore('mediaContent', {
-    state: () => ({
+    state: (): MediaContentState => ({
         seasons: [],
         episodes: [],
         links: [],
@@ -65,10 +95,10 @@ const useMediaContentStore = defineStore('mediaContent', {
             this.currentLink = null
         },
         // --- Seasons ---
-        async exportSeasons(filters = {}) {
-            const date = new Date().toISOString().slice(0, 10)
+        async exportSeasons(filters: SeasonQueryRequest): Promise<boolean> {
+            const date: string = new Date().toISOString().slice(0, 10)
 
-            return handleStoreExport({
+            return handleStoreExport<SeasonQueryRequest, MediaContentState>({
                 store: this,
                 apiCall: handleFindAllSeasons,
                 args: filters,
@@ -76,8 +106,15 @@ const useMediaContentStore = defineStore('mediaContent', {
                 defaultError: 'حدثت مشكلة أثناء تصدير المواسم! ',
             })
         },
-        async getSeasonsByMediaId(mediaId, force = false) {
-            const data = await handleStoreFetch({
+        async getSeasonsByMediaId(
+            mediaId: number,
+            force: boolean = false,
+        ): Promise<SeasonsResponse[] | SeasonsResponse | null> {
+            const data: SeasonsResponse | SeasonsResponse[] | null = await handleStoreFetch<
+                SeasonsResponse[] | SeasonsResponse,
+                number,
+                MediaContentState
+            >({
                 store: this,
                 apiCall: findSeasonsByMediaId,
                 args: mediaId,
@@ -88,13 +125,13 @@ const useMediaContentStore = defineStore('mediaContent', {
 
             // التعديل الأفضل (استخدام Array.isArray كما فعلت في الحلقات)
             if (Array.isArray(data)) {
-                this.seasons = data.sort((a, b) => a.season_number - b.season_number)
+                this.seasons = sortByProperty(data, 'season_number')
             }
 
             return data
         },
-        async getSeasonById(id, force = false) {
-            return handleStoreFetch({
+        async getSeasonById(id: number, force: boolean = false): Promise<SeasonsResponse | null> {
+            return handleStoreFetch<SeasonsResponse, number, MediaContentState>({
                 store: this,
                 apiCall: findSeasonById,
                 args: id,
@@ -103,8 +140,12 @@ const useMediaContentStore = defineStore('mediaContent', {
                 force,
             })
         },
-        async addSeason(media_id, data = {}, force = true) {
-            return handleStoreAdd({
+        async addSeason(
+            media_id: number,
+            data: CreateSeasonSchemaType,
+            force: boolean = true,
+        ): Promise<SeasonsResponse | null> {
+            return handleStoreAdd<SeasonsResponse, CreateSeasonSchemaType, MediaContentState>({
                 store: this,
                 apiCall: createSeason,
                 id: media_id,
@@ -114,30 +155,40 @@ const useMediaContentStore = defineStore('mediaContent', {
                 force,
             })
         },
-        async editSeasonById(id, data = {}, force = true) {
-            return handleStoreEdit({
+        async editSeasonById(
+            id: number,
+            data: UpdateSeasonSchemaType,
+        ): Promise<SeasonsResponse | null> {
+            return handleStoreEdit<
+                SeasonsResponse,
+                UpdateSeasonSchemaType,
+                number,
+                MediaContentState
+            >({
                 store: this,
                 apiCall: updateSeasonById,
                 id,
                 data,
                 listKey: 'seasons',
                 defaultError: 'حدثت مشكلة اثناء تعديل الموسم',
-                force,
             })
         },
-        async removeSeasonById(id, force = true) {
-            return handleStoreDelete({
+        async removeSeasonById(id: number): Promise<boolean | null> {
+            return handleStoreDelete<SeasonsResponse, number, MediaContentState>({
                 store: this,
                 apiCall: deleteSeasonById,
                 id,
                 listKey: 'seasons',
                 defaultError: 'حدث خطأ اثناء حذف الموسم',
-                force,
             })
         },
         // --- Episodes ---
-        async getEpisodeById(id, force = false) {
-            const data = await handleStoreFetch({
+        async getEpisodeById(id: number, force: boolean = false): Promise<EpisodeResponse | null> {
+            const data: EpisodeResponse | null = await handleStoreFetch<
+                EpisodeResponse,
+                number,
+                MediaContentState
+            >({
                 store: this,
                 apiCall: findEpisodeById,
                 args: id,
@@ -146,19 +197,27 @@ const useMediaContentStore = defineStore('mediaContent', {
                 force,
             })
 
-            if (data) {
-                this.currentEpisodeId = data.id
+            if (data && Object.keys(data).length > 0 && 'id' in data) {
+                this.currentEpisodeId = data.id ?? null
             }
 
             return data
         },
-        async getEpisodesByMediaId(media_id, params = {}, force = false) {
+        async getEpisodesByMediaId(
+            media_id: number,
+            params: BaseQueryRequest,
+            force: boolean = false,
+        ) {
             if (typeof params === 'boolean') {
                 params = {}
                 force = true
             }
 
-            const resultData = await handleStoreFetch({
+            const resultData: EpisodeResponse | EpisodeResponse[] | null = await handleStoreFetch<
+                EpisodeResponse[] | EpisodeResponse,
+                [number, BaseQueryRequest],
+                MediaContentState
+            >({
                 store: this,
                 apiCall: findEpisodesByMediaId,
                 args: [media_id, params],
@@ -169,13 +228,20 @@ const useMediaContentStore = defineStore('mediaContent', {
 
             // الترتيب فقط في حال نجاح الجلب ورجوع مصفوفة
             if (Array.isArray(resultData)) {
-                this.episodes = resultData.sort((a, b) => a.episode_number - b.episode_number)
+                this.episodes = sortByProperty(resultData, 'episode_number')
             }
 
             return resultData
         },
-        async getEpisodesBySeasonId(season_id, force = false) {
-            const resultData = await handleStoreFetch({
+        async getEpisodesBySeasonId(
+            season_id: number,
+            force: boolean = false,
+        ): Promise<EpisodeResponse[] | EpisodeResponse | null> {
+            const resultData = await handleStoreFetch<
+                EpisodeResponse[] | EpisodeResponse | null,
+                number,
+                MediaContentState
+            >({
                 store: this,
                 apiCall: findEpisodesBySeasonId,
                 args: season_id,
@@ -186,52 +252,64 @@ const useMediaContentStore = defineStore('mediaContent', {
 
             // الترتيب فقط في حال نجاح الجلب ورجوع مصفوفة
             if (Array.isArray(resultData)) {
-                this.episodes = resultData.sort((a, b) => a.episode_number - b.episode_number)
+                this.episodes = sortByProperty(resultData, 'episode_number')
             }
 
             return resultData
         },
-        async addEpisode(mediaId, data = {}, force = true) {
-            return handleStoreAdd({
+        async addEpisode(
+            mediaId: number,
+            data: CreateEpisodeSchemaType,
+        ): Promise<EpisodeResponse | null> {
+            return handleStoreAdd<
+                EpisodeResponse | null,
+                CreateEpisodeSchemaType,
+                MediaContentState
+            >({
                 store: this,
                 apiCall: createEpisode,
                 id: mediaId,
                 data,
                 listKey: 'episodes',
                 defaultError: 'حدث خطأ اثناء اضافة الحلقة!',
-                force,
             })
         },
-        async editEpisodeById(id, data = {}, force = true) {
-            return handleStoreEdit({
+        async editEpisodeById(
+            id: number,
+            data: UpdateEpisodeSchemaType,
+        ): Promise<EpisodeResponse | null> {
+            return handleStoreEdit<
+                EpisodeResponse | null,
+                UpdateEpisodeSchemaType,
+                number,
+                MediaContentState
+            >({
                 store: this,
                 apiCall: updateEpisodeById,
                 id,
                 data,
                 listKey: 'episodes',
                 defaultError: 'حدث خطأ اثناء تعديل الحلقة!',
-                force,
             })
         },
-        async removeEpisodeById(id, force = true) {
-            return handleStoreDelete({
+        async removeEpisodeById(id: number): Promise<boolean> {
+            return handleStoreDelete<EpisodeResponse, number, MediaContentState>({
                 store: this,
                 apiCall: deleteEpisodeById,
                 id,
                 listKey: 'episodes',
                 defaultError: 'حدث خطأ اثناء حذف الحلقة',
-                force,
             })
         },
 
         // 💡 أكشن تصدير الحلقات المعتمد بالكامل على الـ Utility المشتركة
-        async exportEpisodes(filters = {}) {
-            const date = new Date().toISOString().slice(0, 10)
+        async exportEpisodes(filters: EpisodeQueryRequest): Promise<boolean> {
+            const date: string = new Date().toISOString().slice(0, 10)
 
-            return handleStoreExport({
+            return handleStoreExport<EpisodeQueryRequest, MediaContentState>({
                 store: this,
                 apiCall: handleFindAllEpisodes,
-                args: filters, // تمرير الفلاتر الحالية للـ API
+                args: filters,
                 defaultFileName: `episodes-${date}.csv`,
                 defaultError: 'حدثت مشكلة أثناء تصدير الحلقات ',
             })
@@ -239,10 +317,10 @@ const useMediaContentStore = defineStore('mediaContent', {
 
         // --- Links ---
         // 💡 أكشن تصدير الحلقات المعتمد بالكامل على الـ Utility المشتركة
-        async exportLinks(filters = {}) {
-            const date = new Date().toISOString().slice(0, 10)
+        async exportLinks(filters: LinksQueryRequest): Promise<boolean> {
+            const date: string = new Date().toISOString().slice(0, 10)
 
-            return handleStoreExport({
+            return handleStoreExport<LinksQueryRequest, MediaContentState>({
                 store: this,
                 apiCall: handleFindAllLinks,
                 args: filters, // تمرير الفلاتر الحالية للـ API
@@ -250,8 +328,15 @@ const useMediaContentStore = defineStore('mediaContent', {
                 defaultError: 'حدثت مشكلة أثناء تصدير اللينكات! ',
             })
         },
-        async getLinksByEpisodeId(episode_id, force = false) {
-            const data = await handleStoreFetch({
+        async getLinksByEpisodeId(
+            episode_id: number,
+            force: boolean = false,
+        ): Promise<LinksResponse[] | LinksResponse | null> {
+            const data: LinksResponse | LinksResponse[] | null = await handleStoreFetch<
+                LinksResponse | LinksResponse[] | null,
+                number,
+                MediaContentState
+            >({
                 store: this,
                 apiCall: findLinksByEpisodeId,
                 args: episode_id,
@@ -261,17 +346,14 @@ const useMediaContentStore = defineStore('mediaContent', {
             })
 
             if (data && Array.isArray(this.links)) {
-                this.links.sort((a, b) => {
-                    if (!a.last_check_at) return 1
-                    if (!b.last_check_at) return -1
-                    return new Date(b.last_check_at) - new Date(a.last_check_at)
-                })
+                // تمرير false للترتيب التنازلي (من الأحدث للأقدم)
+                this.links = sortByProperty(this.links, 'last_check_at')
             }
 
             return data
         },
-        async getLinkById(id, force = false) {
-            return handleStoreFetch({
+        async getLinkById(id: number, force: boolean = false): Promise<LinksResponse | null> {
+            return handleStoreFetch<LinksResponse | null, number, MediaContentState>({
                 store: this,
                 apiCall: findLinkById,
                 args: id,
@@ -280,57 +362,62 @@ const useMediaContentStore = defineStore('mediaContent', {
                 force,
             })
         },
-        async addLink(episode_id, data = {}, force = true) {
-            const resultData = await handleStoreAdd({
+        async addLink(
+            episode_id: number,
+            data: CreateLinkSchemaType,
+        ): Promise<LinksResponse | null> {
+            const resultData: LinksResponse | null = await handleStoreAdd<
+                LinksResponse | null,
+                CreateLinkSchemaType,
+                MediaContentState
+            >({
                 store: this,
                 apiCall: createLink,
                 id: episode_id,
                 data,
                 listKey: 'links',
                 defaultError: 'حدثت مشكلة اثناء اضافة الرابط',
-                force,
             })
 
-            if (resultData) {
-                this.links.sort((a, b) => {
-                    if (!a.last_check_at) return 1
-                    if (!b.last_check_at) return -1
-                    return new Date(b.last_check_at) - new Date(a.last_check_at)
-                })
+            if (resultData && Array.isArray(this.links)) {
+                this.links = sortByProperty(this.links, 'last_check_at')
             }
 
             return resultData
         },
-        async editLinkById(id, data = {}, force = true) {
-            const resultData = await handleStoreEdit({
+        async editLinkById(
+            id: number,
+            data: UpdateLinkByIdSchemaType,
+        ): Promise<LinksResponse | null> {
+            const resultData: LinksResponse | null = await handleStoreEdit<
+                LinksResponse | null,
+                UpdateLinkByIdSchemaType,
+                number,
+                MediaContentState
+            >({
                 store: this,
                 apiCall: updateLinkById,
                 id,
                 data,
                 listKey: 'links',
                 defaultError: 'حدث خطأ اثناء تعديل الرابط',
-                force,
             })
 
             // إعادة الترتيب بعد نجاح التعديل
-            if (resultData) {
-                this.links.sort((a, b) => {
-                    if (!a.last_check_at) return 1
-                    if (!b.last_check_at) return -1
-                    return new Date(b.last_check_at) - new Date(a.last_check_at)
-                })
+
+            if (resultData && Array.isArray(this.links)) {
+                this.links = sortByProperty(this.links, 'last_check_at')
             }
 
             return resultData
         },
-        async removeLinkById(id, force = true) {
-            return handleStoreDelete({
+        async removeLinkById(id: number): Promise<boolean> {
+            return handleStoreDelete<LinksResponse, number, MediaContentState>({
                 store: this,
                 apiCall: deleteLinkById,
                 id,
                 listKey: 'links',
                 defaultError: 'حدث خطأ اثناء حذف الرابط',
-                force,
             })
         },
     },

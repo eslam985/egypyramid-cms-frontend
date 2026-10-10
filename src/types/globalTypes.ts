@@ -92,10 +92,10 @@ export interface BaseApiResponse<T = null> {
     }
 }
 export interface BaseStore {
-    isLoading?: boolean
-    successMessage?: string
-    errorMessage?: string
-    _lastFetchArgs?: string
+    isLoading: boolean
+    successMessage: string
+    errorMessage: string
+    _lastFetchArgs?: string | null
 }
 
 export interface UserDataResponse {
@@ -274,10 +274,7 @@ export interface StoreFetchParams<
     TStore extends BaseStore = BaseStore,
 > {
     store?: TStore
-    apiCall:
-        | ((data: TInput) => Promise<BaseApiResponse<TData | null>> | BaseApiResponse<TData | null>)
-        | ((id: number | string, data?: TInput) => Promise<BaseApiResponse<TData | null>> | BaseApiResponse<TData | null>)
-        | (() => Promise<BaseApiResponse<TData | null>> | BaseApiResponse<TData | null>)
+    apiCall: (...args: any[]) => Promise<BaseApiResponse<TData | null>> | BaseApiResponse<TData | null>
     args?: TInput[] | TInput | undefined
     targetKey?: keyof TStore
     defaultError?: string
@@ -290,14 +287,13 @@ export interface StoreAddParams<
     TInput = unknown,
     TStore extends BaseStore = BaseStore,
 > {
-    store?: TStore | null
-    apiCall:
-        | ((data: TInput) => Promise<BaseApiResponse<TData | null>> | BaseApiResponse<TData | null>)
-        | ((id: number | string, data: TInput) => Promise<BaseApiResponse<TData | null>> | BaseApiResponse<TData | null>)
+    store?: TStore
+    apiCall: (...args: any[]) => Promise<BaseApiResponse<TData | null>> | BaseApiResponse<TData | null>
     id?: number | string
-    data?: TInput
+    data: TInput
     listKey?: keyof TStore
     defaultError?: string
+    force?: boolean
 }
 
 export interface StoreEditParams<
@@ -319,15 +315,12 @@ export interface StoreEditParams<
 }
 
 export interface StoreDeleteParams<
-    TData = unknown, // 👈 التايب الخاص بعناصر القائمة في الستور (مثل Task)
+    TData = unknown,
     TId extends number | string | (number | string)[] = number | string,
     TStore extends BaseStore = BaseStore,
 > {
     store?: TStore
-    apiCall:
-        | ((id: TId) => Promise<BaseApiResponse<unknown>> | BaseApiResponse<unknown>)
-        | ((id?: TId) => Promise<BaseApiResponse<unknown>> | BaseApiResponse<unknown>)
-        | (() => Promise<BaseApiResponse<unknown>> | BaseApiResponse<unknown>)
+    apiCall: (...args: any[]) => Promise<any> | any
     id?: TId
     listKey?: keyof TStore
     idKey?: keyof TData
@@ -335,9 +328,12 @@ export interface StoreDeleteParams<
     filterFn?: (items: TData[]) => TData[]
 }
 
-export interface ExportStoreParams<TInput = unknown, TStore extends BaseStore = BaseStore> {
+export interface ExportStoreParams<
+    TInput = unknown,
+    TStore extends BaseStore = BaseStore
+> {
     store?: TStore
-    apiCall: (args?: TInput) => Promise<Blob | string | ArrayBuffer> | Blob | string | ArrayBuffer
+    apiCall: (...args: any[]) => Promise<any> | any
     args?: TInput
     defaultFileName?: string
     defaultError?: string

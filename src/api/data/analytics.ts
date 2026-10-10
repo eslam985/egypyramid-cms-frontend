@@ -10,16 +10,15 @@ import type {
     ServerNameRequest,
 } from '@/types/globalTypes'
 
-const getSystemCounters = async (): Promise<
-    BaseApiResponse<SystemCountersResponse | Record<string, null>>
-> => {
+const getSystemCounters = async (): Promise<BaseApiResponse<SystemCountersResponse | null>> => {
     const result = await api.get('/analytics/system-counters')
     return result.data
 }
 
 const getTotalBrokenAndValidAndPendingLinks = async (
     status?: StatusTasksRequest,
-): Promise<BaseApiResponse<TotalStatusTasksResponse[] | any[]>> => {
+): Promise<BaseApiResponse<TotalStatusTasksResponse[] | null>> => {
+
     const result = await api.get(`/analytics/links/status/total`, {
         params: {
             ...(status && { status }),
@@ -31,7 +30,7 @@ const getTotalBrokenAndValidAndPendingLinks = async (
 
 const getBrokenLinks = async (
     query?: ServerNameRequest,
-): Promise<BaseApiResponse<DownloadTasksResponse[] | any[]>> => {
+): Promise<BaseApiResponse<DownloadTasksResponse[] | null>> => {
     const result = await api.get(`/analytics/links/broken`, { params: { ...query } })
 
     return result.data
@@ -39,7 +38,7 @@ const getBrokenLinks = async (
 
 const getMissingEpisodesByServer = async (
     query?: ServerNameRequest,
-): Promise<BaseApiResponse<DownloadTasksResponse[] | any[]>> => {
+): Promise<BaseApiResponse<DownloadTasksResponse[] | null>> => {
     const result = await api.get(`/analytics/episodes/links/missing-by-server`, {
         params: { ...query },
     })
@@ -48,23 +47,27 @@ const getMissingEpisodesByServer = async (
 
 const getLockedTelegramLinks = async (
     query?: BaseQueryRequest,
-): Promise<BaseApiResponse<DownloadTasksResponse[] | any[]>> => {
+): Promise<BaseApiResponse<DownloadTasksResponse[] | null>> => {
     const result = await api.get(`/analytics/links/telegram/locked`, { params: { ...query } })
+
     return result.data
 }
 
 const getNotReadyMedias = async (
     query?: BaseQueryRequest,
-): Promise<BaseApiResponse<MediasResponse[] | any[]>> => {
+): Promise<BaseApiResponse<MediasResponse[] | null>> => {
+
     const result = await api.get(`/analytics/medias/not-ready`, {
         params: {
             ...query,
         },
     })
+
     return result.data
 }
 
 const handleExportNotReadyMedias = async (params?: BaseQueryRequest): Promise<Blob> => {
+
     const result = await api.get('/analytics/medias/not-ready', {
         params: {
             ...params,

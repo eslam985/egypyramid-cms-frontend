@@ -17,7 +17,7 @@ const createMedia = async (
 const updateMediaById = async (
     id: number,
     data: UpdateMediaInputsType,
-): Promise<BaseApiResponse<MediasResponse | any[] | null>> => {
+): Promise<BaseApiResponse<MediasResponse | null>> => {
     const result = await api.patch(`/medias/${id}`, data)
     return result.data
 }
@@ -42,9 +42,8 @@ const findMediaByAnyId = async (
     return result.data
 }
 
-const findAllMedia = async (
-    query?: GetMediasQueryInputsType,
-): Promise<BaseApiResponse<MediasResponse | null>> => {
+const findAllMedia = async (query?: GetMediasQueryInputsType): Promise<BaseApiResponse<MediasResponse[] | null>> => {
+
     const result = await api.get('/medias', { params: { ...query } })
 
     return result.data

@@ -23,7 +23,7 @@ const updateLinkById = async (
 
 const findLinksByEpisodeId = async (
     episode_id: number,
-): Promise<BaseApiResponse<LinksResponse | any[]>> => {
+): Promise<BaseApiResponse<LinksResponse[] | LinksResponse | null>> => {
     const result = await api.get(`/links/episode/${episode_id}`)
     return result.data
 }
@@ -40,8 +40,10 @@ const deleteLinkById = async (id: number): Promise<BaseApiResponse<LinksResponse
 
 const handleFindAllLinks = async (
     params: LinksQueryRequest,
-): Promise<BaseApiResponse<Blob | LinksResponse[] | any[]>> => {
+): Promise<BaseApiResponse<Blob | LinksResponse[] | LinksResponse | null>> => {
+
     const result = await api.get('/links', {
+
         params: { ...params, export: true },
         responseType: 'blob',
     })

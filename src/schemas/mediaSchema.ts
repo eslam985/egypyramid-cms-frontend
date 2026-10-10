@@ -45,20 +45,26 @@ export const updateMediaSchema = createMediaSchema
         message: 'يجب إرسال حقل واحد على الأقل للتحديث',
     })
 
+// 1. تعريف الـ Inner Query Schema صراحة
+export const mediaQuerySchema = z.object({
+    page: z.coerce.number().int().positive().default(1),
+    limit: z.coerce.number().int().max(100).default(10),
+    search: z.string().trim().optional(),
+    category: z.enum(['movie', 'tv']).optional(),
+    sortBy: z.enum(['title', 'category', 'year', 'is_ready' , 'created_at']).optional(),
+    sortOrder: z.enum(['ASC', 'DESC']).optional(),
+})
+
+// 2. الـ Schema للـ Request Wrapper (إذا كنت تحتاجه للتحقق في مكان ما)
 export const getMediasQuerySchema = z.object({
-    query: z.object({
-        page: z.coerce.number().int().positive().default(1),
-        limit: z.coerce.number().int().max(100).default(10),
-        search: z.string().trim().optional(),
-        category: z.enum(['movie', 'tv']).optional(),
-        sortBy: z.enum(['title', 'category', 'year', 'is_ready', 'created_at']).optional(),
-        sortOrder: z.enum(['ASC', 'DESC']).optional(),
-    }),
+    query: mediaQuerySchema,
 })
 
 // ==============================================================
-//  ✅ استخراج Types التلقائي بـ Best Practices
+//  ✅ استخراج الـ Types (Flat للـ Frontend)
 // ==============================================================
 export type CreateMediaInputsType = z.infer<typeof createMediaSchema>
 export type UpdateMediaInputsType = z.infer<typeof updateMediaSchema>
-export type GetMediasQueryInputsType = z.infer<typeof getMediasQuerySchema>
+
+// 👈 استخراج التايب من الـ Flat Schema المباشرة
+export type GetMediasQueryInputsType = z.infer<typeof mediaQuerySchema>

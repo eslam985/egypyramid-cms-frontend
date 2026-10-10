@@ -6,7 +6,7 @@ import type { BaseApiResponse, SeasonsResponse, SeasonQueryRequest } from '@/typ
 
 const findSeasonsByMediaId = async (
     media_id: number,
-): Promise<BaseApiResponse<SeasonsResponse | any[]>> => {
+): Promise<BaseApiResponse<SeasonsResponse[] | SeasonsResponse | null>> => {
     const result = await api.get(`/seasons/media/${media_id}`)
     return result.data
 }

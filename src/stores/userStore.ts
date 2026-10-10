@@ -42,7 +42,7 @@ export const useUserStore = defineStore('user', {
 
     actions: {
         async updateUserInfo(data: UpdateUserInputsType = {}) {
-            return handleStoreEdit<UserDataResponse, UpdateUserInputsType, UserState>({
+            return handleStoreEdit<UserDataResponse, UpdateUserInputsType, never, UserState>({
                 store: this,
                 apiCall: handleUpdateUserInfo,
                 data,
@@ -52,7 +52,7 @@ export const useUserStore = defineStore('user', {
         },
 
         async ChangePassword(data: ChangePasswordInputsType) {
-            return handleStoreEdit<null, ChangePasswordInputsType, UserState>({
+            return handleStoreEdit<null, ChangePasswordInputsType, never, UserState>({
                 store: this,
                 apiCall: handleChangePassword,
                 data,
@@ -88,7 +88,7 @@ export const useUserStore = defineStore('user', {
         },
 
         async removeSessionById(sessionId: string | number) {
-            return handleStoreDelete<null, UserState>({
+            return handleStoreDelete<null, string, UserState>({
                 store: this,
                 apiCall: handleRemoveSessionById as any,
                 id: sessionId as any,
@@ -98,7 +98,7 @@ export const useUserStore = defineStore('user', {
         },
 
         async uploadAvatar(data: FormData) {
-            return handleStoreEdit<UserDataResponse, FormData, UserState>({
+            return handleStoreEdit<UserDataResponse, FormData, never, UserState>({
                 store: this,
                 apiCall: handleUploadAvatar,
                 data,
@@ -108,7 +108,7 @@ export const useUserStore = defineStore('user', {
         },
 
         async deleteAvatar() {
-            return handleStoreDelete<UserDataResponse, UserState>({
+            return handleStoreDelete<UserDataResponse, never, UserState>({
                 store: this,
                 apiCall: handleDeleteAvatar,
                 listKey: 'userInfo',
@@ -117,7 +117,7 @@ export const useUserStore = defineStore('user', {
         },
 
         async setAvatarFromHistory(avatarUrl: string) {
-            return handleStoreEdit<UserDataResponse, string, UserState>({
+            return handleStoreEdit<UserDataResponse, string, never, UserState>({
                 store: this,
                 apiCall: handleSetAvatarFromHistory,
                 data: avatarUrl,

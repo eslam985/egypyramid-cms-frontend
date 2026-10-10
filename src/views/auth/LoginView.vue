@@ -4,7 +4,6 @@ import { reactive } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import { useAuthStore } from '../../stores/authStore'
-import { useNotificationStore } from '../../stores/notificationStore'
 import { loginUserSchema } from '../../schemas/authSchema'
 import { useFormValidation } from '../../composables/useFormValidation'
 
@@ -18,26 +17,17 @@ const formData = reactive({
 const { errors, validate } = useFormValidation(loginUserSchema)
 
 const router = useRouter()
+// const authStore = useAuthStore()
 const authStore = useAuthStore()
-const notiStore = useNotificationStore()
 
 const handleSubmit = async () => {
-    authStore.successMessage = ''
-
     const { isValid, data } = validate(formData)
     if (!isValid || !data) return
 
-    authStore.isLoading = true
-
     const isSuccess = await authStore.loginUser(data)
 
-    authStore.isLoading = false
-
     if (isSuccess) {
-        notiStore.triggerNotification(authStore.successMessage)
         router.push('/')
-    } else {
-        notiStore.triggerNotification(authStore.errorMessage)
     }
 }
 </script>

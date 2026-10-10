@@ -4,7 +4,7 @@ import { handleStoreAdd } from '@/utils/store'
 import { RolesList } from '@/utils/roles_list'
 import { decodeJwt } from '@/utils/decodeJwt'
 import type { LoginUserInputsType, CreateUserInputsType } from '@/schemas/authSchema'
-
+import { useNotificationStore } from '@/stores/notificationStore'
 import type {
     UserDataResponse,
     RegisterDataResponse,
@@ -41,21 +41,64 @@ export const useAuthStore = defineStore('auth', {
         isEditorAndAbove: (state): boolean =>
             state.userRole === RolesList.Editor || state.userRole === RolesList.Admin,
 
-        hasRole:
-            (state) =>
-            (requiredRole: number): boolean => {
-                if (!state.userRole) return false
+        // 👈 التعديل المهم هنا: كتابة الـ State بشكل غير معقد يمنع الـ Type Circular Loop
+        hasRole() {
+            return (requiredRole: number): boolean => {
+                if (!this.userRole) return false
                 if (requiredRole === RolesList.Editor) {
-                    return state.userRole === RolesList.Editor || state.userRole === RolesList.Admin
+                    return this.userRole === RolesList.Editor || this.userRole === RolesList.Admin
                 }
                 if (requiredRole === RolesList.Admin) {
-                    return state.userRole === RolesList.Admin
+                    return this.userRole === RolesList.Admin
                 }
                 return true
-            },
+            }
+        },
     },
 
     actions: {
+        async loginUser(credentials: LoginUserInputsType): Promise<boolean> {
+            const notiStore = useNotificationStore()
+            this.isLoading = true
+            this.errorMessage = ''
+            this.successMessage = ''
+
+            try {
+                const result: BaseApiResponse<UserDataResponse> = await login(credentials)
+                if (result && result.success) {
+                    this.setAccessToken(result.data?.accessToken ?? null)
+
+                    const rolesAttr: string | undefined = result.data?.roles
+                    this.userRole = rolesAttr ? Number(rolesAttr) : null
+
+                    const userData: UserDataResponse = { ...result.data }
+                    delete userData.accessToken
+                    this.user = userData
+
+                    this.successMessage = result.message || 'تم تسجيل الدخول بنجاح'
+
+                    // 👈 إطلاق إشعار النجاح مباشرة من الـ Store
+                    notiStore.triggerNotification(this.successMessage)
+                    return true
+                }
+                return false
+            } catch (err: any) {
+                const msg: string = err?.response?.data?.message || ''
+                if (msg.includes('getaddrinfo ENOTFOUND')) {
+                    this.errorMessage = 'حدث خطأ اثناء الاتصال بقاعدة البيانات!'
+                } else {
+                    this.errorMessage = msg || 'حدث خطأ ما، يرجى المحاولة لاحقاً'
+                }
+
+                // 👈 إطلاق إشعار الخطأ مباشرة من الـ Store
+                notiStore.triggerNotification(this.errorMessage)
+                console.error('debug: ', msg)
+                console.error(err)
+                return false
+            } finally {
+                this.isLoading = false
+            }
+        },
         setAccessToken(token: string | null): void {
             this.accessToken = token
         },
@@ -112,45 +155,6 @@ export const useAuthStore = defineStore('auth', {
                 data,
                 defaultError: 'حدثت مشكلة اثناء إضافة المستخدم!',
             })
-        },
-
-        async loginUser(credentials: LoginUserInputsType): Promise<boolean> {
-            this.isLoading = true
-            this.errorMessage = ''
-            this.successMessage = ''
-            try {
-                const result: BaseApiResponse<UserDataResponse> = await login(credentials)
-                if (result && result.success) {
-                    // استخدام ?? null يضمن عدم تمرير undefined لـ setAccessToken
-                    this.setAccessToken(result.data?.accessToken ?? null)
-
-                    // استخراج الـ Role بشكل آمن بـ Optional Chaining
-                    const rolesAttr: string | undefined = result.data?.roles
-                    this.userRole = rolesAttr ? Number(rolesAttr) : null
-
-                    // حفظ بيانات المستخدم
-                    const userData: UserDataResponse = { ...result.data }
-                    delete userData.accessToken
-                    this.user = userData
-
-                    this.successMessage = result.message || 'Login successful'
-                    return true
-                }
-                return false
-            } catch (err: any) {
-                const msg: string = err?.response?.data?.message || ''
-                if (msg.includes('getaddrinfo ENOTFOUND')) {
-                    this.errorMessage = 'حدث خطأ اثناء الاتصال بقاعدة البيانات!'
-                } else {
-                    this.errorMessage = msg || 'حدث خطأ ما، يرجى المحاولة لاحقاً'
-                }
-
-                console.error('debug: ', msg)
-                console.error(err)
-                return false
-            } finally {
-                this.isLoading = false
-            }
         },
 
         async logoutUser(): Promise<boolean | void> {
