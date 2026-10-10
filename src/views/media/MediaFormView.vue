@@ -1,5 +1,6 @@
 <!-- frontend/vue-dashbord/src/views/media/MediaFormView.vue -->
-<script setup>
+<script setup lang="ts">
+
 import { useRoute } from 'vue-router'
 
 import NotFoundView from '@/views/errors/NotFoundView.vue'

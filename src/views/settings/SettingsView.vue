@@ -1,4 +1,5 @@
-<script setup>
+<script setup lang="ts">
+
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 
@@ -14,11 +15,14 @@ const authStore = useAuthStore()
 const notiStore = useNotificationStore()
 const router = useRouter()
 
-const handleLogout = async () => {
+const handleLogout = async (): Promise<void> => {
+
     await authStore.logoutUser()
     notiStore.triggerNotification(t('auth.logoutSuccess'))
     router.push('/login')
+
 }
+
 </script>
 <template>
     <div class="max-w-3xl mx-auto p-6 space-y-6">

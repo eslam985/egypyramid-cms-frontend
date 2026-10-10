@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { onUnmounted, watch, computed } from 'vue' // ضفنا computed
 import { useRoute } from 'vue-router'
 import { useMediaContentStore } from '@/stores/mediaContentStore'
@@ -21,7 +21,7 @@ const isSeries = computed(() => {
     )
 })
 
-const fetchMediaDetails = async (id) => {
+const fetchMediaDetails = async (id: number): Promise<void> => {
     mediaContentStore.resetContentState()
     await mediaStore.getMediaById(id)
 
@@ -29,16 +29,21 @@ const fetchMediaDetails = async (id) => {
         // استخدمنا المتغير هنا
         await mediaContentStore.getSeasonsByMediaId(id, true)
     } else {
-        await mediaContentStore.getEpisodesByMediaId(id, true)
+        await mediaContentStore.getEpisodesByMediaId(id, { page: 1, limit: 20 }, true)
     }
 }
 
 watch(
-    () => route.params.id,
-    (newId) => {
-        if (newId && route.name === 'mediaDetails') {
-            fetchMediaDetails(newId)
+    (): string | string[] | undefined => route.params.id,
+    (newId: string | string[] | undefined) => {
+
+        const id: string | undefined = Array.isArray(newId) ? newId[0] : newId
+        const mediaId: number = Number(id)
+
+        if (id && Number.isFinite(mediaId) && route.name === 'mediaDetails') {
+            fetchMediaDetails(mediaId)
         }
+
     },
     { immediate: true },
 )

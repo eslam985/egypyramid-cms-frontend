@@ -1,4 +1,5 @@
-<script setup>
+<script setup lang="ts">
+
 import { onMounted } from 'vue'
 import { useAuthStore } from './stores/authStore'
 
@@ -11,6 +12,7 @@ const authStore = useAuthStore()
 
 // ✅ ده اللي كان ناقص - بيثبت الثيم واللغة لكل الصفحات
 onMounted(() => {
+
     const savedTheme = localStorage.getItem('theme')
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
     const isDark = savedTheme ? savedTheme === 'dark' : prefersDark
@@ -21,6 +23,7 @@ onMounted(() => {
     document.documentElement.lang = savedLang
     document.documentElement.dir = savedLang === 'ar' ? 'rtl' : 'ltr'
 })
+
 </script>
 <template>
     <!-- 🟢 الحالة الأولى: جاري تهيئة النظام عند فتح التطبيق أول مرة -->

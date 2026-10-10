@@ -39,13 +39,13 @@ export enum LinksAllowedColumnsSorted {
 // =================================
 
 export interface BaseQueryRequest {
-    page?: string
-    limit?: string
+    page?: string | number | null
+    limit?: string | number | null
     sortOrder?: OrderingEnum
 }
 
 export interface SortedSessionRequest {
-    sortBy?: string
+    sortBy?: string | number | null
     sortOrder?: OrderingEnum
 }
 
