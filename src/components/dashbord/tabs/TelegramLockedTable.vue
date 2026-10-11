@@ -1,4 +1,5 @@
-<script setup>
+<script setup lang="ts">
+
 import { useRouter, useRoute } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { useI18n } from 'vue-i18n'
@@ -9,6 +10,10 @@ import { useNotificationStore } from '@/stores/notificationStore'
 import { formatDate } from '@/utils/global'
 import { useAuthStore } from '@/stores/authStore'
 
+import BaseTable from '@/components/ui/BaseTable.vue'
+
+import type { BaseQueryRequest, LockedTelegramResponse } from '@/types/globalTypes'
+
 const authStore = useAuthStore()
 const { t } = useI18n()
 const router = useRouter()
@@ -16,12 +21,26 @@ const route = useRoute()
 const notiStore = useNotificationStore()
 const analyticsStore = useAnalyticsStore()
 const { telegramLocked, isLoading } = storeToRefs(analyticsStore)
+const columns: {
+    label: string;
+    key: string;
+}[] = [
+        { label: t('telegramLocked.table.titleEpisode'), key: 'title' },
+        { label: t('telegramLocked.table.type'), key: 'media_type' },
+        { label: t('telegramLocked.table.server'), key: 'server_name' },
+        { label: t('telegramLocked.table.lockedUrl'), key: 'url' },
+        { label: t('telegramLocked.table.workStatus'), key: 'is_ready' },
+        { label: t('telegramLocked.table.addedAt'), key: 'created_at' },
+    ]
 
-const handleExport = async () => {
+const handleExport = async (): Promise<void> => {
+
     router.push({
         params: {},
     })
-    const isSuccess = await analyticsStore.exportLockedTelegramLinks(route.query)
+
+    const isSuccess: boolean = await analyticsStore.exportLockedTelegramLinks(route.query)
+
     if (isSuccess) {
         notiStore.triggerNotification(analyticsStore.successMessage || 'تم تحميل البيانات بنجاح!')
     } else {
@@ -29,167 +48,129 @@ const handleExport = async () => {
             analyticsStore.errorMessage || 'حدث خطأ اثناء تحميل البيانات!',
         )
     }
+
 }
 
-const handleRefresh = async () => {
+
+const handleRefresh = async (): Promise<null | undefined> => {
+
     router.push({
         params: {},
     })
-    const data = await analyticsStore.fetchLockedTelegramLinks(true)
-    if (data) {
-        notiStore.triggerNotification(analyticsStore.successMessage || 'تم تحديث البيانات بنجاح!')
-    } else {
+
+    const params: BaseQueryRequest = {
+        page: 1,
+        limit: 20
+    }
+
+    const data: LockedTelegramResponse[] | null =
+        await analyticsStore.fetchLockedTelegramLinks(params, true)
+
+    if (data === undefined || data === null) {
         notiStore.triggerNotification(
             analyticsStore.errorMessage || 'حدث خطأ اثناء تحديث البيانات!',
         )
+
+        return null
     }
+
+    if (data.length > 0) {
+        notiStore.triggerNotification(analyticsStore.successMessage || 'تم تحديث البيانات بنجاح!')
+    }
+
+    return null
 }
+
+
+const handleRowClick = (row: Record<string, any>): void => {
+    router.push(`/media/${row.media_id}/details`)
+}
+
 </script>
 <template>
-    <div class="overflow-x-auto">
+    <div class="space-y-4">
+        <!-- أزرار التحكم -->
         <div class="flex justify-between gap-fluid-gap w-full mb-4">
-            <!-- 1111 -->
-            <!-- refreshData -->
-            <button
-                @click="handleRefresh"
-                :disabled="isLoading"
-                type="button"
-                class="md:col-span-5 btn-outline gap-1 shadow-glow/10 text-fluid-xs lg:text-fluid-p text-accent-dark hover:text-slate-900 hover:bg-accent/70"
-            >
-                <Loader
-                    class="size-5 text-accent"
-                    :class="{ 'animate-spin': isLoading }"
-                    :stroke-width="2"
-                />
+            <button @click="handleRefresh" :disabled="isLoading" type="button"
+                class="md:col-span-5 btn-outline gap-1 shadow-glow/10 text-fluid-xs lg:text-fluid-p text-accent-dark hover:text-slate-900 hover:bg-accent/70">
+                <Loader class="size-5 text-accent" :class="{ 'animate-spin': isLoading }" :stroke-width="2" />
                 {{ t('common.refreshData') }}
             </button>
 
-            <!-- 2222 -->
-            <!-- Export -->
-            <div
-                v-if="authStore.isEditorAndAbove"
-                class="md:col-span-5 self-center flex md:justify-end"
-            >
-                <button
-                    type="button"
+            <div v-if="authStore.isEditorAndAbove" class="md:col-span-5 self-center flex md:justify-end">
+                <button type="button"
                     class="btn-outline shadow-glow/10 text-fluid-xs lg:text-fluid-p text-accent-dark hover:text-slate-900 hover:bg-accent/70"
-                    @click="handleExport"
-                >
+                    @click="handleExport">
                     <Download class="size-5 text-accent" :stroke-width="2" />
                     Export
                 </button>
             </div>
         </div>
 
-        <table class="w-full text-fluid-xs text-right card">
-            <thead class="text-sub bg-line/20 border-b border-line">
-                <tr>
-                    <th class="p-fluid whitespace-nowrap text-center">
-                        {{ t('telegramLocked.table.titleEpisode') }}
-                    </th>
-                    <th class="p-fluid whitespace-nowrap text-center">
-                        {{ t('telegramLocked.table.type') }}
-                    </th>
-                    <th class="p-fluid whitespace-nowrap text-center">
-                        {{ t('telegramLocked.table.server') }}
-                    </th>
-                    <th class="p-fluid whitespace-nowrap text-center">
-                        {{ t('telegramLocked.table.lockedUrl') }}
-                    </th>
-                    <th class="p-fluid whitespace-nowrap text-center">
-                        {{ t('telegramLocked.table.workStatus') }}
-                    </th>
-                    <th class="p-fluid whitespace-nowrap text-center">
-                        {{ t('telegramLocked.table.addedAt') }}
-                    </th>
-                </tr>
-            </thead>
-            <tbody class="divide-y divide-line">
-                <tr
-                    v-for="item in telegramLocked"
-                    :key="item.id"
-                    @click="router.push(`/media/${item.media_id}/details`)"
-                    class="hover:bg-line/10 transition-colors cursor-pointer"
-                >
-                    <!-- اسم العمل ورقم الحلقة -->
-                    <td class="p-fluid whitespace-nowrap">
-                        <div class="font-boldmb-0.5">{{ item.title }}</div>
-                        <div class="text-sub text-fluid-xs">
-                            <span v-if="item.media_type === 'series' && item.season_number">
-                                {{ t('telegramLocked.season') }} {{ item.season_number }} -
-                                {{ t('telegramLocked.episode') }} #{{ item.episode_number }}
-                            </span>
-                            <span v-else> {{ t('telegramLocked.customMedia') }} </span>
-                        </div>
-                    </td>
-
-                    <!-- النوع -->
-                    <td class="p-fluid whitespace-nowrap">
-                        <span
-                            :class="
-                                item.media_type === 'series'
-                                    ? 'bg-accent/10 text-accent border-accent/20'
-                                    : 'bg-warning/10 text-warning border-warning/20'
-                            "
-                            class="px-2.5 py-0.5 rounded-lg text-fluid-xs font-semibold border inline-block"
-                        >
-                            {{
-                                item.media_type === 'series'
-                                    ? t('telegramLocked.series')
-                                    : t('telegramLocked.movie')
-                            }}
+        <!-- استخدام BaseTable الموحد -->
+        <BaseTable :columns="columns" :rows="telegramLocked ?? []" :isLoading="isLoading" storeKey="telegramLocked"
+            @row-click="handleRowClick">
+            <!-- 1. اسم العمل ورقم الحلقة -->
+            <template #cell-title="{ value, row }">
+                <div class="text-center">
+                    <div class="font-bold mb-0.5">{{ value }}</div>
+                    <div class="text-sub text-fluid-xs">
+                        <span v-if="row.media_type === 'series' && row.season_number">
+                            {{ t('telegramLocked.season') }} {{ row.season_number }} -
+                            {{ t('telegramLocked.episode') }} #{{ row.episode_number }}
                         </span>
-                    </td>
+                        <span v-else> {{ t('telegramLocked.customMedia') }} </span>
+                    </div>
+                </div>
+            </template>
 
-                    <!-- السيرفر -->
-                    <td class="p-fluid whitespace-nowrap">
-                        <span
-                            class="bg-line/20border border-line px-2 py-1 rounded-lg font-mono text-fluid-xs"
-                        >
-                            {{ item.server_name }}
-                        </span>
-                    </td>
+            <!-- 2. النوع -->
+            <template #cell-media_type="{ value }">
+                <span :class="value === 'series'
+                    ? 'bg-accent/10 text-accent border-accent/20'
+                    : 'bg-warning/10 text-warning border-warning/20'
+                    " class="px-2.5 py-0.5 rounded-lg text-fluid-xs font-semibold border inline-block">
+                    {{
+                        value === 'series'
+                            ? t('telegramLocked.series')
+                            : t('telegramLocked.movie')
+                    }}
+                </span>
+            </template>
 
-                    <!-- الرابط المغلَق -->
-                    <td class="p-fluid whitespace-nowrap">
-                        <a
-                            :href="item.url"
-                            target="_blank"
-                            dir="ltr"
-                            @click.stop
-                            class="text-link hover:text-link-hover underline underline-offset-2 text-fluid-xs font-mono truncate max-w-xs block"
-                        >
-                            {{ item.url }}
-                        </a>
-                    </td>
+            <!-- 3. السيرفر -->
+            <template #cell-server_name="{ value }">
+                <span class="bg-line/20 border border-line px-2 py-1 rounded-lg font-mono text-fluid-xs">
+                    {{ value }}
+                </span>
+            </template>
 
-                    <!-- حالة العمل -->
-                    <td class="p-fluid whitespace-nowrap">
-                        <span
-                            v-if="item.is_ready === true"
-                            class="text-success font-semibold bg-success/10 px-2.5 py-1 rounded-lg border border-success/20 inline-block"
-                        >
-                            {{ t('telegramLocked.ready') }}
-                        </span>
-                        <span
-                            v-else
-                            class="text-danger font-semibold bg-danger/10 px-2.5 py-1 rounded-lg border border-danger/20 inline-block"
-                        >
-                            {{ t('telegramLocked.notReady') }}
-                        </span>
-                    </td>
+            <!-- 4. الرابط المغلَق -->
+            <template #cell-url="{ value }">
+                <a :href="value" target="_blank" dir="ltr" @click.stop
+                    class="text-link hover:text-link-hover underline underline-offset-2 text-fluid-xs font-mono truncate max-w-xs block">
+                    {{ value }}
+                </a>
+            </template>
 
-                    <!-- تاريخ الإضافة -->
-                    <td class="p-fluid text-sub whitespace-nowrap">
-                        {{ formatDate(item.created_at) }}
-                    </td>
-                </tr>
-                <tr v-if="!telegramLocked.length && !isLoading">
-                    <td colspan="6" class="text-center py-8 text-sub italic">
-                        {{ t('telegramLocked.noData') }}
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+            <!-- 5. حالة العمل -->
+            <template #cell-is_ready="{ value }">
+                <span v-if="value === true"
+                    class="text-success font-semibold bg-success/10 px-2.5 py-1 rounded-lg border border-success/20 inline-block">
+                    {{ t('telegramLocked.ready') }}
+                </span>
+                <span v-else
+                    class="text-danger font-semibold bg-danger/10 px-2.5 py-1 rounded-lg border border-danger/20 inline-block">
+                    {{ t('telegramLocked.notReady') }}
+                </span>
+            </template>
+
+            <!-- 6. تاريخ الإضافة -->
+            <template #cell-created_at="{ value }">
+                <span class="text-sub">
+                    {{ formatDate(value) }}
+                </span>
+            </template>
+        </BaseTable>
     </div>
 </template>

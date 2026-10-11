@@ -1,4 +1,5 @@
-<script setup>
+<script setup lang="ts">
+
 import { storeToRefs } from 'pinia'
 import { useRouter, useRoute } from 'vue-router'
 import { Download, Loader } from '@lucide/vue'
@@ -12,6 +13,8 @@ import AppPagination from '@/components/utils/AppPagination.vue'
 import BaseTable from '@/components/ui/BaseTable.vue'
 import { useAuthStore } from '@/stores/authStore'
 
+import type { BaseQueryRequest, MediasResponse } from '@/types/globalTypes'
+
 const authStore = useAuthStore()
 const { t } = useI18n()
 const router = useRouter()
@@ -21,26 +24,32 @@ const notiStore = useNotificationStore()
 const analyticsStore = useAnalyticsStore()
 const { mediasNotReadyList, pagination, isLoading } = storeToRefs(analyticsStore)
 
-const columns = [
+const columns: { key: string; label: string; sortable: boolean }[] = [
+
     { key: 'poster', label: t('notReady.table.poster'), sortable: false },
     { key: 'title', label: t('notReady.table.titleYear'), sortable: false },
     { key: 'type', label: t('notReady.table.typeGenre'), sortable: false },
     { key: 'tmdb', label: t('notReady.table.tmdb'), sortable: false },
     { key: 'created_at', label: t('notReady.table.addedAt'), sortable: true },
 ]
-let action = { key: 'status', label: t('notReady.table.status'), sortable: false }
+
+let action: { key: string; label: string; sortable: boolean; } =
+    { key: 'status', label: t('notReady.table.status'), sortable: false }
+
 if (authStore.isEditorAndAbove) {
     columns.push(action)
 }
-const handlePageChange = async (newPage) => {
+
+const handlePageChange = async (newPage: BaseQueryRequest) => {
     await analyticsStore.fetchNotReadyMedias(newPage)
 }
 
-const handleRowClick = (row) => {
+const handleRowClick = (row: Record<string, null>): void => {
     router.push(`/media/${row.id}/details`)
 }
 
-const handleExport = async () => {
+const handleExport = async (): Promise<void> => {
+
     router.push({
         params: {},
     })
@@ -55,18 +64,31 @@ const handleExport = async () => {
     }
 }
 
-const handleRefresh = async () => {
+const handleRefresh = async (): Promise<null | undefined> => {
+
     router.push({
         params: {},
     })
-    const data = await analyticsStore.fetchNotReadyMedias(true)
-    if (data) {
-        notiStore.triggerNotification(analyticsStore.successMessage || 'تم تحديث البيانات بنجاح!')
-    } else {
+
+    const params: BaseQueryRequest = {
+        page: 1,
+        limit: 20
+    }
+
+    const data: MediasResponse[] | null = await analyticsStore.fetchNotReadyMedias(params, true)
+
+    if (data === undefined || data === null) {
         notiStore.triggerNotification(
             analyticsStore.errorMessage || 'حدث خطأ اثناء تحديث البيانات!',
         )
+        return null
     }
+
+    if (data.length > 0) {
+        notiStore.triggerNotification(analyticsStore.successMessage || 'تم تحديث البيانات بنجاح!')
+    }
+
+    return null
 }
 </script>
 
@@ -75,55 +97,31 @@ const handleRefresh = async () => {
         <div v-if="mediasNotReadyList.length > 0" class="flex justify-between gap-fluid-gap w-full">
             <!-- 1111 -->
             <!-- refreshData -->
-            <button
-                @click="handleRefresh"
-                :disabled="isLoading"
-                type="button"
-                class="md:col-span-5 btn-outline gap-1 shadow-glow/10 text-fluid-xs lg:text-fluid-p text-accent-dark hover:text-slate-900 hover:bg-accent/70"
-            >
-                <Loader
-                    class="size-5 text-accent"
-                    :class="{ 'animate-spin': isLoading }"
-                    :stroke-width="2"
-                />
+            <button @click="handleRefresh" :disabled="isLoading" type="button"
+                class="md:col-span-5 btn-outline gap-1 shadow-glow/10 text-fluid-xs lg:text-fluid-p text-accent-dark hover:text-slate-900 hover:bg-accent/70">
+                <Loader class="size-5 text-accent" :class="{ 'animate-spin': isLoading }" :stroke-width="2" />
                 {{ t('common.refreshData') }}
             </button>
 
             <!-- 2222 -->
             <!-- Export -->
-            <div
-                v-if="authStore.isEditorAndAbove"
-                class="md:col-span-5 self-center flex md:justify-end"
-            >
-                <button
-                    type="button"
+            <div v-if="authStore.isEditorAndAbove" class="md:col-span-5 self-center flex md:justify-end">
+                <button type="button"
                     class="btn-outline shadow-glow/10 text-fluid-xs lg:text-fluid-p text-accent-dark hover:text-slate-900 hover:bg-accent/70"
-                    @click="handleExport"
-                >
+                    @click="handleExport">
                     <Download class="size-5 text-accent" :stroke-width="2" />
                     Export
                 </button>
             </div>
         </div>
 
-        <BaseTable
-            :columns="columns"
-            :rows="mediasNotReadyList"
-            :isLoading="isLoading"
-            storeKey="notReady"
-            @row-click="handleRowClick"
-        >
+        <BaseTable :columns="columns" :rows="mediasNotReadyList" :isLoading="isLoading" storeKey="notReady"
+            @row-click="handleRowClick">
             <template #cell-poster="{ row }">
-                <img
-                    v-if="row.poster_url"
-                    :src="row.poster_url"
-                    :alt="row.title"
-                    class="w-10 h-14 object-cover rounded-xl border border-line shadow-soft mx-auto"
-                />
-                <div
-                    v-else
-                    class="w-10 h-14 bg-line/20 rounded-xl border border-line flex items-center justify-center text- text-sub text-center leading-tight mx-auto"
-                >
+                <img v-if="row.poster_url" :src="row.poster_url" :alt="row.title"
+                    class="w-10 h-14 object-cover rounded-xl border border-line shadow-soft mx-auto" />
+                <div v-else
+                    class="w-10 h-14 bg-line/20 rounded-xl border border-line flex items-center justify-center text- text-sub text-center leading-tight mx-auto">
                     {{ t('notReady.noImage') }}
                 </div>
             </template>
@@ -134,14 +132,11 @@ const handleRefresh = async () => {
             </template>
 
             <template #cell-type="{ row }">
-                <span
-                    :class="
-                        row.media_type === 'series'
-                            ? 'bg-accent/10 text-accent border-accent/20'
-                            : 'bg-warning/10 text-warning border-warning/20'
+                <span :class="row.media_type === 'series'
+                    ? 'bg-accent/10 text-accent border-accent/20'
+                    : 'bg-warning/10 text-warning border-warning/20'
                     "
-                    class="px-2 py-0.5 rounded-lg text-fluid-xs font-semibold border inline-block whitespace-nowrap mb-1"
-                >
+                    class="px-2 py-0.5 rounded-lg text-fluid-xs font-semibold border inline-block whitespace-nowrap mb-1">
                     {{ row.media_type === 'series' ? t('notReady.series') : t('notReady.movie') }}
                 </span>
                 <div class="text-sub/70 truncate max-w- text-center mx-auto" v-if="row.labels">
@@ -150,10 +145,9 @@ const handleRefresh = async () => {
             </template>
 
             <template #cell-tmdb="{ row }">
-                <span v-if="row.tmdb_id" class="font-mono text-sub">{{
-                    `#${row.tmdb_id}` ?? '-'
-                }}</span>
+                <span class="font-mono text-sub">{{ row.tmdb_id ? `#${row.tmdb_id}` : '-' }}</span>
             </template>
+
 
             <template #cell-created_at="{ value }">
                 {{ formatDate(value) }}
@@ -161,17 +155,12 @@ const handleRefresh = async () => {
 
             <template #cell-status>
                 <span
-                    class="px-2.5 py-1 rounded-full text-fluid-xs text-center font-semibold bg-warning/10 text-warning border border-warning/20 inline-block"
-                >
+                    class="px-2.5 py-1 rounded-full text-fluid-xs text-center font-semibold bg-warning/10 text-warning border border-warning/20 inline-block">
                     {{ t('notReady.notReadyBadge') }}
                 </span>
             </template>
         </BaseTable>
 
-        <AppPagination
-            :pagination="pagination"
-            :is-loading="isLoading"
-            @change-page="handlePageChange"
-        />
+        <AppPagination :pagination="pagination" :is-loading="isLoading" @change-page="handlePageChange" />
     </div>
 </template>

@@ -1,4 +1,5 @@
-<script setup>
+<script setup lang="ts">
+
 import { useRouter, useRoute } from 'vue-router'
 import { reactive, onMounted, toRaw, onUnmounted } from 'vue'
 
@@ -8,33 +9,32 @@ import { useFormValidation } from '@/composables/useFormValidation'
 import { useGenresStore } from '@/stores/genreStore'
 import { useI18n } from 'vue-i18n'
 
+import type { CreateGenreSchemaType } from '@/schemas/genreSchema'
+import type { GenresResponse } from '@/types/globalTypes'
+
 const { t } = useI18n()
 const router = useRouter()
 const genresStore = useGenresStore()
 const route = useRoute()
 const notiStore = useNotificationStore()
-const genreId = route.params.id
-const formData = reactive({
+
+const id: string | string[] | undefined = Array.isArray(route.params.id) ? route.params.id[0] : route.params.id
+const genreId: number = Number(id)
+const formData = reactive<CreateGenreSchemaType>({
     name: '',
 })
 
 // استبدل السطرين القديمين بهذا السطر فقط:
 const { errors, validate } = useFormValidation(genreId ? updateGenreByIdSchema : createGenreSchema)
 
-const handleSubmit = async () => {
-    genresStore.successMessage = ''
-    genresStore.errorMessage = ''
+const handleSubmit = async ():  Promise<void> => {
 
     const { isValid, data } = validate(toRaw(formData))
-    if (!isValid) return
+    if (!isValid || !data) return
 
-    genresStore.isLoading = true
-
-    const isSuccess = genreId
+    const isSuccess: GenresResponse | null = genreId
         ? await genresStore.editGenreById(genreId, data)
         : await genresStore.addGenre(data)
-
-    genresStore.isLoading = false
 
     if (isSuccess) {
         const msg = genreId ? t('genres.updatedSuccess') : t('genres.addedSuccess')

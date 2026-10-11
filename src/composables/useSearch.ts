@@ -29,7 +29,7 @@ export const handleSearch = async <TData>({
         Number.isInteger(targetId) && targetId > 0 && String(targetId) === rawValue
 
     if (!isId && rawValue.length < 3) {
-        notiStore('حقل البحث بالاسم يجب ألا يكون أصغر من 3 حروف !')
+        notiStore.triggerNotification('حقل البحث بالاسم يجب ألا يكون أصغر من 3 حروف !')
         return false
     }
 

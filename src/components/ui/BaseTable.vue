@@ -1,16 +1,34 @@
-<script setup>
+<script setup lang="ts">
 import { useI18n } from 'vue-i18n'
-defineProps({
-    columns: { type: Array, required: true },
-    rows: { type: Array, default: () => [] },
-    isLoading: { type: Boolean, default: false },
-    storeKey: { type: String, default: 'tasks' },
-    sortBy: String, // اللي بيتعمله sort حاليا
-    sortOrder: String, // ASC or DESC
-})
 
+export interface Column {
+    key: string
+    label: string
+    sortable?: boolean
+}
+
+type TableRow = Record<string, any>
+
+defineProps<{
+    columns: Column[]
+    rows?: TableRow[]
+    isLoading?: boolean
+    storeKey?: string
+    sortBy?: string
+    sortOrder?: 'ASC' | 'DESC' | string
+}>()
+
+// 👈 أضف هذا السطر هنا لحل المشكلة نهائياً
+// تعريف الـ slots بشكل عام ليتعرف عليها المحرر فوراً في أي صفحة
+defineSlots<{
+    [key: string]: (props: { value: any; row: TableRow }) => any
+}>()
 const { t } = useI18n()
-defineEmits(['sort', 'row-click'])
+
+defineEmits<{
+    (e: 'sort', key: string): void
+    (e: 'row-click', row: TableRow): void
+}>()
 </script>
 
 <template>
@@ -45,10 +63,10 @@ defineEmits(['sort', 'row-click'])
                 </thead>
                 <tbody class="divide-y divide-line/60 bg-card text-main">
                     <tr
-                        v-for="row in rows"
-                        :key="row.id"
+                        v-for="(row, index) in rows"
+                        :key="index"
                         @click="$emit('row-click', row)"
-                        class="hover:bg-line/10 transition-colors text-sub text-fluid-p"
+                        class="hover:bg-line/10 transition-colors text-sub text-fluid-p cursor-pointer"
                     >
                         <td v-for="col in columns" :key="col.key" class="p-fluid text-center">
                             <slot :name="`cell-${col.key}`" :value="row[col.key]" :row="row">

@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import Header from '@/components/layouts/HeaderApp.vue'
 import Footer from '@/components/layouts/FooterApp.vue'
 import Sidebar from '@/components/layouts/SidebarApp.vue'

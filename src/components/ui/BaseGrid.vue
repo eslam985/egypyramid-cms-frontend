@@ -1,11 +1,15 @@
 <!-- /src/components/ui/BaseGrid.vue -->
-<script setup>
+<script setup lang="ts" generic="T extends Record<string, any>">
 import { Loader2 } from '@lucide/vue'
 
-defineProps({
-    rows: { type: Array, required: true },
-    isLoading: { type: Boolean, default: false },
-})
+defineProps<{
+    rows?: T[]
+    isLoading?: boolean
+}>()
+
+defineSlots<{
+    card: (props: { row: T }) => any
+}>()
 </script>
 
 <template>
@@ -20,7 +24,7 @@ defineProps({
 
         <!-- حالة عدم وجود بيانات (Empty State) -->
         <div
-            v-else-if="!rows.length"
+            v-else-if="!rows || !rows.length"
             class="text-center py-20 text-sub border border-dashed border-line rounded-2xl"
         >
             لا توجد بيانات لعرضها

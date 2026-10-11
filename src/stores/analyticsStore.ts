@@ -19,24 +19,25 @@ import type {
     StatusTasksRequest,
     MediasResponse,
     DownloadTasksResponse,
-    TotalStatusTasksResponse,
+    TotalStatusLinksResponse,
     BaseQueryRequest,
     ServerNameRequest,
+    LockedTelegramResponse,
 } from '@/types/globalTypes'
 
 export interface AnalyticsState extends BaseStore {
-    systemCounters: SystemCountersResponse | null,
-    totalCountersStatusServeres: StatusTasksRequest[] | null,
-    mediasNotReadyList: MediasResponse[] | null,
-    brokenLinksList: DownloadTasksResponse[] | null,
-    missingLinksByServer: DownloadTasksResponse[] | null,
-    telegramLocked: DownloadTasksResponse[] | null,
+    systemCounters: SystemCountersResponse | null
+    totalCountersStatusServeres: TotalStatusLinksResponse[]
+    mediasNotReadyList: MediasResponse[]
+    brokenLinksList: DownloadTasksResponse[]
+    missingLinksByServer: DownloadTasksResponse[]
+    telegramLocked: LockedTelegramResponse[] | []
     pagination: {
-        total: number,
-        page: number,
-        limit: number,
-        totalPage: number,
-    },
+        total: number
+        page: number
+        limit: number
+        totalPage: number
+    }
 }
 
 const useAnalyticsStore = defineStore('analytics', {
@@ -67,7 +68,6 @@ const useAnalyticsStore = defineStore('analytics', {
             this.telegramLocked = []
         },
         async exportNotReadyMedia(filters: BaseQueryRequest): Promise<boolean> {
-
             const date: string = new Date().toISOString().slice(0, 10)
 
             return handleStoreExport<BaseQueryRequest, AnalyticsState>({
@@ -90,7 +90,6 @@ const useAnalyticsStore = defineStore('analytics', {
             })
         },
         async exportMissingEpisodesByServer(filters: ServerNameRequest): Promise<boolean> {
-
             const date: string = new Date().toISOString().slice(0, 10)
 
             return handleStoreExport<ServerNameRequest, AnalyticsState>({
@@ -114,7 +113,6 @@ const useAnalyticsStore = defineStore('analytics', {
         },
 
         async fetchAllCounters(force = false): Promise<SystemCountersResponse | null> {
-
             return handleStoreFetch<SystemCountersResponse | null, never, AnalyticsState>({
                 store: this,
                 apiCall: getSystemCounters,
@@ -122,11 +120,16 @@ const useAnalyticsStore = defineStore('analytics', {
                 defaultError: 'حدث خطا أثناء جلب العدادات!',
                 force,
             })
-
         },
-        async fetchMissingEpisodesByServer(params: ServerNameRequest, force = false): Promise<DownloadTasksResponse[] | null> {
-
-            return handleStoreFetch<DownloadTasksResponse[] | null, ServerNameRequest, AnalyticsState>({
+        async fetchMissingEpisodesByServer(
+            params: ServerNameRequest,
+            force = false,
+        ): Promise<DownloadTasksResponse[] | null> {
+            return handleStoreFetch<
+                DownloadTasksResponse[] | null,
+                ServerNameRequest,
+                AnalyticsState
+            >({
                 store: this,
                 apiCall: getMissingEpisodesByServer,
                 args: params,
@@ -135,9 +138,15 @@ const useAnalyticsStore = defineStore('analytics', {
                 force,
             })
         },
-        async fetchTotalCountersStatusServers(status: StatusTasksRequest, force = false): Promise<TotalStatusTasksResponse[] | null> {
-
-            return handleStoreFetch<TotalStatusTasksResponse[] | null, StatusTasksRequest, AnalyticsState>({
+        async fetchTotalCountersStatusServers(
+            status: StatusTasksRequest,
+            force = false,
+        ): Promise<TotalStatusLinksResponse[] | null> {
+            return handleStoreFetch<
+                TotalStatusLinksResponse[] | null,
+                StatusTasksRequest,
+                AnalyticsState
+            >({
                 store: this,
                 apiCall: getTotalBrokenAndValidAndPendingLinks,
                 args: status,
@@ -146,8 +155,10 @@ const useAnalyticsStore = defineStore('analytics', {
                 force,
             })
         },
-        async fetchNotReadyMedias(params: BaseQueryRequest, force = false): Promise<MediasResponse[] | null> {
-
+        async fetchNotReadyMedias(
+            params: BaseQueryRequest,
+            force = false,
+        ): Promise<MediasResponse[] | null> {
             if (typeof params === 'boolean') {
                 params = {}
                 force = true
@@ -162,14 +173,20 @@ const useAnalyticsStore = defineStore('analytics', {
                 force,
             })
         },
-        async fetchBrokenLinks(params: ServerNameRequest, force = false): Promise<DownloadTasksResponse[] | null> {
-
+        async fetchBrokenLinks(
+            params: ServerNameRequest,
+            force = false,
+        ): Promise<DownloadTasksResponse[] | null> {
             if (params.serverName === undefined) {
                 params.serverName = 'telegram_direct'
                 force = true
             }
 
-            return handleStoreFetch<DownloadTasksResponse[] | null, ServerNameRequest, AnalyticsState>({
+            return handleStoreFetch<
+                DownloadTasksResponse[] | null,
+                ServerNameRequest,
+                AnalyticsState
+            >({
                 store: this,
                 apiCall: getBrokenLinks,
                 args: params,
@@ -177,16 +194,21 @@ const useAnalyticsStore = defineStore('analytics', {
                 defaultError: 'حدث خطا أثناء جلب اللينكات المكسورة!',
                 force,
             })
-
         },
-        async fetchLockedTelegramLinks(params: BaseQueryRequest, force = false): Promise<DownloadTasksResponse[] | null> {
-
+        async fetchLockedTelegramLinks(
+            params: BaseQueryRequest,
+            force = false,
+        ): Promise<LockedTelegramResponse[] | null> {
             if (typeof params === 'boolean') {
                 params = {}
                 force = true
             }
 
-            return handleStoreFetch<DownloadTasksResponse[] | null, BaseQueryRequest, AnalyticsState>({
+            return handleStoreFetch<
+                LockedTelegramResponse[] | null,
+                BaseQueryRequest,
+                AnalyticsState
+            >({
                 store: this,
                 apiCall: getLockedTelegramLinks,
                 args: params,
@@ -194,7 +216,6 @@ const useAnalyticsStore = defineStore('analytics', {
                 defaultError: 'حدث خطا أثناء جلب اللينكات المحجوزة!',
                 force,
             })
-
         },
     },
 })

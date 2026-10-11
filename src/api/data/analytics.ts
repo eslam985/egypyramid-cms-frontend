@@ -3,22 +3,27 @@ import type {
     BaseApiResponse,
     SystemCountersResponse,
     StatusTasksRequest,
-    TotalStatusTasksResponse,
     DownloadTasksResponse,
     MediasResponse,
     BaseQueryRequest,
     ServerNameRequest,
+    LockedTelegramResponse,
+    TotalStatusLinksResponse
 } from '@/types/globalTypes'
 
 const getSystemCounters = async (): Promise<BaseApiResponse<SystemCountersResponse | null>> => {
     const result = await api.get('/analytics/system-counters')
     return result.data
 }
+/*
+"server_name": "streamtape",
+"last_check_status": "broken",
+"total": 70
+*/
 
 const getTotalBrokenAndValidAndPendingLinks = async (
     status?: StatusTasksRequest,
-): Promise<BaseApiResponse<TotalStatusTasksResponse[] | null>> => {
-
+): Promise<BaseApiResponse<TotalStatusLinksResponse[] | null>> => {
     const result = await api.get(`/analytics/links/status/total`, {
         params: {
             ...(status && { status }),
@@ -45,9 +50,10 @@ const getMissingEpisodesByServer = async (
     return result.data
 }
 
+
 const getLockedTelegramLinks = async (
     query?: BaseQueryRequest,
-): Promise<BaseApiResponse<DownloadTasksResponse[] | null>> => {
+): Promise<BaseApiResponse<LockedTelegramResponse[] | null>> => {
     const result = await api.get(`/analytics/links/telegram/locked`, { params: { ...query } })
 
     return result.data
@@ -56,7 +62,6 @@ const getLockedTelegramLinks = async (
 const getNotReadyMedias = async (
     query?: BaseQueryRequest,
 ): Promise<BaseApiResponse<MediasResponse[] | null>> => {
-
     const result = await api.get(`/analytics/medias/not-ready`, {
         params: {
             ...query,
@@ -67,7 +72,6 @@ const getNotReadyMedias = async (
 }
 
 const handleExportNotReadyMedias = async (params?: BaseQueryRequest): Promise<Blob> => {
-
     const result = await api.get('/analytics/medias/not-ready', {
         params: {
             ...params,

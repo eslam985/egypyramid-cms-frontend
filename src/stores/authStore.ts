@@ -41,21 +41,20 @@ export const useAuthStore = defineStore('auth', {
         isEditorAndAbove: (state): boolean =>
             state.userRole === RolesList.Editor || state.userRole === RolesList.Admin,
 
-        // 👈 التعديل المهم هنا: كتابة الـ State بشكل غير معقد يمنع الـ Type Circular Loop
-        hasRole() {
+        // 👈 التعديل الصريح هنا: حددنا إن الـ getter ده بيرجع دالة تأخذ رقم وترجع boolean
+        hasRole(state): (requiredRole: number) => boolean {
             return (requiredRole: number): boolean => {
-                if (!this.userRole) return false
+                if (!state.userRole) return false
                 if (requiredRole === RolesList.Editor) {
-                    return this.userRole === RolesList.Editor || this.userRole === RolesList.Admin
+                    return state.userRole === RolesList.Editor || state.userRole === RolesList.Admin
                 }
                 if (requiredRole === RolesList.Admin) {
-                    return this.userRole === RolesList.Admin
+                    return state.userRole === RolesList.Admin
                 }
                 return true
             }
         },
     },
-
     actions: {
         async loginUser(credentials: LoginUserInputsType): Promise<boolean> {
             const notiStore = useNotificationStore()

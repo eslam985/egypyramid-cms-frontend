@@ -1,4 +1,5 @@
 // /src/types/globalTypes.ts
+import { useNotificationStore } from '@/stores/notificationStore'
 
 export type dataType = string | number | Date
 
@@ -151,6 +152,25 @@ export interface SystemCountersResponse {
     missing_vk: string
     missing_archive: string
 }
+export interface LockedTelegramResponse {
+    id: string
+    episode_id: string
+    idserver_name: string
+    url: string
+    created_at: string
+    is_ready: string
+    media_type: string
+    title: string
+    episode_number: string
+    season_number: string
+    media_id: string
+}
+
+export interface TotalStatusLinksResponse {
+    server_name: string
+    last_check_status: StatusTasksRequest
+    total: number
+}
 
 export interface DownloadTasksResponse {
     id?: string | number
@@ -247,7 +267,6 @@ export interface LinksResponse {
 // ========== API Request ==========
 // =================================
 
-
 export interface JwtUserPayload {
     userId: string
     roles: string
@@ -263,7 +282,7 @@ export interface ConfirmAndDeleteParams {
         triggerConfirm: (msg: string) => Promise<boolean> | boolean
         triggerNotification: (msg: string, ...args: unknown[]) => void
     }
-    onSuccess?: () => Promise<void> | void
+    onSuccess?: () => Promise<unknown> | unknown
     fallbackSuccess?: string
     fallbackError?: string
 }
@@ -274,7 +293,9 @@ export interface StoreFetchParams<
     TStore extends BaseStore = BaseStore,
 > {
     store?: TStore
-    apiCall: (...args: any[]) => Promise<BaseApiResponse<TData | null>> | BaseApiResponse<TData | null>
+    apiCall: (
+        ...args: any[]
+    ) => Promise<BaseApiResponse<TData | null>> | BaseApiResponse<TData | null>
     args?: TInput[] | TInput | undefined
     targetKey?: keyof TStore
     defaultError?: string
@@ -288,7 +309,9 @@ export interface StoreAddParams<
     TStore extends BaseStore = BaseStore,
 > {
     store?: TStore
-    apiCall: (...args: any[]) => Promise<BaseApiResponse<TData | null>> | BaseApiResponse<TData | null>
+    apiCall: (
+        ...args: any[]
+    ) => Promise<BaseApiResponse<TData | null>> | BaseApiResponse<TData | null>
     id?: number | string
     data: TInput
     listKey?: keyof TStore
@@ -304,7 +327,10 @@ export interface StoreEditParams<
 > {
     store?: TStore
     apiCall:
-        | ((id: TId, data: TInput) => Promise<BaseApiResponse<TData | null>> | BaseApiResponse<TData | null>)
+        | ((
+              id: TId,
+              data: TInput,
+          ) => Promise<BaseApiResponse<TData | null>> | BaseApiResponse<TData | null>)
         | ((data: TInput) => Promise<BaseApiResponse<TData | null>> | BaseApiResponse<TData | null>)
         | ((id: TId) => Promise<BaseApiResponse<TData | null>> | BaseApiResponse<TData | null>)
     id?: TId
@@ -328,10 +354,7 @@ export interface StoreDeleteParams<
     filterFn?: (items: TData[]) => TData[]
 }
 
-export interface ExportStoreParams<
-    TInput = unknown,
-    TStore extends BaseStore = BaseStore
-> {
+export interface ExportStoreParams<TInput = unknown, TStore extends BaseStore = BaseStore> {
     store?: TStore
     apiCall: (...args: any[]) => Promise<any> | any
     args?: TInput
@@ -341,7 +364,7 @@ export interface ExportStoreParams<
 
 export interface SearchParamsType<TData = unknown> {
     searchInput?: string | number | null
-    notiStore: (msg: string) => void
+    notiStore: ReturnType<typeof useNotificationStore>
     targetStore: {
         errorMessage: string
     }

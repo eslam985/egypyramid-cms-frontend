@@ -1,4 +1,5 @@
-<script setup>
+<script setup lang="ts">
+
 import { ref } from 'vue'
 import { storeToRefs } from 'pinia'
 import { defineAsyncComponent } from 'vue'
@@ -6,8 +7,11 @@ import { CircleOff, BoneFracture, Lock, FileX } from '@lucide/vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 
-const { t } = useI18n()
-const router = useRouter()
+import { useAnalyticsStore } from '@/stores/analyticsStore'
+
+import type { ServerNameRequest, } from '@/types/globalTypes'
+
+
 // تحميل التابات بشكل ذكي وخفيف (Lazy Loading)
 const BrokenLinksTable = defineAsyncComponent(
     () => import('@/components/dashbord/tabs/BrokenLinksTable.vue'),
@@ -22,33 +26,43 @@ const TelegramLockedTable = defineAsyncComponent(
     () => import('@/components/dashbord/tabs/TelegramLockedTable.vue'),
 )
 
-import { useAnalyticsStore } from '@/stores/analyticsStore'
-
+const { t } = useI18n()
+const router = useRouter()
 const analyticsStore = useAnalyticsStore()
+
 const { mediasNotReadyList, brokenLinksList, telegramLocked, missingLinksByServer } =
     storeToRefs(analyticsStore)
 
 // 1. جعل التبويب الافتراضي فارغاً عند البداية
-const activeTab = ref(null)
+const activeTab = ref<string | null>(null)
 
-const query = () => {
+const query = (): void => {
     router.push({
         query: {},
     })
 }
-
+const params: ServerNameRequest = {
+    page: 1,
+    limit: 20,
+}
 // 2. جلب بيانات التبويب فقط لحظة الضغط عليه
-const switchTab = async (tab) => {
+const switchTab = async (tab: string | null): Promise<void | null | undefined> => {
+
+    if (!tab) {
+        console.error(tab, "tab is undefined or null")
+        return null
+    }
+
     activeTab.value = tab
 
     if (tab === 'notReady' && !mediasNotReadyList.value.length) {
         query()
-        await analyticsStore.fetchNotReadyMedias()
+        await analyticsStore.fetchNotReadyMedias(params)
     } else if (tab === 'broken' && !brokenLinksList.value.length) {
-        await analyticsStore.fetchBrokenLinks()
+        await analyticsStore.fetchBrokenLinks(params)
     } else if (tab === 'telegram' && !telegramLocked.value.length) {
         query()
-        await analyticsStore.fetchLockedTelegramLinks()
+        await analyticsStore.fetchLockedTelegramLinks(params)
     } else if (tab === 'missing') {
         // الكومبوننت سيقوم بالجلب بنفسه مع تحديد السيرفر
     }
@@ -60,15 +74,12 @@ const switchTab = async (tab) => {
         <!-- أزرار التبويبات -->
         <div class="grid grid-cols-2 md:flex items-center gap-3">
             <!-- الأعمال غير الجاهزة -->
-            <button
-                @click="switchTab('notReady')"
+            <button @click="switchTab('notReady')"
                 class="flex items-center justify-center gap-2 py-fluid md:px-4 rounded-xl text-fluid-xs font-semibold transition-all duration-200 cursor-pointer active:scale-95 select-none"
-                :class="
-                    activeTab === 'notReady'
-                        ? 'btn-outline shadow-glow/10 text-fluid-xs lg:text-fluid-p text-accent-dark hover:text-slate-900 hover:bg-accent/70'
-                        : 'bg-line/20 border border-line text-sub hover:text-main hover:bg-line/40'
-                "
-            >
+                :class="activeTab === 'notReady'
+                    ? 'btn-outline shadow-glow/10 text-fluid-xs lg:text-fluid-p text-accent-dark hover:text-slate-900 hover:bg-accent/70'
+                    : 'bg-line/20 border border-line text-sub hover:text-main hover:bg-line/40'
+                    ">
                 <span class="text-fluid-xs md:text-fluid-p">{{
                     t('dashboard.tabs.notReady', {
                         count: mediasNotReadyList.length,
@@ -78,47 +89,38 @@ const switchTab = async (tab) => {
             </button>
 
             <!-- الروابط المكسورة -->
-            <button
-                @click="switchTab('broken')"
+            <button @click="switchTab('broken')"
                 class="flex items-center justify-center gap-2 py-fluid md:px-4 rounded-xl text-fluid-xs font-semibold transition-all duration-200 cursor-pointer active:scale-95 select-none"
-                :class="
-                    activeTab === 'broken'
-                        ? 'btn-outline shadow-glow/10 text-fluid-xs lg:text-fluid-p text-accent-dark hover:text-slate-900 hover:bg-accent/70'
-                        : 'bg-line/20 border border-line text-sub hover:text-main hover:bg-line/40'
-                "
-            >
+                :class="activeTab === 'broken'
+                    ? 'btn-outline shadow-glow/10 text-fluid-xs lg:text-fluid-p text-accent-dark hover:text-slate-900 hover:bg-accent/70'
+                    : 'bg-line/20 border border-line text-sub hover:text-main hover:bg-line/40'
+                    ">
                 <span class="text-fluid-xs md:text-fluid-p">{{
                     t('dashboard.tabs.broken', { count: brokenLinksList.length })
-                }}</span>
+                    }}</span>
                 <BoneFracture class="size-4 shrink-0" />
             </button>
 
             <!-- روابط تليجرام المقفولة -->
-            <button
-                @click="switchTab('telegram')"
+            <button @click="switchTab('telegram')"
                 class="flex items-center justify-center gap-2 py-fluid md:px-4 rounded-xl text-fluid-xs font-semibold transition-all duration-200 cursor-pointer active:scale-95 select-none"
-                :class="
-                    activeTab === 'telegram'
-                        ? 'btn-outline shadow-glow/10 text-fluid-xs lg:text-fluid-p text-accent-dark hover:text-slate-900 hover:bg-accent/70'
-                        : 'bg-line/20 border border-line text-sub hover:text-main hover:bg-line/40'
-                "
-            >
+                :class="activeTab === 'telegram'
+                    ? 'btn-outline shadow-glow/10 text-fluid-xs lg:text-fluid-p text-accent-dark hover:text-slate-900 hover:bg-accent/70'
+                    : 'bg-line/20 border border-line text-sub hover:text-main hover:bg-line/40'
+                    ">
                 <span class="text-fluid-xs md:text-fluid-p">{{
                     t('dashboard.tabs.telegram', { count: telegramLocked.length })
-                }}</span>
+                    }}</span>
                 <Lock class="size-4 shrink-0" />
             </button>
 
             <!-- الحلقات المفقودة -->
-            <button
-                @click="switchTab('missing')"
+            <button @click="switchTab('missing')"
                 class="flex items-center justify-center gap-2 py-fluid md:px-4 rounded-xl text-fluid-xs font-semibold transition-all duration-200 cursor-pointer active:scale-95 select-none"
-                :class="
-                    activeTab === 'missing'
-                        ? 'btn-outline shadow-glow/10 text-fluid-xs lg:text-fluid-p text-accent-dark hover:text-slate-900 hover:bg-accent/70'
-                        : 'bg-line/20 border border-line text-sub hover:text-main hover:bg-line/40'
-                "
-            >
+                :class="activeTab === 'missing'
+                    ? 'btn-outline shadow-glow/10 text-fluid-xs lg:text-fluid-p text-accent-dark hover:text-slate-900 hover:bg-accent/70'
+                    : 'bg-line/20 border border-line text-sub hover:text-main hover:bg-line/40'
+                    ">
                 <span class="text-fluid-xs md:text-fluid-p">{{
                     t('dashboard.tabs.missing', {
                         count: missingLinksByServer.length,

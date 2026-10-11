@@ -1,4 +1,5 @@
-<script setup>
+<script setup lang="ts">
+
 import { House, Video, ChartBarStacked, Download, Settings, CircleUser } from '@lucide/vue'
 import { useI18n } from 'vue-i18n'
 const { t } = useI18n()
