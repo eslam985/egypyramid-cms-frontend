@@ -173,7 +173,7 @@ const useMediaContentStore = defineStore('mediaContent', {
                 defaultError: 'حدثت مشكلة اثناء تعديل الموسم',
             })
         },
-        async removeSeasonById(id: number): Promise<boolean | null> {
+        async removeSeasonById(id: number): Promise<boolean> {
             return handleStoreDelete<SeasonsResponse, number, MediaContentState>({
                 store: this,
                 apiCall: deleteSeasonById,

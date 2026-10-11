@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 // src/components/media/mediaDetail/episodeInfo.vue
 import { nextTick } from 'vue'
 import { useI18n } from 'vue-i18n'
@@ -21,37 +21,46 @@ const mediaContentStore = useMediaContentStore()
 const mediaStore = useMediaStore()
 const notiStore = useNotificationStore()
 
-const mediaId = route.params.id
+const id: string | string[] | undefined = Array.isArray(route.params.id) ? route.params.id[0] : route.params.id
+const mediaId: number = Number(id)
 
-const handleSelectEpisode = async (episodeId) => {
+const handleSelectEpisode = async (episodeId: number): Promise<void | null> => {
+
+    if (!episodeId) return null
+
     mediaContentStore.currentEpisode = mediaContentStore.episodes?.find(
-        (e) => String(e.id) === String(episodeId),
-    )
+        (e) => Number(e.id) === Number(episodeId),
+    ) ?? null
 
     // الانتظار حتى تقوم Vue بتحديث الـ ID في الـ DOM
     await nextTick()
 
     // التمرير السلس إلى الـ div الخاص بالروابط
-    const targetElement = document.getElementById(String(episodeId))
+    const targetElement: HTMLElement | null = document.getElementById(String(episodeId))
     if (targetElement) {
         targetElement.scrollIntoView({ behavior: 'smooth' })
     }
 
     // جلب الروابط من السيرفر
-    await mediaContentStore.getLinksByEpisodeId(episodeId, true)
+    await mediaContentStore.getLinksByEpisodeId(Number(episodeId), true)
 }
 
 // 3. إدارة الحلقات
-const handleAddEpisode = () => {
+const handleAddEpisode = (): void => {
     router.push({ name: 'addEpisode', params: { media_id: mediaId } })
 }
 
-const handleEditEpisode = async (episode) => {
-    await mediaContentStore.getEpisodeById(episode, true)
+const handleEditEpisode = async (episode: number): Promise<void> => {
+    if (!episode) return
+
+    await mediaContentStore.getEpisodeById(Number(episode), true)
+
+    if (!mediaContentStore.currentEpisode) return
+
     router.push({ name: 'editEpisode', params: { id: mediaContentStore.currentEpisode.id } })
 }
 
-const handleDeleteEpisode = (episodeId) => {
+const handleDeleteEpisode = (episodeId: number): void => {
     if (!episodeId) {
         notiStore.triggerNotification(t('media.episodeInfo.noEpisodeToDelete'))
         return
@@ -59,7 +68,7 @@ const handleDeleteEpisode = (episodeId) => {
 
     confirmAndDelete({
         message: t('media.episodeInfo.confirmDelete', { id: episodeId }),
-        action: () => mediaContentStore.removeEpisodeById(episodeId),
+        action: () => mediaContentStore.removeEpisodeById(Number(episodeId)),
         store: mediaContentStore,
         notiStore,
         onSuccess: () => router.push({ name: 'mediaDetails' }),
@@ -70,27 +79,20 @@ const handleDeleteEpisode = (episodeId) => {
 <template>
     <main class="space-y-6">
         <!-- حالة جاري التحميل -->
-        <div
-            v-if="mediaStore.isLoading"
-            class="p-fluid text-center text-sub font-medium bg-card rounded-2xl border border-line"
-        >
+        <div v-if="mediaStore.isLoading"
+            class="p-fluid text-center text-sub font-medium bg-card rounded-2xl border border-line">
             {{ t('media.episodeInfo.loading') }}
         </div>
 
         <div v-else class="bg-card rounded-2xl border border-line p-fluid shadow-soft space-y-6">
             <!-- الهيدر: عنوان القائمة وزر الإضافة -->
             <div
-                class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-fluid pb-4 border-b border-line"
-            >
+                class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-fluid pb-4 border-b border-line">
                 <div class="flex items-center gap-3">
                     <div class="p-2.5 rounded-xl bg-accent/10 text-accent border border-accent/20">
                         <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                stroke-width="2"
-                                d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"
-                            />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
                         </svg>
                     </div>
                     <div :id="`${mediaContentStore.currentSeason?.id}`">
@@ -103,77 +105,46 @@ const handleDeleteEpisode = (episodeId) => {
                     </div>
                 </div>
 
-                <button
-                    v-if="authStore.isEditorAndAbove"
-                    type="button"
-                    @click="handleAddEpisode"
-                    class="btn-primary w-full sm:w-auto px-4 py-2 text-fluid-xs font-bold rounded-xl flex items-center justify-center gap-2 active:scale-95 transition-all cursor-pointer"
-                >
+                <button v-if="authStore.isEditorAndAbove" type="button" @click="handleAddEpisode"
+                    class="btn-primary w-full sm:w-auto px-4 py-2 text-fluid-xs font-bold rounded-xl flex items-center justify-center gap-2 active:scale-95 transition-all cursor-pointer">
                     <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
-                            d="M12 4v16m8-8H4"
-                        />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                     </svg>
                     <span>{{ t('media.episodeInfo.addNew') }}</span>
                 </button>
             </div>
 
             <!-- عرض الحلقات بنظام الشبكة (Grid Layout) -->
-            <div
-                v-if="mediaContentStore.episodes && mediaContentStore.episodes.length > 0"
-                class="grid grid-cols-2 xs:grid-cols-3 md:grid-cols-4 gap-3 md:gap-fluid"
-            >
-                <div
-                    v-for="ep in mediaContentStore.episodes"
-                    :key="ep.id"
-                    :class="[
-                        'group bg-card hover:bg-line/10 border rounded-xl p-fluid transition-all duration-200 shadow-soft flex flex-col justify-between gap-3',
-                        mediaContentStore.currentEpisode?.id === ep.id
-                            ? 'border-accent bg-accent/10 ring-2 ring-accent/30'
-                            : 'border-line hover:border-accent/50',
-                    ]"
-                >
+            <div v-if="mediaContentStore.episodes && mediaContentStore.episodes.length > 0"
+                class="grid grid-cols-2 xs:grid-cols-3 md:grid-cols-4 gap-3 md:gap-fluid">
+                <div v-for="ep in mediaContentStore.episodes" :key="ep.id" :class="[
+                    'group bg-card hover:bg-line/10 border rounded-xl p-fluid transition-all duration-200 shadow-soft flex flex-col justify-between gap-3',
+                    mediaContentStore.currentEpisode?.id === ep.id
+                        ? 'border-accent bg-accent/10 ring-2 ring-accent/30'
+                        : 'border-line hover:border-accent/50',
+                ]">
                     <!-- الجزء العلوي: رقم الحلقة والروابط -->
-                    <a
-                        @click.prevent="handleSelectEpisode(ep.id)"
-                        class="cursor-pointer flex items-start flex-wrap justify-between gap-2"
-                    >
+                    <a @click.prevent="handleSelectEpisode(Number(ep.id))"
+                        class="cursor-pointer flex items-start flex-wrap justify-between gap-2">
                         <span
-                            class="px-2 py-1 rounded-lg bg-accent/10 text-accent font-black text-fluid-xs flex items-center justify-center border border-accent/20 group-hover:scale-105 transition-transform"
-                        >
+                            class="px-2 py-1 rounded-lg bg-accent/10 text-accent font-black text-fluid-xs flex items-center justify-center border border-accent/20 group-hover:scale-105 transition-transform">
                             #{{ ep.episode_number }}
                         </span>
                         <div>
                             <span class="text-fluid-xs font-boldblock">{{
                                 t('media.episodeInfo.episodeLabel', { number: ep.episode_number })
                             }}</span>
-                            <span class="text-[10px] text-sub/70 font-mono block"
-                                >ID: {{ ep.id }}</span
-                            >
+                            <span class="text-[10px] text-sub/70 font-mono block">ID: {{ ep.id }}</span>
                         </div>
                     </a>
                     <!-- شارة (Badge) عدد الروابط -->
-                    <div
-                        class="px-2.5 py-1 rounded-full text-fluid-xs font-semibold bg-line/20 border border-line flex items-center gap-1.5 shrink-0"
-                        :title="t('media.episodeInfo.linksCountTitle')"
-                    >
-                        <svg
-                            class="w-3.5 h-3.5 text-accent"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                        >
-                            <path
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                stroke-width="2"
-                                d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"
-                            />
+                    <div class="px-2.5 py-1 rounded-full text-fluid-xs font-semibold bg-line/20 border border-line flex items-center gap-1.5 shrink-0"
+                        :title="t('media.episodeInfo.linksCountTitle')">
+                        <svg class="w-3.5 h-3.5 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
                         </svg>
-                        <template v-if="ep.links_count > 0">
+                        <template v-if="ep.links_count != null && ep.links_count > 0">
                             <span class="text-sub">{{ t('media.episodeInfo.links') }}</span>
                             <span class="text-success font-bold">{{ ep.links_count }}</span>
                         </template>
@@ -192,58 +163,30 @@ const handleDeleteEpisode = (episodeId) => {
                         <div v-if="ep.id" class="flex items-center justify-between text-sub">
                             <span>{{ t('media.episodeInfo.identifier') }}:</span>
                             <code
-                                class="text-[11px] font-mono bg-line/20 border border-line px-1.5 py-0.5 roundedtruncate max-w-[120px]"
-                            >
+                                class="text-[11px] font-mono bg-line/20 border border-line px-1.5 py-0.5 roundedtruncate max-w-[120px]">
                                 {{ ep.id }}
                             </code>
                         </div>
                     </div>
 
                     <!-- الإجراءات (تعديل / حذف) -->
-                    <div
-                        v-if="authStore.isEditorAndAbove"
-                        class="pt-2 flex items-center justify-end gap-1 border-t border-line/40"
-                    >
-                        <button
-                            type="button"
-                            @click="handleEditEpisode(ep.id)"
+                    <div v-if="authStore.isEditorAndAbove"
+                        class="pt-2 flex items-center justify-end gap-1 border-t border-line/40">
+                        <button type="button" @click="handleEditEpisode(Number(ep.id))"
                             class="p-1.5 rounded-lg text-sub hover:text-accent hover:bg-accent/10 transition-colors active:scale-95 cursor-pointer"
-                            :title="t('media.episodeInfo.editEpisode')"
-                        >
-                            <svg
-                                class="w-4 h-4"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor"
-                            >
-                                <path
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    stroke-width="2"
-                                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-                                />
+                            :title="t('media.episodeInfo.editEpisode')">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                             </svg>
                         </button>
 
-                        <button
-                            v-if="authStore.isAdmin"
-                            type="button"
-                            @click="handleDeleteEpisode(ep.id)"
+                        <button v-if="authStore.isAdmin" type="button" @click="handleDeleteEpisode(Number(ep.id))"
                             class="p-1.5 rounded-lg text-sub hover:text-danger hover:bg-danger/10 transition-colors active:scale-95 cursor-pointer"
-                            :title="t('media.episodeInfo.deleteEpisode')"
-                        >
-                            <svg
-                                class="w-4 h-4"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor"
-                            >
-                                <path
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    stroke-width="2"
-                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                                />
+                            :title="t('media.episodeInfo.deleteEpisode')">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                             </svg>
                         </button>
                     </div>
@@ -251,20 +194,13 @@ const handleDeleteEpisode = (episodeId) => {
             </div>
 
             <!-- حالة عدم وجود حلقات -->
-            <div
-                v-else
-                class="text-fluid-xs text-sub py-12 text-center bg-line/5 rounded-2xl border border-dashed border-line space-y-3"
-            >
+            <div v-else
+                class="text-fluid-xs text-sub py-12 text-center bg-line/5 rounded-2xl border border-dashed border-line space-y-3">
                 <div
-                    class="w-12 h-12 mx-auto rounded-xl bg-line/20 flex items-center justify-center text-sub border border-line"
-                >
+                    class="w-12 h-12 mx-auto rounded-xl bg-line/20 flex items-center justify-center text-sub border border-line">
                     <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="1.5"
-                            d="M7 4v16M17 4v16M3 8h4m10 0h4M3 12h18M3 16h4m10 0h4M4 20h16a1 1 0 001-1V5a1 1 0 00-1-1H4a1 1 0 00-1 1v14a1 1 0 001 1z"
-                        />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                            d="M7 4v16M17 4v16M3 8h4m10 0h4M3 12h18M3 16h4m10 0h4M4 20h16a1 1 0 001-1V5a1 1 0 00-1-1H4a1 1 0 00-1 1v14a1 1 0 001 1z" />
                     </svg>
                 </div>
                 <p class="font-medium">{{ t('media.episodeInfo.noEpisodesYet') }}</p>

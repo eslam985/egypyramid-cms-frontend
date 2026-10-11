@@ -172,7 +172,8 @@ const useMediaStore = defineStore('media', {
                 defaultError: 'حدث خطأ اثناء تعديل الميديا',
             })
         },
-        async removeMediaById(id: number): Promise<boolean | null> {
+        async removeMediaById(id: number): Promise<boolean> {
+            if(!id) return false
             return handleStoreDelete<boolean, number, MediaState>({
                 store: this,
                 apiCall: deleteMediaById,

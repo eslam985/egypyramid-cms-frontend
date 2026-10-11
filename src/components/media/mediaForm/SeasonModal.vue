@@ -1,4 +1,5 @@
-<script setup>
+<script setup lang="ts">
+
 import { reactive, onMounted, computed, toRaw } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
@@ -9,6 +10,13 @@ import { useNotificationStore } from '@/stores/notificationStore'
 
 import { useMediaContentStore } from '@/stores/mediaContentStore'
 import { useMediaStore } from '@/stores/mediaStore'
+import { toNumber } from '@/utils/global'
+
+import type { CreateSeasonSchemaType, UpdateSeasonSchemaType } from '@/schemas/seasonSchema'
+import type {
+    SeasonsResponse,
+    MediasResponse,
+} from '@/types/globalTypes'
 
 const { t } = useI18n()
 
@@ -18,20 +26,23 @@ const router = useRouter()
 const route = useRoute()
 const notiStore = useNotificationStore()
 
-const mediaId = route.params.media_id
-const seasonId = route.params.id
+const mediaId: number | null = toNumber(route.params.media_id) ?? null
+const seasonId: number | null = toNumber(route.params.id) ?? null
 
 const currentSchema = computed(() => (mediaId ? createSeasonSchema : updateSeasonSchema))
 const { errors, validate } = useFormValidation(currentSchema)
 
-const formData = reactive({
+const formData: {
+    season_number: number;
+} = reactive<CreateSeasonSchemaType>({
     season_number: 0,
 })
 
 onMounted(async () => {
     // Add New Season In Current Media
     if (route.name === 'addSeason') {
-        const foundMedia = await mediaStore.getMediaById(mediaId)
+        const foundMedia: MediasResponse | null = await mediaStore.getMediaById(mediaId)
+
         if (!foundMedia && !mediaStore.currentMedia) {
             notiStore.triggerNotification(mediaStore.errorMessage || t('media.form.notFound'))
             router.push({ name: 'NotFound' })
@@ -40,7 +51,7 @@ onMounted(async () => {
 
     // edit current season
     if (route.name === 'editSeason') {
-        const foundSeason = await mediaContentStore.getSeasonById(seasonId, true)
+        const foundSeason: SeasonsResponse | null = await mediaContentStore.getSeasonById(seasonId, true)
 
         if (!foundSeason && !mediaContentStore.currentSeason) {
             notiStore.triggerNotification(
@@ -50,26 +61,23 @@ onMounted(async () => {
         }
 
         if (foundSeason && foundSeason.season_number !== undefined) {
-            formData.season_number = foundSeason.season_number
+            formData.season_number = toNumber(foundSeason.season_number)
         }
     }
 })
 
-const handleSubmit = async () => {
-    mediaContentStore.successMessage = ''
-    mediaContentStore.errorMessage = ''
+const handleSubmit = async (): Promise<void> => {
 
     const { isValid, data } = validate(toRaw(formData))
-    if (!isValid) return
-    mediaContentStore.isLoading = true
+    if (!isValid || !data) return
 
-    const isSuccess =
+    const isSuccess: SeasonsResponse | null =
         route.name === 'editSeason'
-            ? await mediaContentStore.editSeasonById(seasonId, data)
-            : await mediaContentStore.addSeason(mediaId, data)
+            ? await mediaContentStore.editSeasonById(seasonId, data as UpdateSeasonSchemaType)
+            : await mediaContentStore.addSeason(mediaId, data as CreateSeasonSchemaType)
 
     if (isSuccess) {
-        const msg =
+        const msg: string =
             route.name === 'addSeason'
                 ? t('media.seasonForm.addedSuccess')
                 : t('media.seasonForm.updatedSuccess')
@@ -109,19 +117,12 @@ const handleSubmit = async () => {
                         {{ t('media.seasonForm.seasonNumberLabel') }}
                         <span class="text-danger">*</span>
                     </label>
-                    <input
-                        type="number"
-                        id="season_number"
-                        name="season_number"
-                        required
+                    <input type="number" id="season_number" name="season_number" required
                         v-model.number="formData.season_number"
-                        :placeholder="t('media.seasonForm.seasonNumberPlaceholder')"
-                        class="form-input"
-                        :class="{
+                        :placeholder="t('media.seasonForm.seasonNumberPlaceholder')" class="form-input" :class="{
                             'border-danger focus:ring-danger/20 focus:border-danger':
                                 errors.season_number,
-                        }"
-                    />
+                        }" />
                     <p v-if="errors.season_number" class="form-error">
                         {{ errors.season_number }}
                     </p>
@@ -132,15 +133,10 @@ const handleSubmit = async () => {
                     <button type="button" @click="router.back()" class="btn-secondary">
                         {{ t('common.cancel') }}
                     </button>
-                    <button
-                        type="submit"
-                        class="btn-primary"
-                        :disabled="mediaContentStore.isLoading"
-                    >
+                    <button type="submit" class="btn-primary" :disabled="mediaContentStore.isLoading">
                         <span v-if="mediaContentStore.isLoading" class="flex items-center gap-2">
                             <span
-                                class="size-4 border-2 border-on-accent border-t-transparent rounded-full animate-spin"
-                            ></span>
+                                class="size-4 border-2 border-on-accent border-t-transparent rounded-full animate-spin"></span>
                             <span>{{ t('common.processing') }}</span>
                         </span>
                         <span v-else>{{

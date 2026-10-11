@@ -228,6 +228,7 @@ export interface SeasonsResponse {
     media_id?: string | number
     season_number?: string
     created_at?: string
+    episodes_count?: number
 }
 
 export interface EpisodeResponse {
@@ -244,6 +245,7 @@ export interface EpisodeResponse {
     download_url?: string
     season_id?: string | number
     slug?: string
+    links_count?: number
 }
 
 export interface LinksResponse {

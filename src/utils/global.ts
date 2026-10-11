@@ -91,4 +91,6 @@ this.episodes = sortByProperty(episodesList, 'title')
 this.media = sortByProperty(mediaList, 'created_at', false)
 */
 
-export { formatDate, confirmAndDelete, sortByProperty }
+const toNumber = (val: any): number => Array.isArray(val) ? Number(val[0]) : Number(val)
+
+export { formatDate, confirmAndDelete, sortByProperty, toNumber }

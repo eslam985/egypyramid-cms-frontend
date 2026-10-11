@@ -1,4 +1,5 @@
-<script setup>
+<script setup lang="ts">
+
 // /frontend/vue-dashbord/src/components/media/mediaDetail/MediaInfoCard.vue
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
@@ -10,6 +11,8 @@ import { useNotificationStore } from '@/stores/notificationStore'
 import { confirmAndDelete } from '@/utils/global'
 import { useAuthStore } from '@/stores/authStore'
 
+import type { MediasResponse } from '@/types/globalTypes'
+
 const authStore = useAuthStore()
 const router = useRouter()
 
@@ -17,9 +20,16 @@ const mediaStore = useMediaStore()
 const notiStore = useNotificationStore()
 
 const handleBack = () => router.push({ name: 'mediaList' })
-const handleEditMedia = (item) => router.push({ name: 'editMedia', params: { id: item.id } })
+const handleEditMedia = () => {
 
-const handleDeleteMedia = () => {
+    const item: MediasResponse | null = mediaStore.currentMedia
+
+    if (!item) return
+
+    return router.push({ name: 'editMedia', params: { id: item.id } })
+}
+
+const handleDeleteMedia = (): void => {
     if (!mediaStore.currentMedia) {
         notiStore.triggerNotification(t('media.noMediaToDelete'))
         return
@@ -30,7 +40,7 @@ const handleDeleteMedia = () => {
             title: mediaStore.currentMedia.title,
             id: mediaStore.currentMedia.id,
         }),
-        action: () => mediaStore.removeMediaById(mediaStore.currentMedia.id),
+        action: () => mediaStore.removeMediaById(Number(mediaStore.currentMedia?.id)),
         store: mediaStore,
         notiStore,
         onSuccess: () => router.push({ name: 'mediaList' }),
@@ -205,7 +215,7 @@ const handleDeleteMedia = () => {
 
                     <!-- البوستر / right  -->
                     <div
-                        class="self-center content-center items-center align-center my-3 mx-auto aspect-1/1 w-50 h-50 rounded-xl overflow-hidden bg-line/10 border border-line relative shadow-soft"
+                        class="self-center content-center items-center align-center my-3 mx-auto aspect-square w-50 h-50 rounded-xl overflow-hidden bg-line/10 border border-line relative shadow-soft"
                     >
                         <img
                             v-if="mediaStore.currentMedia.poster_url"

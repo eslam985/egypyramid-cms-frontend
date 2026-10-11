@@ -1,4 +1,5 @@
-<script setup>
+<script setup lang="ts">
+
 import { useRouter, useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 
@@ -12,6 +13,13 @@ import { useNotificationStore } from '@/stores/notificationStore'
 import { createMediaSchema, updateMediaSchema } from '@/schemas/mediaSchema'
 import { useFormValidation } from '@/composables/useFormValidation'
 
+import type {
+    CreateMediaInputsType,
+    UpdateMediaInputsType,
+} from '@/schemas/mediaSchema'
+
+import type { MediasResponse, GenresResponse } from '@/types/globalTypes'
+
 // استدعاء الـ Composable وتمرين الـ Schema
 const genresStore = useGenresStore()
 const route = useRoute()
@@ -19,13 +27,14 @@ const mediaStore = useMediaStore()
 
 const router = useRouter()
 const notiStore = useNotificationStore()
-const mediaId = route.params.id // استخراج الـ ID من الرابط
+const id = Array.isArray(route.params.id) ? route.params.id[0] : route.params.id
+const mediaId = Number(id)
 
 const currentSchema = computed(() => (mediaId ? updateMediaSchema : createMediaSchema))
 const { errors, validate } = useFormValidation(currentSchema)
 
 // تجميع الحقول في كائن reactive واحد
-const formData = reactive({
+const formData = reactive<CreateMediaInputsType>({
     title: '',
     year: '',
     tmdb_id: '',
@@ -36,28 +45,24 @@ const formData = reactive({
     is_ready: false,
     is_facebook_posted: false,
     labels: '',
-    category: '',
-    media_type: '',
+    category: 'movie' ,
+    media_type: 'movie',
     duration_iso: '',
     genres: [],
 })
 // جلب التصنيفات من السيرفر عند تحميل الصفحة
 
-const handleSubmit = async () => {
-    mediaStore.successMessage = ''
-    mediaStore.errorMessage = ''
+const handleSubmit = async (): Promise<void> => {
 
     // فحص البيانات باستخدام Zod بعد تجريد الـ Proxy
     const { isValid, data } = validate(toRaw(formData))
-    if (!isValid) return // إيقاف التنفيذ إذا توجد أخطاء مدخلات
+    if (!isValid || !data) return
 
-    mediaStore.isLoading = true
 
-    const result = mediaId
-        ? await mediaStore.editMediaById(mediaId, data)
-        : await mediaStore.addMedia(data)
+    const result: MediasResponse | null = mediaId
+        ? await mediaStore.editMediaById(mediaId, data as UpdateMediaInputsType)
+        : await mediaStore.addMedia(data as CreateMediaInputsType)
 
-    mediaStore.isLoading = false
 
     if (result) {
         const msg = mediaId ? t('media.form.updatedSuccess') : t('media.form.addedSuccess')
@@ -70,7 +75,7 @@ const handleSubmit = async () => {
 
 onMounted(async () => {
     // 1. جلب قائمة كل التصنيفات أولاً
-    const foundGenres = await genresStore.fetchAllGenres()
+    const foundGenres: GenresResponse[] | null = await genresStore.fetchAllGenres()
 
     if (!foundGenres) {
         notiStore.triggerNotification(genresStore.errorMessage || t('genres.notFound'))
@@ -79,7 +84,7 @@ onMounted(async () => {
 
     // 2. إذا كنا في وضع التعديل (يوجد mediaId)
     if (mediaId) {
-        const foundMedia = await mediaStore.getMediaById(mediaId)
+        const foundMedia: MediasResponse | null = await mediaStore.getMediaById(mediaId)
 
         if (!foundMedia && !mediaStore.currentMedia) {
             notiStore.triggerNotification(genresStore.errorMessage || t('media.form.notFound'))
@@ -92,7 +97,7 @@ onMounted(async () => {
             // ب) تحويل مصفوفة الـ Objects إلى مصفوفة IDs للـ Checkboxes
             if (Array.isArray(mediaStore.currentMedia.genres)) {
                 formData.genres = mediaStore.currentMedia.genres.map((g) =>
-                    typeof g === 'object' ? g.id : g,
+                    Number(typeof g === 'object' && g !== null ? (g as { id: number }).id : g),
                 )
             }
         }
