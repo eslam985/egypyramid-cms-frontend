@@ -1,18 +1,21 @@
-<script setup>
+<script setup lang="ts">
+
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 
+type SupportedLanguage = 'en' | 'ar'
+
 const { locale } = useI18n()
 
-const change = (l) => {
+const change = (l: SupportedLanguage): void => {
     locale.value = l
     localStorage.setItem('lang', l)
     document.documentElement.lang = l
     document.documentElement.dir = l === 'ar' ? 'rtl' : 'ltr'
 }
 
-const isArabic = computed(() => locale.value === 'ar')
-const toggleLang = () => {
+const isArabic = computed<boolean>(() => locale.value === 'ar')
+const toggleLang = (): void => {
     change(isArabic.value ? 'en' : 'ar')
 }
 </script>

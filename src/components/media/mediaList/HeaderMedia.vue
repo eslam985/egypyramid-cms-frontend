@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
@@ -12,17 +12,20 @@ import { Loader, Plus, Download } from '@lucide/vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/authStore'
 
+import type { MediasResponse } from '@/types/globalTypes'
+
 // authStore
 const authStore = useAuthStore()
 const mediaStore = useMediaStore()
 const notiStore = useNotificationStore()
 const route = useRoute()
 const router = useRouter()
-const searchInput = ref('')
-const selectedCategory = ref('')
+
+const selectedCategory = ref < 'movie' | 'tv' | undefined > ('movie')
 
 // معالجة التصفية حسب التصنيف
-const handleCategoryChange = () => {
+const handleCategoryChange = (): void => {
+
     router.push({
         name: 'mediaList',
         query: {
@@ -32,14 +35,14 @@ const handleCategoryChange = () => {
             category: selectedCategory.value,
         },
     })
+
     mediaStore.setFilters({ category: selectedCategory.value })
 }
 
 const handleRefresh = async () => {
-    searchInput.value = ''
-    selectedCategory.value = ''
-    mediaStore.filters.search = ''
-    mediaStore.filters.category = ''
+    selectedCategory.value = undefined
+    mediaStore.filters.search = null
+    mediaStore.filters.category = null
 
     router.push({
         name: 'mediaList',
@@ -49,13 +52,10 @@ const handleRefresh = async () => {
         },
     })
 
-    const data = await mediaStore.fetchMedias({
-        page: 1,
-        limit: 20,
-        force: true,
-    })
+    const data: MediasResponse[] | null = await mediaStore.fetchMedias( { page: 1, limit: 20 }, true )
 
-    if (data) {
+
+    if (data && data.length > 0) {
         notiStore.triggerNotification(t('common.refreshSuccess'))
     }
 
@@ -65,20 +65,15 @@ const handleRefresh = async () => {
 }
 
 const handleExport = async () => {
-    const query = route.query
-    console.log(query)
-    await mediaStore.exportMedia(query)
+    await mediaStore.exportMedia(mediaStore.queryParams)
 }
+
 </script>
 <template>
-    <div
-        :class="
-            authStore.isEditorAndAbove
-                ? 'grid grid-cols-2 xs:grid-cols-3 md:grid-cols-25'
-                : 'flex flex-wrap md:gap-fluid-gap'
-        "
-        class="gap-2 my-3"
-    >
+    <div :class="authStore.isEditorAndAbove
+            ? 'grid grid-cols-2 xs:grid-cols-3 md:grid-cols-25'
+            : 'flex flex-wrap md:gap-fluid-gap'
+        " class="gap-2 my-3">
         <!-- 1111 -->
         <!-- حقل البحث -->
         <div class="md:col-span-6 flex self-center relative text-fluid-xs">
@@ -88,12 +83,9 @@ const handleExport = async () => {
         <!-- 2222 -->
         <!-- تصفية حسب التصنيف -->
         <div class="md:col-span-4 self-center">
-            <select
-                id="media-category"
-                v-model="selectedCategory"
+            <select id="media-category" v-model="selectedCategory"
                 class="w-full p-fluid self-center text-center rounded-xl bg-line/10 border border-accent/20 border-linerounded-xl text-fluid-xs text-nowrap"
-                @change="handleCategoryChange"
-            >
+                @change="handleCategoryChange">
                 <option class="text-fluid-xs" value="">
                     {{ t('media.filter.allCategories') }}
                 </option>
@@ -105,11 +97,9 @@ const handleExport = async () => {
         <!-- 3333 -->
         <!-- Export -->
         <div v-if="authStore.isEditorAndAbove" class="md:col-span-5 self-center flex justify-end">
-            <button
-                type="button"
+            <button type="button"
                 class="px-fluid btn-outline shadow-glow/10 text-fluid-xs lg:text-fluid-p text-accent-dark hover:text-slate-900 hover:bg-accent/70"
-                @click="handleExport"
-            >
+                @click="handleExport">
                 <Download class="size-5 text-accent" :stroke-width="2" />
                 Export
             </button>
@@ -117,27 +107,17 @@ const handleExport = async () => {
 
         <!-- 4444 -->
         <!-- refreshData -->
-        <button
-            type="button"
+        <button type="button"
             class="md:col-span-5 btn-outline gap-1 shadow-glow/10 text-fluid-xs lg:text-fluid-p text-accent-dark hover:text-slate-900 hover:bg-accent/70"
-            @click="handleRefresh"
-            :disabled="mediaStore.isLoading"
-        >
-            <Loader
-                class="size-4 text-accent"
-                :class="{ 'animate-spin': mediaStore.isLoading }"
-                :stroke-width="2"
-            />
+            @click="handleRefresh" :disabled="mediaStore.isLoading">
+            <Loader class="size-4 text-accent" :class="{ 'animate-spin': mediaStore.isLoading }" :stroke-width="2" />
             <span class="text-fluid-xs">{{ t('media.toolbar.refreshData') }}</span>
         </button>
 
         <!-- 5555 -->
         <!-- addNewMedia -->
-        <router-link
-            v-if="authStore.isEditorAndAbove"
-            to="/new-media"
-            class="md:col-span-5 btn-outline gap-1 px-0 shadow-glow/10 text-fluid-xs lg:text-fluid-p text-accent-dark hover:text-slate-900 hover:bg-accent/70"
-        >
+        <router-link v-if="authStore.isEditorAndAbove" to="/new-media"
+            class="md:col-span-5 btn-outline gap-1 px-0 shadow-glow/10 text-fluid-xs lg:text-fluid-p text-accent-dark hover:text-slate-900 hover:bg-accent/70">
             <Plus class="max-w-4" />
             <span class="text-fluid-xs">{{ t('media.toolbar.addNewMedia') }}</span>
         </router-link>

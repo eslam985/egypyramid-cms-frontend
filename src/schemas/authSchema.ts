@@ -40,6 +40,11 @@ export const changePasswordSchema = z.object({
         .trim()
         .min(6, 'كلمة المرور الجديدة يجب أن تكون 6 أحرف على الأقل')
         .max(100),
+    confirmNewPassword: z
+        .string()
+        .trim()
+        .min(6, 'يجب ان تكون كلمة المرور مطابقة')
+        .max(100),
 })
 
 // 5️⃣ مخطط تسجيل الدخول

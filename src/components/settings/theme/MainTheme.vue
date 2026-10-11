@@ -1,4 +1,5 @@
-<script setup>
+<script setup lang="ts">
+
 import { useI18n } from 'vue-i18n'
 
 import ThemeSwitcher from '@/components/settings/theme/ThemeSwitcher.vue'

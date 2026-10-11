@@ -1,21 +1,24 @@
-<script setup>
+<script setup lang="ts">
+
 import { ref, onMounted } from 'vue'
 
-const isDark = ref(false)
+const isDark = ref<boolean>(false)
 
-const toggle = () => {
+const toggle = (): void => {
     isDark.value = !isDark.value
     document.documentElement.classList.toggle('dark', isDark.value)
     localStorage.setItem('theme', isDark.value ? 'dark' : 'light')
 }
 
 onMounted(() => {
-    const saved = localStorage.getItem('theme')
+    const saved: string | null = localStorage.getItem('theme')
+
     if (saved) {
         isDark.value = saved === 'dark'
     } else {
         isDark.value = document.documentElement.classList.contains('dark')
     }
+
 })
 </script>
 

@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { Search } from '@lucide/vue'
@@ -11,30 +11,33 @@ const router = useRouter()
 const route = useRoute()
 const mediaStore = useMediaStore()
 const notiStore = useNotificationStore()
+import { toNumber } from '@/utils/global'
 
-const searchInput = ref('')
+import type {
+    SearchResultData,
+    MediasResponse
+} from '@/types/globalTypes'
 
-const sreach = async () => {
-    const data = await handleSearch({
-        searchInput: searchInput,
+const searchInput = ref<string | number | null>('')
+
+const sreach = async (): Promise<void> => {
+
+    const data: false | SearchResultData = await handleSearch({
+        searchInput: searchInput.value,
         notiStore: notiStore,
         targetStore: mediaStore,
         apiCallById: (id) => mediaStore.fetchMediaByAnyId(id, 'all', true),
-        apiCallAll: () => mediaStore.fetchMedias({ force: true }),
+        apiCallAll: () => mediaStore.fetchMedias(mediaStore.queryParams, true),
         apiCallByName: (value) => mediaStore.setFilters({ search: value }),
         defaultErrorMsg: mediaStore.errorMessage,
     })
 
     // 1. استخراج الـ media_id بشكل آمن
-    let finalMediaId = null
-    const current = mediaStore.currentMedia
+    let finalMediaId: number | null = null
+    const current: MediasResponse | null = mediaStore.currentMedia
 
-    if (current) {
-        if (Array.isArray(current) && current.length > 0) {
-            finalMediaId = current[0].media_id
-        } else if (!Array.isArray(current)) {
-            finalMediaId = current.media_id
-        }
+    if (current && Object.keys(current).length > 0 && "id" in current) {
+        finalMediaId = toNumber(current.id)
     }
 
     // 2. التحقق والتوجيه
@@ -47,7 +50,7 @@ const sreach = async () => {
         }
     }
 
-    if (data.rawValue) {
+    if (data && data.rawValue) {
         router.push({
             name: 'mediaList',
             query: {
@@ -57,7 +60,6 @@ const sreach = async () => {
                 limit: 20,
             },
         })
-        console.log(router.query)
     }
 }
 </script>
@@ -65,14 +67,9 @@ const sreach = async () => {
 <template>
     <!-- حقل البحث -->
     <div class="col-span-4 flex self-center relative">
-        <input
-            placeholder="search by ID or name and press Enter..."
-            id="media-search"
-            type="search"
-            v-model="searchInput"
-            class="form-input pl-8 bg-line/10 border border-accent/20 border-linerounded-xl"
-            @keyup.enter="sreach"
-        />
+        <input placeholder="search by ID or name and press Enter..." id="media-search" type="search"
+            v-model="searchInput" class="form-input pl-8 bg-line/10 border border-accent/20 border-linerounded-xl"
+            @keyup.enter="sreach" />
         <Search @click="sreach" class="self-center absolute left-2 text-accent w-3 md:w-5" />
     </div>
 </template>

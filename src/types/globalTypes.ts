@@ -197,7 +197,7 @@ export interface MediasResponse {
     title?: string
     story?: string
     poster_url?: string
-    category?: string
+    category?: 'movie' | 'tv'
     year?: string
     rating?: string
     created_at?: string
@@ -205,7 +205,7 @@ export interface MediasResponse {
     labels?: string
     runtime?: string
     duration_iso?: string
-    media_type?: string
+    media_type?: 'movie' | 'series'
     is_ready?: boolean
     is_notified?: boolean
     is_facebook_posted?: boolean

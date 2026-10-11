@@ -1,4 +1,5 @@
-<script setup>
+<script setup lang="ts">
+
 import { Trash, MonitorCheck } from '@lucide/vue'
 
 import BaseTable from '@/components/ui/BaseTable.vue'
@@ -8,6 +9,7 @@ import { useNotificationStore } from '@/stores/notificationStore'
 
 const userStore = useUserStore()
 const notiStore = useNotificationStore()
+
 const columns = [
     { label: 'Device / User Agent', key: 'user_agent', sortable: true },
     { label: 'IP Address', key: 'ip_address', sortable: true },
@@ -16,16 +18,22 @@ const columns = [
     { label: 'Updated At', key: 'updated_at', sortable: true },
     { label: 'Action', key: 'Action' },
 ]
+const handleSort = (column: string): void => {
 
-const handleSort = (column) => {
-    userStore.setSort(column)
+    const key: string[] = columns.map(c => c.key)
+
+    if ([...key].includes(column)) {
+        userStore.setSort(column as "user_agent" | "ip_address" | "expires_at" | "created_at" | "updated_at")
+    }
 }
-const handleDelete = (sessionId) => {
+
+const handleDelete = (sessionId: number): void => {
+
     if (!sessionId) {
         notiStore.triggerNotification(`session Id required!, sessionId: ${sessionId}`)
         return
     }
-    console.log(sessionId)
+
     confirmAndDelete({
         message: 'هل انت متأكد من حذف الجلسة ؟ّ',
         action: () => userStore.removeSessionById(sessionId),
@@ -34,6 +42,7 @@ const handleDelete = (sessionId) => {
         fallbackSuccess: 'تم حذف الجلسة بنجاح',
         fallbackError: 'حدثت مشكلة اثناء حذف الجلسة!',
     })
+
 }
 </script>
 <template>
@@ -54,7 +63,7 @@ const handleDelete = (sessionId) => {
             :columns="columns"
             :rows="userStore.sessions"
             :isLoading="userStore.isLoading"
-            :sortBy="userStore.filters.sortBy"
+            :sortBy="userStore.filters.sortBy?.toString()"
             :sortOrder="userStore.filters.sortOrder"
             @sort="handleSort"
         >

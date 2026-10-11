@@ -1,37 +1,32 @@
-<script setup>
+<script setup lang="ts">
+
 import { computed, watch } from 'vue'
-import { useBackupStore } from '@/stores/backupStore'
-import { useNotificationStore } from '@/stores/notificationStore'
-// 💡 أضفنا Loader2 و Download للتحسين البصري
 import { ShieldLock, SaveCheck, KeyRound, Loader2, Download } from '@lucide/vue'
+
+import { useNotificationStore } from '@/stores/notificationStore'
+import { useBackupStore } from '@/stores/backupStore'
 import { useAuthStore } from '@/stores/authStore'
 
-const authStore = useAuthStore()
-const backupStore = useBackupStore()
 const notiStore = useNotificationStore()
+const backupStore = useBackupStore()
+const authStore = useAuthStore()
 
-// ربط قيم الـ state من الستور
-const isLoading = computed(() => backupStore.isLoading)
-const successMessage = computed(() => backupStore.successMessage)
-const errorMessages = computed(() => backupStore.errorMessages)
-
-// جلب بيانات الـ Progress وحساباتها
 const downloadedBytes = computed(() => backupStore.downloadedBytes)
+const successMessage = computed(() => backupStore.successMessage)
+const errorMessages = computed(() => backupStore.errorMessage)
 const elapsedTime = computed(() => backupStore.elapsedTime)
+const isLoading = computed(() => backupStore.isLoading)
 
-// تحويل الحجم ديناميكياً من Bytes إلى ميجابايت (MB) بصيغة عشرية منضبطة
 const downloadedMB = computed(() => {
     return (downloadedBytes.value / (1024 * 1024)).toFixed(2)
 })
 
-// حساب سرعة التحميل التقريبية (MB / ثانية)
 const downloadSpeed = computed(() => {
     if (elapsedTime.value === 0) return '0.00'
-    return (downloadedMB.value / elapsedTime.value).toFixed(2)
+    return (Number(downloadedMB.value) / elapsedTime.value).toFixed(2)
 })
 
-// مراقبة رسائل النجاح لتنبيه المستخدم
-watch(successMessage, (newMsg) => {
+watch(successMessage, (newMsg: string) => {
     if (newMsg && notiStore?.triggerNotification) {
         notiStore.triggerNotification(newMsg)
     }
@@ -45,9 +40,10 @@ watch(errorMessages, (newMsg) => {
 })
 
 // دالة تنفيذ تحميل النسخة الاحتياطية
-const triggerBackupDownload = async () => {
+const triggerBackupDownload = async (): Promise<void> => {
     await backupStore.downloadBackup()
 }
+
 </script>
 
 <template>
@@ -70,7 +66,6 @@ const triggerBackupDownload = async () => {
             </p>
         </div>
 
-        <!-- 💡 مؤشر التحميل والـ Progress Bar الديناميكي (يظهر فقط أثناء الـ isLoading أو النقل) -->
         <div
             v-if="isLoading || downloadedBytes > 0"
             class="mb-5 p-4 bg-background-alt border border-line rounded-xl transition-all duration-300"
@@ -83,7 +78,6 @@ const triggerBackupDownload = async () => {
                 <span class="text-accent font-mono font-bold">{{ downloadedMB }} MB</span>
             </div>
 
-            <!-- البار المتحرك الـ Infinite Loader لأن الحجم النهائي Chunked -->
             <div class="w-full bg-line rounded-full h-2 overflow-hidden">
                 <div class="bg-accent h-full rounded-full animate-infinite-loading w-1/3"></div>
             </div>
@@ -127,7 +121,6 @@ const triggerBackupDownload = async () => {
                 </div>
             </div>
 
-            <!-- الزر الاحترافي المعتمد على الـ Classes الخاصة بك -->
             <button
                 @click="triggerBackupDownload"
                 :disabled="isLoading"
@@ -143,7 +136,6 @@ const triggerBackupDownload = async () => {
 </template>
 
 <style scoped>
-/* انيميشن مخصص لتحريك مؤشر الـ Stream كخط جاري من اليسار لليمين بشكل متكرر */
 @keyframes infinite-loading {
     0% {
         transform: translateX(-100%);
