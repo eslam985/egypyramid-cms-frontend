@@ -1,6 +1,5 @@
 <!-- /TasksVue/src/components/notificationApp.vue -->
 <script setup lang="ts">
-
 import { useNotificationStore } from '../../stores/notificationStore'
 
 const notiStore = useNotificationStore()
@@ -9,8 +8,10 @@ const notiStore = useNotificationStore()
     <main>
         <!-- مكون الإشعار المتحرك بـ Tailwind -->
         <transition name="fade">
-            <div v-if="notiStore.notification.show"
-                class="fixed top-17.5 right-5 bg-red-600 text-white px-6 py-4 rounded-lg shadow-2xl flex items-center gap-3 z-50 min-w-62.5 border border-red-700">
+            <div
+                v-if="notiStore.notification.show"
+                class="fixed top-17.5 right-5 bg-red-600 text-white px-6 py-4 rounded-lg shadow-2xl flex items-center gap-3 z-50 min-w-62.5 border border-red-700"
+            >
                 <!-- أيقونة من فونت اوسوم قمنا بتركيبها سابقاً -->
 
                 <span class="font-bold">{{ notiStore.notification.message }}</span>

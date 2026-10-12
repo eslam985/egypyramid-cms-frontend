@@ -289,7 +289,6 @@ const useMediaStore = defineStore('media', {
             return isSuccess
         },
         async setSort(column: MediaState['filters']['sortBy']): Promise<MediasResponse[] | null> {
-            
             if (this.filters.sortBy === column) {
                 this.filters.sortOrder =
                     this.filters.sortOrder === OrderingEnum.ASC

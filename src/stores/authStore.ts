@@ -167,7 +167,7 @@ export const useAuthStore = defineStore('auth', {
 
             if (!isSuccess) {
                 this.notiStore.triggerNotification(
-                    this.errorMessage || 'An error occurred while adding the user!'
+                    this.errorMessage || 'An error occurred while adding the user!',
                 )
             } else {
                 this.notiStore.triggerNotification(
@@ -184,13 +184,12 @@ export const useAuthStore = defineStore('auth', {
             this.successMessage = ''
 
             try {
-
                 const result: BaseApiResponse<null> = await logout()
 
                 if (result?.success) {
                     this.successMessage = result.message || 'Logout successful'
                 }
-                
+
                 this.notiStore.triggerNotification(this.successMessage)
                 this.clearAccessToken()
             } catch (err: any) {

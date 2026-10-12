@@ -1,5 +1,4 @@
 <script setup lang="ts">
-
 import { storeToRefs } from 'pinia'
 import { useAnalyticsStore } from '@/stores/analyticsStore'
 import { Loader } from '@lucide/vue'
@@ -13,9 +12,7 @@ const analyticsStore = useAnalyticsStore()
 const router = useRouter()
 const { isLoading } = storeToRefs(analyticsStore)
 
-
 const loadDashboardData = async () => {
-
     router.push({
         name: 'dashboard',
         query: {},
@@ -36,17 +33,25 @@ const loadDashboardData = async () => {
                 </p>
             </div>
 
-            <button @click="loadDashboardData"
+            <button
+                @click="loadDashboardData"
                 class="btn-outline shadow-glow/10 text-fluid-xs lg:text-fluid-p text-accent-dark hover:text-slate-900 hover:bg-accent/70"
-                :disabled="isLoading">
-                <Loader class="size-5 text-accent" :class="{ 'animate-spin': isLoading }" :stroke-width="2" />
+                :disabled="isLoading"
+            >
+                <Loader
+                    class="size-5 text-accent"
+                    :class="{ 'animate-spin': isLoading }"
+                    :stroke-width="2"
+                />
                 <span>{{ t('dashboard.overview.refresh') }}</span>
             </button>
         </div>
 
         <!-- رسائل الخطأ -->
-        <div v-if="analyticsStore.errorMessage"
-            class="p-fluid bg-danger/10! border border-danger/20 text-danger rounded-2xl text-fluid-xs font-medium">
+        <div
+            v-if="analyticsStore.errorMessage"
+            class="p-fluid bg-danger/10! border border-danger/20 text-danger rounded-2xl text-fluid-xs font-medium"
+        >
             {{ analyticsStore.errorMessage }}
         </div>
     </main>

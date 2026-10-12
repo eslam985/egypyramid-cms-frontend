@@ -1,5 +1,4 @@
 <script setup lang="ts">
-
 import { Mail, CalendarDays, Link, Camera, Trash2, History, ImagePlus } from '@lucide/vue'
 import { ref } from 'vue'
 
@@ -7,9 +6,7 @@ import { formatDate, confirmAndDelete } from '@/utils/global'
 import { useNotificationStore } from '@/stores/notificationStore'
 import { useUserStore } from '@/stores/userStore'
 
-import type {
-    UserDataResponse,
-} from '@/types/globalTypes'
+import type { UserDataResponse } from '@/types/globalTypes'
 
 const userStore = useUserStore()
 const notiStore = useNotificationStore()
@@ -27,7 +24,7 @@ const handleFileChange = (event: Event) => {
     const file: File | undefined = (event.target as HTMLInputElement | null)?.files?.[0]
     if (!file) return
 
-    selectedFile.value = file// حفظ الملف الصافي في المتغير
+    selectedFile.value = file // حفظ الملف الصافي في المتغير
 
     // توليد رابط المعاينة المؤقت وتخزينه ليعرض في الـ <img> فوراً
     avatarPreview.value = URL.createObjectURL(file)
@@ -35,7 +32,6 @@ const handleFileChange = (event: Event) => {
 
 // دالة رفع الصورة الفعلية إلى السيرفر (يتم استدعاؤها عند الضغط على زر حفظ الخاص بك)
 const handleUpload = async (): Promise<void | null> => {
-
     if (!selectedFile.value) return null
 
     // الملفات لا تُرسل كـ JSON عادي، يجب وضعها داخل FormData
@@ -48,7 +44,6 @@ const handleUpload = async (): Promise<void | null> => {
 }
 
 const handleDelete = (): void => {
-
     confirmAndDelete({
         message: 'هل انت متأكد من حذف هذة الصورة ؟',
         action: () => userStore.deleteAvatar(),
@@ -61,7 +56,6 @@ const handleDelete = (): void => {
 
 // دالة تفعيل صورة قديمة من السجل
 const handleSelectHistory = async (url: string): Promise<null | undefined> => {
-
     const isSuccess: UserDataResponse | null = await userStore.setAvatarFromHistory(url)
 
     if (!isSuccess) {
@@ -74,7 +68,7 @@ const handleSelectHistory = async (url: string): Promise<null | undefined> => {
     return null
 }
 
-const role = (): "Admin" | "Editor" | "User" | "N/A" =>
+const role = (): 'Admin' | 'Editor' | 'User' | 'N/A' =>
     userStore.userInfo?.roles === '5150'
         ? 'Admin'
         : userStore.userInfo?.roles === '1984'
@@ -82,7 +76,6 @@ const role = (): "Admin" | "Editor" | "User" | "N/A" =>
             : userStore.userInfo?.roles === '2001'
                 ? 'User'
                 : 'N/A'
-
 </script>
 <template>
     <section>
@@ -141,9 +134,9 @@ const role = (): "Admin" | "Editor" | "User" | "N/A" =>
                                         userStore.userInfo?.avatar_history &&
                                         userStore.userInfo?.avatar_history?.length > 0
                                     " type="button" @click="
-                                        isModalOpen = true;
-                                    isDropdownOpen = false;
-                                    "
+                                            isModalOpen = true;
+                                        isDropdownOpen = false;
+                                        "
                                         class="w-10 h-10 flex items-center justify-center rounded-xl cursor-pointer hover:bg-accent-light/10 text-accent transition-colors duration-200">
                                         <History class="w-5 h-5" />
                                     </button>
@@ -186,7 +179,11 @@ const role = (): "Admin" | "Editor" | "User" | "N/A" =>
                             <span
                                 class="py-1 px-2 rounded-xl max-w-[270px] text-fluid-p text-foreground dark:bg-[#151f35] bg-accent-light">
                                 Member since
-                                {{ userStore.userInfo?.created_at ? formatDate(userStore.userInfo?.created_at) : '-' }}
+                                {{
+                                    userStore.userInfo?.created_at
+                                        ? formatDate(userStore.userInfo?.created_at)
+                                        : '-'
+                                }}
                             </span>
                         </div>
 

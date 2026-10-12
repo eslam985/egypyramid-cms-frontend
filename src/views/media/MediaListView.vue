@@ -13,7 +13,6 @@ const route = useRoute()
 
 // جلب بيانات الصفحة الأولى عند الفتح
 onMounted(async () => {
-
     router.push({
         name: 'mediaList',
         query: {
@@ -23,14 +22,11 @@ onMounted(async () => {
         },
     })
     await mediaStore.fetchMedias({ page: 1, limit: 20 })
-
 })
 
 const handlePageChange = async (newPage: number): Promise<void> => {
-
     await mediaStore.setPage(newPage)
     window.scrollTo({ top: 0, behavior: 'smooth' })
-
 }
 </script>
 

@@ -8,7 +8,7 @@ import type {
     BaseQueryRequest,
     ServerNameRequest,
     LockedTelegramResponse,
-    TotalStatusLinksResponse
+    TotalStatusLinksResponse,
 } from '@/types/globalTypes'
 
 const getSystemCounters = async (): Promise<BaseApiResponse<SystemCountersResponse | null>> => {
@@ -49,7 +49,6 @@ const getMissingEpisodesByServer = async (
     })
     return result.data
 }
-
 
 const getLockedTelegramLinks = async (
     query?: BaseQueryRequest,

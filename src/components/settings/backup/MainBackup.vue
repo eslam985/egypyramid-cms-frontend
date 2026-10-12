@@ -1,5 +1,4 @@
 <script setup lang="ts">
-
 import { computed, watch } from 'vue'
 import { ShieldLock, SaveCheck, KeyRound, Loader2, Download } from '@lucide/vue'
 
@@ -43,7 +42,6 @@ watch(errorMessages, (newMsg) => {
 const triggerBackupDownload = async (): Promise<void> => {
     await backupStore.downloadBackup()
 }
-
 </script>
 
 <template>

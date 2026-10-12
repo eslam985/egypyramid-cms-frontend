@@ -1,5 +1,4 @@
 <script setup lang="ts">
-
 import { Trash, MonitorCheck } from '@lucide/vue'
 
 import BaseTable from '@/components/ui/BaseTable.vue'
@@ -19,11 +18,12 @@ const columns = [
     { label: 'Action', key: 'Action' },
 ]
 const handleSort = (column: string): void => {
-
-    const key: string[] = columns.map(c => c.key)
+    const key: string[] = columns.map((c) => c.key)
 
     if ([...key].includes(column)) {
-        userStore.setSort(column as "user_agent" | "ip_address" | "expires_at" | "created_at" | "updated_at")
+        userStore.setSort(
+            column as 'user_agent' | 'ip_address' | 'expires_at' | 'created_at' | 'updated_at',
+        )
     }
 }
 
@@ -36,7 +36,6 @@ const handleDelete = (sessionId: number): void => {
         fallbackSuccess: 'تم حذف الجلسة بنجاح',
         fallbackError: 'حدثت مشكلة اثناء حذف الجلسة!',
     })
-
 }
 </script>
 <template>

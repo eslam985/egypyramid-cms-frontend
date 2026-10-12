@@ -8,7 +8,8 @@ const checkScroll = (event: Event): void => {
     const scrollTop: number =
         (event.target as HTMLElement | null)?.scrollTop ||
         document.documentElement.scrollTop ||
-        window.scrollY || 0
+        window.scrollY ||
+        0
 
     isVisible.value = scrollTop > 300
 }

@@ -1,5 +1,4 @@
 <script setup lang="ts">
-
 import { ref, onMounted } from 'vue'
 
 const isDark = ref<boolean>(false)
@@ -18,7 +17,6 @@ onMounted(() => {
     } else {
         isDark.value = document.documentElement.classList.contains('dark')
     }
-
 })
 </script>
 

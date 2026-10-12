@@ -57,14 +57,14 @@ export const useBackupStore = defineStore('backup', {
                 window.URL.revokeObjectURL(url)
 
                 this.successMessage = 'تم إنشاء وتحميل النسخة الاحتياطية بنجاح'
-                this.notiStore.triggerNotification(this.successMessage )
+                this.notiStore.triggerNotification(this.successMessage)
                 return true
             } catch (err: any) {
                 console.error('Backup download error:', err)
                 this.errorMessage =
                     err?.response?.data?.message || 'حدثت مشكلة أثناء إنشاء النسخة الاحتياطية'
 
-                this.notiStore.triggerNotification(this.errorMessage )
+                this.notiStore.triggerNotification(this.errorMessage)
                 return false
             } finally {
                 this.isLoading = false

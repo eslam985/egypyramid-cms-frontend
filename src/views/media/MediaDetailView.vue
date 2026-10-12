@@ -36,14 +36,12 @@ const fetchMediaDetails = async (id: number): Promise<void> => {
 watch(
     (): string | string[] | undefined => route.params.id,
     (newId: string | string[] | undefined) => {
-
         const id: string | undefined = Array.isArray(newId) ? newId[0] : newId
         const mediaId: number = Number(id)
 
         if (id && Number.isFinite(mediaId) && route.name === 'mediaDetails') {
             fetchMediaDetails(mediaId)
         }
-
     },
     { immediate: true },
 )

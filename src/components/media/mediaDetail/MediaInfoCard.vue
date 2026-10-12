@@ -1,5 +1,4 @@
 <script setup lang="ts">
-
 // /frontend/vue-dashbord/src/components/media/mediaDetail/MediaInfoCard.vue
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
@@ -21,7 +20,6 @@ const notiStore = useNotificationStore()
 
 const handleBack = () => router.push({ name: 'mediaList' })
 const handleEditMedia = () => {
-
     const item: MediasResponse | null = mediaStore.currentMedia
 
     if (!item) return

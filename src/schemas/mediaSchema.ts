@@ -51,7 +51,7 @@ export const mediaQuerySchema = z.object({
     limit: z.coerce.number().int().max(100).default(10),
     search: z.string().trim().optional(),
     category: z.enum(['movie', 'tv']).optional(),
-    sortBy: z.enum(['title', 'category', 'year', 'is_ready' , 'created_at']).optional(),
+    sortBy: z.enum(['title', 'category', 'year', 'is_ready', 'created_at']).optional(),
     sortOrder: z.enum(['ASC', 'DESC']).optional(),
 })
 

@@ -1,5 +1,4 @@
 <script setup lang="ts">
-
 import { reactive, onMounted, computed, toRaw } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
@@ -11,10 +10,7 @@ import { useMediaStore } from '@/stores/mediaStore'
 import { toNumber } from '@/utils/global'
 
 import type { CreateSeasonSchemaType, UpdateSeasonSchemaType } from '@/schemas/seasonSchema'
-import type {
-    SeasonsResponse,
-    MediasResponse,
-} from '@/types/globalTypes'
+import type { SeasonsResponse, MediasResponse } from '@/types/globalTypes'
 
 const { t } = useI18n()
 
@@ -30,7 +26,7 @@ const currentSchema = computed(() => (mediaId ? createSeasonSchema : updateSeaso
 const { errors, validate } = useFormValidation(currentSchema)
 
 const formData: {
-    season_number: number;
+    season_number: number
 } = reactive<CreateSeasonSchemaType>({
     season_number: 0,
 })
@@ -47,7 +43,10 @@ onMounted(async () => {
 
     // edit current season
     if (route.name === 'editSeason') {
-        const foundSeason: SeasonsResponse | null = await mediaContentStore.getSeasonById(seasonId, true)
+        const foundSeason: SeasonsResponse | null = await mediaContentStore.getSeasonById(
+            seasonId,
+            true,
+        )
 
         if (!foundSeason && !mediaContentStore.currentSeason) {
             router.push({ name: 'NotFound' })
@@ -60,7 +59,6 @@ onMounted(async () => {
 })
 
 const handleSubmit = async (): Promise<void | null> => {
-
     const { isValid, data } = validate(toRaw(formData))
     if (!isValid || !data) return null
 
@@ -103,12 +101,19 @@ const handleSubmit = async (): Promise<void | null> => {
                         {{ t('media.seasonForm.seasonNumberLabel') }}
                         <span class="text-danger">*</span>
                     </label>
-                    <input type="number" id="season_number" name="season_number" required
+                    <input
+                        type="number"
+                        id="season_number"
+                        name="season_number"
+                        required
                         v-model.number="formData.season_number"
-                        :placeholder="t('media.seasonForm.seasonNumberPlaceholder')" class="form-input" :class="{
+                        :placeholder="t('media.seasonForm.seasonNumberPlaceholder')"
+                        class="form-input"
+                        :class="{
                             'border-danger focus:ring-danger/20 focus:border-danger':
                                 errors.season_number,
-                        }" />
+                        }"
+                    />
                     <p v-if="errors.season_number" class="form-error">
                         {{ errors.season_number }}
                     </p>
@@ -119,10 +124,15 @@ const handleSubmit = async (): Promise<void | null> => {
                     <button type="button" @click="router.back()" class="btn-secondary">
                         {{ t('common.cancel') }}
                     </button>
-                    <button type="submit" class="btn-primary" :disabled="mediaContentStore.isLoading">
+                    <button
+                        type="submit"
+                        class="btn-primary"
+                        :disabled="mediaContentStore.isLoading"
+                    >
                         <span v-if="mediaContentStore.isLoading" class="flex items-center gap-2">
                             <span
-                                class="size-4 border-2 border-on-accent border-t-transparent rounded-full animate-spin"></span>
+                                class="size-4 border-2 border-on-accent border-t-transparent rounded-full animate-spin"
+                            ></span>
                             <span>{{ t('common.processing') }}</span>
                         </span>
                         <span v-else>{{

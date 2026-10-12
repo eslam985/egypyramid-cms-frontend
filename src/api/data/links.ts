@@ -41,9 +41,7 @@ const deleteLinkById = async (id: number): Promise<BaseApiResponse<LinksResponse
 const handleFindAllLinks = async (
     params: LinksQueryRequest,
 ): Promise<BaseApiResponse<Blob | LinksResponse[] | LinksResponse | null>> => {
-
     const result = await api.get('/links', {
-
         params: { ...params, export: true },
         responseType: 'blob',
     })

@@ -2,7 +2,12 @@ import api from '@/api/auth/interceptors'
 
 import type { CreateTaskInputsType, UpdateTaskInputsType } from '@/schemas/downloadTaskSchema'
 
-import type { BaseApiResponse, DownloadTasksResponse, TasksQueryRequest, DeleteTaskResponseData } from '@/types/globalTypes'
+import type {
+    BaseApiResponse,
+    DownloadTasksResponse,
+    TasksQueryRequest,
+    DeleteTaskResponseData,
+} from '@/types/globalTypes'
 
 const createTask = async (
     data: CreateTaskInputsType,
@@ -19,8 +24,9 @@ const updateTaskById = async (
     return result.data
 }
 
-const getAllTasks = async (query?: TasksQueryRequest): Promise<BaseApiResponse<DownloadTasksResponse[] | null>> => {
-
+const getAllTasks = async (
+    query?: TasksQueryRequest,
+): Promise<BaseApiResponse<DownloadTasksResponse[] | null>> => {
     const result = await api.get('/tasks', { params: { ...query } })
 
     return result.data

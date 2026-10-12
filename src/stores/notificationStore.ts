@@ -38,7 +38,6 @@ export const useNotificationStore = defineStore('noti', {
         },
 
         handleConfirmResult(result: boolean): void {
-
             if (this.confirmModal.resolvePromise) {
                 this.confirmModal.resolvePromise(result)
             }

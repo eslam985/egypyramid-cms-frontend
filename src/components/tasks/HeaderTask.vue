@@ -1,5 +1,4 @@
 <script setup lang="ts">
-
 import { Search, Loader, Download } from '@lucide/vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ref, computed } from 'vue'
@@ -25,7 +24,6 @@ const selectState = ref(typeof route.query.status === 'string' ? route.query.sta
 let searchInput = ref<string | number>('')
 
 const handleChooseState = async (value: string): Promise<void> => {
-
     router.push({
         query: {
             ...route.query,
@@ -38,7 +36,6 @@ const handleChooseState = async (value: string): Promise<void> => {
     if (!value) {
         handleRefresh()
     }
-
 }
 
 const handleRefresh = async (): Promise<void> => {
@@ -64,7 +61,6 @@ const sreach = async (): Promise<void> => {
         defaultErrorMsg: taskStore.errorMessage,
     })
 
-
     // if Search By Name
     if (data && data.rawValue) {
         router.push({
@@ -81,7 +77,7 @@ const sreach = async (): Promise<void> => {
 }
 
 const failedCount = computed(() =>
-    taskStore.allTasks ? taskStore.allTasks.filter((t) => t.status === 'failed').length : null
+    taskStore.allTasks ? taskStore.allTasks.filter((t) => t.status === 'failed').length : null,
 )
 
 const handleDeleteFailed = async (): Promise<void> => {
@@ -99,28 +95,38 @@ const handleExport = async (): Promise<void> => {
     const query = route.query
     await taskStore.exportTasks(query)
 }
-
 </script>
 <template>
     <!-- أدوات الفلترة والبحث والتحديث -->
-    <div :class="authStore.isEditorAndAbove ? 'grid grid-cols-2 xs:grid-cols-3 md:grid-cols-25' : 'flex '
-        " class="gap-fluid-gap p-fluid">
+    <div
+        :class="
+            authStore.isEditorAndAbove ? 'grid grid-cols-2 xs:grid-cols-3 md:grid-cols-25' : 'flex '
+        "
+        class="gap-fluid-gap p-fluid"
+    >
         <!-- 1111 -->
         <!-- حقل البحث -->
         <div class="md:col-span-4 flex self-center relative text-fluid-xs">
-            <input id="task-search" type="search" v-model="searchInput"
+            <input
+                id="task-search"
+                type="search"
+                v-model="searchInput"
                 :placeholder="t('tasks.toolbar.searchPlaceholder')"
                 class="form-input pl-6 pr-0 text-center bg-line/10 border border-accent/20 border-linerounded-xl text-fluid-xs"
-                @keyup.enter="sreach" />
+                @keyup.enter="sreach"
+            />
             <Search @click="sreach" class="self-center absolute left-2 text-accent" />
         </div>
 
         <!-- 2222 -->
         <!-- select -->
         <div class="md:col-span-3 self-center">
-            <select id="task-status" v-model="selectState"
+            <select
+                id="task-status"
+                v-model="selectState"
                 class="form-input w-full bg-line/10 border border-accent/20 border-linerounded-xl focus:ring-2 focus:ring-accent/20 cursor-pointer"
-                @change="handleChooseState(selectState)">
+                @change="handleChooseState(selectState)"
+            >
                 <option value="">{{ t('tasks.toolbar.allStatuses') }}</option>
                 <option value="idle">{{ t('tasks.form.statusOptions.idle') }}</option>
                 <option value="processing">{{ t('tasks.form.statusOptions.processing') }}</option>
@@ -131,9 +137,11 @@ const handleExport = async (): Promise<void> => {
         <!-- 3333 -->
         <!-- Export -->
         <div v-if="authStore.isEditorAndAbove" class="md:col-span-5 self-center">
-            <button type="button"
+            <button
+                type="button"
                 class="btn-outline shadow-glow/10 text-fluid-xs lg:text-fluid-p text-accent-dark hover:text-slate-900 hover:bg-accent/70"
-                @click="handleExport">
+                @click="handleExport"
+            >
                 <Download class="size-5 text-accent" :stroke-width="2" />
                 Export
             </button>
@@ -141,30 +149,43 @@ const handleExport = async (): Promise<void> => {
 
         <!-- 4444 -->
         <!-- refreshData -->
-        <button type="button"
+        <button
+            type="button"
             class="md:col-span-4 btn-outline shadow-glow/10 text-fluid-xs lg:text-fluid-p text-accent-dark hover:text-slate-900 hover:bg-accent/70"
-            @click="handleRefresh">
-            <Loader class="size-5 text-accent" :class="{ 'animate-spin': taskStore.isLoading }" :stroke-width="2" />
+            @click="handleRefresh"
+        >
+            <Loader
+                class="size-5 text-accent"
+                :class="{ 'animate-spin': taskStore.isLoading }"
+                :stroke-width="2"
+            />
             {{ t('common.refreshData') }}
         </button>
 
         <!-- 5555 -->
         <!-- addNew -->
-        <router-link v-if="authStore.isEditorAndAbove" to="/new-task"
-            class="md:col-span-4 btn-outline shadow-glow/10 text-fluid-xs lg:text-fluid-p text-accent-dark hover:text-slate-900 hover:bg-accent/70">
+        <router-link
+            v-if="authStore.isEditorAndAbove"
+            to="/new-task"
+            class="md:col-span-4 btn-outline shadow-glow/10 text-fluid-xs lg:text-fluid-p text-accent-dark hover:text-slate-900 hover:bg-accent/70"
+        >
             {{ t('tasks.toolbar.addNew') }}
         </router-link>
 
         <!-- 6666 -->
         <!-- deleteFailed -->
-        <button v-if="failedCount > 0 && authStore.isAdmin" @click="handleDeleteFailed" :disabled="taskStore.isLoading"
-            class="md:col-span-4 btn-danger text-fluid-xs max-w-[150px]">
+        <button
+            v-if="failedCount > 0 && authStore.isAdmin"
+            @click="handleDeleteFailed"
+            :disabled="taskStore.isLoading"
+            class="md:col-span-4 btn-danger text-fluid-xs max-w-[150px]"
+        >
             {{
                 taskStore.isLoading
                     ? t('tasks.toolbar.deleting')
                     : t('tasks.toolbar.deleteFailed', {
-                        count: failedCount,
-                    })
+                          count: failedCount,
+                      })
             }}
         </button>
     </div>

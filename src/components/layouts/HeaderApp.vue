@@ -1,5 +1,4 @@
 <script setup lang="ts">
-
 import { Menu, Settings } from '@lucide/vue'
 import { useNotificationStore } from '../../stores/notificationStore'
 import { useI18n } from 'vue-i18n'

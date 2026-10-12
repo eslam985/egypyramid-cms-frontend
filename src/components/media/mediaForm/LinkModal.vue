@@ -1,5 +1,4 @@
 <script setup lang="ts">
-
 import { reactive, onMounted, computed, toRaw } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
@@ -10,10 +9,7 @@ import { useMediaContentStore } from '@/stores/mediaContentStore'
 import { toNumber } from '@/utils/global'
 
 import type { CreateLinkSchemaType, UpdateLinkByIdSchemaType } from '@/schemas/linkSchema'
-import type {
-    EpisodeResponse,
-    LinksResponse
-} from '@/types/globalTypes'
+import type { EpisodeResponse, LinksResponse } from '@/types/globalTypes'
 const { t } = useI18n()
 
 const route = useRoute()
@@ -31,25 +27,24 @@ const linkId = toNumber(route.params.id)
 const formData = reactive<CreateLinkSchemaType>({
     server_name: '',
     url: '',
-    last_check_status: "pending",
-    link_type: "watch",
-    quality: "720p",
+    last_check_status: 'pending',
+    link_type: 'watch',
+    quality: '720p',
     is_fixed: false,
     check_count: 0,
 })
 
 onMounted(async () => {
-
     if (route.name === 'addLink') {
-
-        const foundEpisode: EpisodeResponse | null = await mediaContentStore.getEpisodeById(episodeId, true)
+        const foundEpisode: EpisodeResponse | null = await mediaContentStore.getEpisodeById(
+            episodeId,
+            true,
+        )
 
         if (!foundEpisode) {
             router.push({ name: 'NotFound' })
         }
-
     } else if (route.name === 'editLink') {
-
         const link: LinksResponse | null = await mediaContentStore.getLinkById(linkId, true)
 
         if (!link) {
@@ -70,19 +65,17 @@ onMounted(async () => {
 
             formData.quality =
                 link.quality === '1080p' ||
-                    link.quality === '720p' ||
-                    link.quality === '480p' ||
-                    link.quality === '360p' ||
-                    link.quality === '4k'
+                link.quality === '720p' ||
+                link.quality === '480p' ||
+                link.quality === '360p' ||
+                link.quality === '4k'
                     ? link.quality
                     : undefined
-
         }
     }
 })
 
 const handleSubmit = async (): Promise<void> => {
-
     const { isValid, data } = validate(toRaw(formData))
     if (!isValid || !data) return
 
@@ -125,8 +118,14 @@ const handleSubmit = async (): Promise<void> => {
                             {{ t('media.linkForm.serverNameLabel') }}
                             <span class="text-danger">*</span>
                         </label>
-                        <input id="server_name" type="text" v-model="formData.server_name"
-                            :placeholder="t('media.linkForm.serverNamePlaceholder')" class="form-input" required />
+                        <input
+                            id="server_name"
+                            type="text"
+                            v-model="formData.server_name"
+                            :placeholder="t('media.linkForm.serverNamePlaceholder')"
+                            class="form-input"
+                            required
+                        />
                         <p v-if="errors?.server_name" class="form-error">
                             {{ errors.server_name }}
                         </p>
@@ -138,7 +137,12 @@ const handleSubmit = async (): Promise<void> => {
                             {{ t('media.linkForm.linkTypeLabel') }}
                             <span class="text-danger">*</span>
                         </label>
-                        <select id="link_type" v-model="formData.link_type" class="form-select" required>
+                        <select
+                            id="link_type"
+                            v-model="formData.link_type"
+                            class="form-select"
+                            required
+                        >
                             <option value="" disabled>
                                 {{ t('media.linkForm.selectLinkType') }}
                             </option>
@@ -172,8 +176,14 @@ const handleSubmit = async (): Promise<void> => {
                         <label for="check_count" class="form-label">
                             {{ t('media.linkForm.checkCountLabel') }}
                         </label>
-                        <input id="check_count" type="number" v-model.number="formData.check_count" min="0"
-                            placeholder="0" class="form-input" />
+                        <input
+                            id="check_count"
+                            type="number"
+                            v-model.number="formData.check_count"
+                            min="0"
+                            placeholder="0"
+                            class="form-input"
+                        />
                         <p v-if="errors?.check_count" class="form-error">
                             {{ errors.check_count }}
                         </p>
@@ -184,7 +194,11 @@ const handleSubmit = async (): Promise<void> => {
                         <label for="last_check_status" class="form-label">
                             {{ t('media.linkForm.lastCheckStatusLabel') }}
                         </label>
-                        <select id="last_check_status" v-model="formData.last_check_status" class="form-select">
+                        <select
+                            id="last_check_status"
+                            v-model="formData.last_check_status"
+                            class="form-select"
+                        >
                             <option value="">{{ t('media.linkForm.selectCheckStatus') }}</option>
                             <option value="pending">{{ t('media.linkForm.statusPending') }}</option>
                             <option value="valid">{{ t('media.linkForm.statusValid') }}</option>
@@ -200,8 +214,14 @@ const handleSubmit = async (): Promise<void> => {
                         <label for="url" class="form-label">
                             {{ t('media.linkForm.urlLabel') }} <span class="text-danger">*</span>
                         </label>
-                        <input id="url" type="url" v-model="formData.url" placeholder="https://example.com/embed-xyz"
-                            class="form-input" required />
+                        <input
+                            id="url"
+                            type="url"
+                            v-model="formData.url"
+                            placeholder="https://example.com/embed-xyz"
+                            class="form-input"
+                            required
+                        />
                         <p v-if="errors?.url" class="form-error">
                             {{ errors.url }}
                         </p>
@@ -209,9 +229,16 @@ const handleSubmit = async (): Promise<void> => {
 
                     <!-- هل الرابط مصلَح / ثابت (is_fixed) -->
                     <div class="sm:col-span-2 flex items-center gap-3 pt-2">
-                        <input id="is_fixed" type="checkbox" v-model="formData.is_fixed"
-                            class="size-4 accent-accent rounded cursor-pointer" />
-                        <label for="is_fixed" class="text-fluid-xs font-semibold text-title cursor-pointer select-none">
+                        <input
+                            id="is_fixed"
+                            type="checkbox"
+                            v-model="formData.is_fixed"
+                            class="size-4 accent-accent rounded cursor-pointer"
+                        />
+                        <label
+                            for="is_fixed"
+                            class="text-fluid-xs font-semibold text-title cursor-pointer select-none"
+                        >
                             {{ t('media.linkForm.isFixedLabel') }}
                         </label>
                     </div>
@@ -222,10 +249,15 @@ const handleSubmit = async (): Promise<void> => {
                     <button type="button" class="btn-secondary" @click="router.back()">
                         {{ t('common.cancel') }}
                     </button>
-                    <button type="submit" class="btn-primary" :disabled="mediaContentStore.isLoading">
+                    <button
+                        type="submit"
+                        class="btn-primary"
+                        :disabled="mediaContentStore.isLoading"
+                    >
                         <span v-if="mediaContentStore.isLoading" class="flex items-center gap-2">
                             <span
-                                class="size-4 border-2 border-on-accent border-t-transparent rounded-full animate-spin"></span>
+                                class="size-4 border-2 border-on-accent border-t-transparent rounded-full animate-spin"
+                            ></span>
                             <span>{{ t('common.processing') }}</span>
                         </span>
                         <span v-else>

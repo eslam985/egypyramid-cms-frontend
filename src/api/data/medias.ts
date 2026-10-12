@@ -42,8 +42,9 @@ const findMediaByAnyId = async (
     return result.data
 }
 
-const findAllMedia = async (query?: GetMediasQueryInputsType): Promise<BaseApiResponse<MediasResponse[] | null>> => {
-
+const findAllMedia = async (
+    query?: GetMediasQueryInputsType,
+): Promise<BaseApiResponse<MediasResponse[] | null>> => {
     const result = await api.get('/medias', { params: { ...query } })
 
     return result.data

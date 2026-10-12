@@ -10,7 +10,6 @@ import BaseTable from '@/components/ui/BaseTable.vue'
 import { useTaskStore } from '@/stores/taskStore'
 import { useAuthStore } from '@/stores/authStore'
 
-
 const notiStore = useNotificationStore()
 const authStore = useAuthStore()
 const taskStore = useTaskStore()
@@ -36,7 +35,7 @@ if (authStore.isEditorAndAbove) {
 }
 
 // تحديد لون ونظر الشارة حسب الحالة
-const getStatusBadge = (status: string): { label: string; class: string; } => {
+const getStatusBadge = (status: string): { label: string; class: string } => {
     switch (status) {
         case 'processing':
             return {
@@ -63,7 +62,6 @@ const getStatusBadge = (status: string): { label: string; class: string; } => {
 
 // الانتقال لصفحة التعديل
 const handleEdit = (id: number | string): void => {
-
     if (!id) return
 
     router.push(`/edit-task/${id}`)
@@ -112,13 +110,22 @@ const handleBulkDelete = (): void => {
     <div>
         <!-- ده هيظهر بس لما تختار حاجة -->
         <div v-if="selectedIds.length > 0" class="mb-4 flex justify-end">
-            <button @click="handleBulkDelete" :disabled="taskStore.isLoading" class="btn-danger text-fluid-xs">
+            <button
+                @click="handleBulkDelete"
+                :disabled="taskStore.isLoading"
+                class="btn-danger text-fluid-xs"
+            >
                 {{ t('tasks.toolbar.deleteSelected', { count: selectedIds.length }) }}
             </button>
         </div>
 
         <!-- من غير ما تكتب اي header خالص -->
-        <BaseTable :columns="columns" :rows="taskStore.allTasks" :isLoading="taskStore.isLoading" storeKey="tasks">
+        <BaseTable
+            :columns="columns"
+            :rows="taskStore.allTasks"
+            :isLoading="taskStore.isLoading"
+            storeKey="tasks"
+        >
             <template #cell-status="{ value }">
                 <span class="px-2 py-1 rounded border text-xs" :class="getStatusBadge(value).class">
                     {{ getStatusBadge(value).label }}
@@ -134,8 +141,10 @@ const handleBulkDelete = (): void => {
                         }}</span>
                     </div>
                     <div class="w-full bg-line/20 rounded-full h-1.5 overflow-hidden">
-                        <div class="bg-accent h-full transition-all duration-300" :style="{ width: `${value ?? 0}%` }">
-                        </div>
+                        <div
+                            class="bg-accent h-full transition-all duration-300"
+                            :style="{ width: `${value ?? 0}%` }"
+                        ></div>
                     </div>
                 </div>
             </template>
@@ -148,15 +157,21 @@ const handleBulkDelete = (): void => {
             </template>
             <template #cell-actions="{ row }" v-if="authStore.isEditorAndAbove">
                 <div class="flex items-center justify-center gap-fluid-gap">
-                    <div @click="handleEdit(row.id)"
-                        class="cursor-pointer flex gap-2 px-3 py-1.5 rounded-xl border border-line font-mediumbg-card hover:bg-line/20 transition-all active:scale-95">
+                    <div
+                        @click="handleEdit(row.id)"
+                        class="cursor-pointer flex gap-2 px-3 py-1.5 rounded-xl border border-line font-mediumbg-card hover:bg-line/20 transition-all active:scale-95"
+                    >
                         <Info class="self-center text-accent" />
                         <span class="self-center"> {{ t('common.edit') }}</span>
                     </div>
 
-                    <button v-if="authStore.isAdmin" type="button" @click="handleDelete(row.id)"
+                    <button
+                        v-if="authStore.isAdmin"
+                        type="button"
+                        @click="handleDelete(row.id)"
                         :disabled="taskStore.isLoading"
-                        class="flex gap-2 px-3 py-2 rounded-xl border border-danger/20 hover:bg-danger/10 font-medium transition-all active:scale-95 disabled:opacity-50 cursor-pointer">
+                        class="flex gap-2 px-3 py-2 rounded-xl border border-danger/20 hover:bg-danger/10 font-medium transition-all active:scale-95 disabled:opacity-50 cursor-pointer"
+                    >
                         <Trash class="self-center text-danger" />
                         <span class="self-center">{{ t('common.delete') }}</span>
                     </button>
@@ -165,11 +180,19 @@ const handleBulkDelete = (): void => {
 
             <template #cell-checked="{ row }">
                 <label class="relative flex cursor-pointer">
-                    <input type="checkbox" :checked="selectedIds.includes(row.id)" @change="toggleSelect(row.id)"
-                        class="peer sr-only" />
+                    <input
+                        type="checkbox"
+                        :checked="selectedIds.includes(row.id)"
+                        @change="toggleSelect(row.id)"
+                        class="peer sr-only"
+                    />
                     <div
-                        class="w-6 h-6 rounded-md border-2 border-line bg-card! peer-checked:bg-accent peer-checked:border-accent transition-all flex items-center justify-center">
-                        <Check v-if="selectedIds.includes(row.id)" class="w-3.5 h-3.5 text-white stroke-4" />
+                        class="w-6 h-6 rounded-md border-2 border-line bg-card! peer-checked:bg-accent peer-checked:border-accent transition-all flex items-center justify-center"
+                    >
+                        <Check
+                            v-if="selectedIds.includes(row.id)"
+                            class="w-3.5 h-3.5 text-white stroke-4"
+                        />
                     </div>
                 </label>
             </template>

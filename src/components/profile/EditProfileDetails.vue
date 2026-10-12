@@ -1,5 +1,4 @@
 <script setup lang="ts">
-
 import { SquarePen, SaveCheck, ShieldLock, KeyRound } from '@lucide/vue'
 import { onMounted, ref, toRaw } from 'vue'
 
@@ -18,8 +17,8 @@ const notiStore = useNotificationStore()
 const authStore = useAuthStore()
 
 const { validate: validateProfile, errors: profileErrors } = useFormValidation(updateUserByIdSchema)
-const { validate: validatePassword, errors: passwordErrors } = useFormValidation(changePasswordSchema)
-
+const { validate: validatePassword, errors: passwordErrors } =
+    useFormValidation(changePasswordSchema)
 
 const userInfo = async () => await userStore.getUserById()
 
@@ -49,18 +48,16 @@ type ValidationResult = {
     data: any | null
 }
 
-const utilsSubmit = async <TInputs, TResponse,>(
+const utilsSubmit = async <TInputs, TResponse>(
     formData: TInputs,
     validateSchema: (data: any) => ValidationResult,
-    apiCall: (data: TInputs) => Promise<TResponse | null>
+    apiCall: (data: TInputs) => Promise<TResponse | null>,
 ): Promise<TResponse | null> => {
-
     const rawFormData: TInputs = toRaw(formData)
 
     const { isValid, data } = validateSchema(rawFormData)
 
     if (!isValid || !data) return null
-
 
     await apiCall(data)
 
@@ -68,7 +65,6 @@ const utilsSubmit = async <TInputs, TResponse,>(
 }
 
 const handleSubmitFormData = async (): Promise<void | null> => {
-
     if (!formData.value) {
         notiStore.triggerNotification('يجب ارسال بيانات اولا!')
         return null
@@ -78,26 +74,25 @@ const handleSubmitFormData = async (): Promise<void | null> => {
 }
 
 const handleSubmitFormPasswordData = async (): Promise<void | null> => {
-
     if (!formPasswordData.value) {
         notiStore.triggerNotification('يجب ارسال بيانات اولا!')
         return null
     }
 
     utilsSubmit(formPasswordData.value, validatePassword, userStore.ChangePassword)
-
 }
 
 onMounted(async () => {
     await userInfo()
     data()
 })
-
 </script>
 <template>
     <!-- container -->
-    <section :class="authStore.isEditorAndAbove ? 'md:grid-cols-3' : 'md:grid-cols-2'"
-        class="grid grid-cols-1 gap-3 space-y-6 max-w-6xl mx-auto mb-8 w-full min-w-0 overflow-x-hidden">
+    <section
+        :class="authStore.isEditorAndAbove ? 'md:grid-cols-3' : 'md:grid-cols-2'"
+        class="grid grid-cols-1 gap-3 space-y-6 max-w-6xl mx-auto mb-8 w-full min-w-0 overflow-x-hidden"
+    >
         <!-- left -->
         <div>
             <!-- form edit  -->
@@ -113,8 +108,14 @@ onMounted(async () => {
 
                 <div>
                     <label for="userName" class="form-label">Name</label>
-                    <input id="userName" type="text" placeholder="Eslam Sayed" required class="form-input"
-                        v-model="formData.username" />
+                    <input
+                        id="userName"
+                        type="text"
+                        placeholder="Eslam Sayed"
+                        required
+                        class="form-input"
+                        v-model="formData.username"
+                    />
                     <p v-if="profileErrors?.username" class="form-error">
                         {{ profileErrors.username }}
                     </p>
@@ -122,24 +123,40 @@ onMounted(async () => {
 
                 <div>
                     <label for="email" class="form-label">email</label>
-                    <input id="email" type="text" placeholder="es@gmail.com" required class="form-input"
-                        v-model="formData.email" />
+                    <input
+                        id="email"
+                        type="text"
+                        placeholder="es@gmail.com"
+                        required
+                        class="form-input"
+                        v-model="formData.email"
+                    />
                     <p v-if="profileErrors?.email" class="form-error">
                         {{ profileErrors.email }}
                     </p>
                 </div>
                 <div v-if="authStore.isAdmin">
                     <label for="roles" class="roles">Roles</label>
-                    <input id="roles" type="text" class="form-input text-link" placeholder="2001"
-                        v-model="formData.roles" />
+                    <input
+                        id="roles"
+                        type="text"
+                        class="form-input text-link"
+                        placeholder="2001"
+                        v-model="formData.roles"
+                    />
                     <p v-if="profileErrors?.roles" class="form-error">
                         {{ profileErrors.roles }}
                     </p>
                 </div>
                 <div>
                     <label for="avatarUrl" class="form-label">Avatar Url</label>
-                    <input id="avatarUrl" type="text" class="form-input text-link"
-                        placeholder="https://edn.egypyramid.io/avatars/ahmed.png" v-model="formData.avatar_url" />
+                    <input
+                        id="avatarUrl"
+                        type="text"
+                        class="form-input text-link"
+                        placeholder="https://edn.egypyramid.io/avatars/ahmed.png"
+                        v-model="formData.avatar_url"
+                    />
                     <p v-if="profileErrors?.avatar_url" class="form-error">
                         {{ profileErrors.avatar_url }}
                     </p>
@@ -148,8 +165,11 @@ onMounted(async () => {
                 <!-- الأزرار -->
                 <div class="flex items-center justify-end gap-3 pt-4 border-t border-line">
                     <button type="button" @click="data" class="btn-secondary">cancel</button>
-                    <button type="submit" :disabled="userStore.isLoading"
-                        class="btn-outline shadow-glow/10 text-fluid-xs lg:text-fluid-p text-accent-dark hover:text-slate-900 hover:bg-accent/70">
+                    <button
+                        type="submit"
+                        :disabled="userStore.isLoading"
+                        class="btn-outline shadow-glow/10 text-fluid-xs lg:text-fluid-p text-accent-dark hover:text-slate-900 hover:bg-accent/70"
+                    >
                         <SaveCheck />
                         Save Change
                     </button>
@@ -160,7 +180,10 @@ onMounted(async () => {
         <!-- right -->
         <div>
             <!-- form edit  -->
-            <form @submit.prevent="handleSubmitFormPasswordData" class="max-w-xl card space-y-5 px-2 lg:px-4">
+            <form
+                @submit.prevent="handleSubmitFormPasswordData"
+                class="max-w-xl card space-y-5 px-2 lg:px-4"
+            >
                 <!-- header h2 & P -->
                 <div>
                     <div class="flex gap-0.5 lg:gap-2">
@@ -172,8 +195,14 @@ onMounted(async () => {
 
                 <div>
                     <label for="currentPassword" class="form-label">Current Password</label>
-                    <input id="currentPassword" type="password" placeholder="********" required class="form-input"
-                        v-model="formPasswordData.currentPassword" />
+                    <input
+                        id="currentPassword"
+                        type="password"
+                        placeholder="********"
+                        required
+                        class="form-input"
+                        v-model="formPasswordData.currentPassword"
+                    />
                     <p v-if="passwordErrors?.currentPassword" class="form-error">
                         {{ passwordErrors.currentPassword }}
                     </p>
@@ -181,8 +210,14 @@ onMounted(async () => {
 
                 <div>
                     <label for="newPassword" class="form-label">New Password</label>
-                    <input id="newPassword" type="password" placeholder="**********" required class="form-input"
-                        v-model="formPasswordData.newPassword" />
+                    <input
+                        id="newPassword"
+                        type="password"
+                        placeholder="**********"
+                        required
+                        class="form-input"
+                        v-model="formPasswordData.newPassword"
+                    />
                     <p v-if="passwordErrors?.newPassword" class="form-error">
                         {{ passwordErrors.newPassword }}
                     </p>
@@ -190,8 +225,14 @@ onMounted(async () => {
 
                 <div>
                     <label for="confirmNewPassword" class="form-label">Confirm New Password</label>
-                    <input id="confirmNewPassword" type="password" class="form-input" placeholder="**********" required
-                        v-model="formPasswordData.confirmNewPassword" />
+                    <input
+                        id="confirmNewPassword"
+                        type="password"
+                        class="form-input"
+                        placeholder="**********"
+                        required
+                        v-model="formPasswordData.confirmNewPassword"
+                    />
                     <p v-if="passwordErrors?.confirmNewPassword" class="form-error">
                         {{ passwordErrors.confirmNewPassword }}
                     </p>
@@ -200,8 +241,11 @@ onMounted(async () => {
                 <!-- الأزرار -->
                 <div class="flex items-center justify-end gap-3 pt-4 border-t border-line">
                     <button type="button" class="btn-secondary">cancel</button>
-                    <button type="submit" :disabled="userStore.isLoading"
-                        class="btn-outline shadow-glow/10 text-fluid-xs lg:text-fluid-p text-accent-dark hover:text-slate-900 hover:bg-accent/70">
+                    <button
+                        type="submit"
+                        :disabled="userStore.isLoading"
+                        class="btn-outline shadow-glow/10 text-fluid-xs lg:text-fluid-p text-accent-dark hover:text-slate-900 hover:bg-accent/70"
+                    >
                         <KeyRound />
                         Change Password
                     </button>

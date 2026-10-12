@@ -252,14 +252,16 @@ const useTaskStore = defineStore('task', {
         },
 
         async removeTasksByIds(ids: number[]): Promise<boolean> {
-
             if (!ids) {
                 this.notiStore.triggerNotification('Id is Required!')
                 return false
-
             }
 
-            const isSuccess: boolean = await handleStoreDelete<DownloadTasksResponse, number[], TasksState>({
+            const isSuccess: boolean = await handleStoreDelete<
+                DownloadTasksResponse,
+                number[],
+                TasksState
+            >({
                 store: this,
                 apiCall: deleteTasksByIds,
                 id: ids, // [1,5,10]

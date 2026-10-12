@@ -12,15 +12,11 @@ const route = useRoute()
 const mediaStore = useMediaStore()
 const notiStore = useNotificationStore()
 
-
-import type {
-    SearchResultData,
-} from '@/types/globalTypes'
+import type { SearchResultData } from '@/types/globalTypes'
 
 let searchInput = ref<string | number>('')
 
 const sreach = async (): Promise<void> => {
-
     const data: false | SearchResultData = await handleSearch({
         searchInput: searchInput.value,
         notiStore: notiStore,
@@ -62,9 +58,14 @@ const sreach = async (): Promise<void> => {
 <template>
     <!-- حقل البحث -->
     <div class="col-span-4 flex self-center relative">
-        <input placeholder="search by ID or name and press Enter..." id="media-search" type="search"
-            v-model="searchInput" class="form-input pl-8 bg-line/10 border border-accent/20 border-linerounded-xl"
-            @keyup.enter="sreach" />
+        <input
+            placeholder="search by ID or name and press Enter..."
+            id="media-search"
+            type="search"
+            v-model="searchInput"
+            class="form-input pl-8 bg-line/10 border border-accent/20 border-linerounded-xl"
+            @keyup.enter="sreach"
+        />
         <Search @click="sreach" class="self-center absolute left-2 text-accent w-3 md:w-5" />
     </div>
 </template>

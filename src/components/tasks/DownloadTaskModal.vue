@@ -1,5 +1,4 @@
 <script setup lang="ts">
-
 import { reactive, ref, onMounted, computed, toRaw } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
@@ -39,7 +38,6 @@ const formData = reactive<CreateTaskInputsType>({
 const fallbackUrlsInput = ref<string>('')
 
 const handleSubmit = async (): Promise<void> => {
-
     const rawFormData: CreateTaskInputsType = toRaw(formData)
     const payload: CreateTaskInputsType = {
         ...rawFormData,
@@ -65,9 +63,7 @@ const handleSubmit = async (): Promise<void> => {
 }
 
 onMounted(async () => {
-
     if (route.name === 'editTask') {
-
         const task: DownloadTasksResponse | null = await taskStore.fetchTaskById(taskId)
 
         if (!task) {
@@ -86,7 +82,6 @@ onMounted(async () => {
         formData.is_cancelled = task.is_cancelled ?? false
         formData.progress_percent = Number(task.progress_percent ?? 0)
     }
-
 })
 </script>
 <template>
@@ -119,8 +114,13 @@ onMounted(async () => {
                     <!-- Task Name -->
                     <div class="col-span-1 md:col-span-2">
                         <label class="form-label">{{ t('tasks.form.taskNameLabel') }}</label>
-                        <input v-model="formData.task_name" type="text" class="form-input"
-                            :placeholder="t('tasks.form.taskNamePlaceholder')" required />
+                        <input
+                            v-model="formData.task_name"
+                            type="text"
+                            class="form-input"
+                            :placeholder="t('tasks.form.taskNamePlaceholder')"
+                            required
+                        />
                         <p v-if="errors?.task_name" class="form-error">
                             {{ errors.task_name }}
                         </p>
@@ -129,8 +129,13 @@ onMounted(async () => {
                     <!-- Source URL -->
                     <div class="col-span-1 md:col-span-2">
                         <label class="form-label">{{ t('tasks.form.sourceUrlLabel') }}</label>
-                        <input v-model="formData.source_url" type="url" class="form-input"
-                            placeholder="https://example.com/video.mp4" required />
+                        <input
+                            v-model="formData.source_url"
+                            type="url"
+                            class="form-input"
+                            placeholder="https://example.com/video.mp4"
+                            required
+                        />
                         <p v-if="errors?.source_url" class="form-error">
                             {{ errors.source_url }}
                         </p>
@@ -139,8 +144,12 @@ onMounted(async () => {
                     <!-- Trailer URL -->
                     <div class="col-span-1 md:col-span-2">
                         <label class="form-label">{{ t('tasks.form.trailerUrlLabel') }}</label>
-                        <input v-model="formData.trailer_url" type="url" class="form-input"
-                            placeholder="https://youtube.com/watch?v=..." />
+                        <input
+                            v-model="formData.trailer_url"
+                            type="url"
+                            class="form-input"
+                            placeholder="https://youtube.com/watch?v=..."
+                        />
                         <p v-if="errors?.trailer_url" class="form-error">
                             {{ errors.trailer_url }}
                         </p>
@@ -169,8 +178,14 @@ onMounted(async () => {
                     <!-- Progress Percent -->
                     <div>
                         <label class="form-label">{{ t('tasks.form.progressLabel') }}</label>
-                        <input v-model.number="formData.progress_percent" type="number" min="0" max="100"
-                            class="form-input" placeholder="0 - 100" />
+                        <input
+                            v-model.number="formData.progress_percent"
+                            type="number"
+                            min="0"
+                            max="100"
+                            class="form-input"
+                            placeholder="0 - 100"
+                        />
                         <p v-if="errors?.progress_percent" class="form-error">
                             {{ errors.progress_percent }}
                         </p>
@@ -179,8 +194,12 @@ onMounted(async () => {
                     <!-- Download Speed -->
                     <div>
                         <label class="form-label">{{ t('tasks.form.downloadSpeedLabel') }}</label>
-                        <input v-model="formData.download_speed" type="text" class="form-input"
-                            :placeholder="t('tasks.form.downloadSpeedPlaceholder')" />
+                        <input
+                            v-model="formData.download_speed"
+                            type="text"
+                            class="form-input"
+                            :placeholder="t('tasks.form.downloadSpeedPlaceholder')"
+                        />
                         <p v-if="errors?.download_speed" class="form-error">
                             {{ errors.download_speed }}
                         </p>
@@ -189,9 +208,11 @@ onMounted(async () => {
                     <!-- Status Message -->
                     <div>
                         <label class="form-label">{{ t('tasks.form.statusMessageLabel') }}</label>
-                        <textarea v-model="formData.status_message"
+                        <textarea
+                            v-model="formData.status_message"
                             class="form-textarea min-h-20 max-h-30 text-start font-mono text-fluid-xs leading-relaxed"
-                            :placeholder="t('tasks.form.statusMessagePlaceholder')"></textarea>
+                            :placeholder="t('tasks.form.statusMessagePlaceholder')"
+                        ></textarea>
                         <p v-if="errors?.status_message" class="form-error">
                             {{ errors.status_message }}
                         </p>
@@ -200,9 +221,12 @@ onMounted(async () => {
                     <!-- Fallback URLs -->
                     <div class="col-span-1 md:col-span-2">
                         <label class="form-label">{{ t('tasks.form.fallbackUrlsLabel') }}</label>
-                        <textarea v-model="fallbackUrlsInput" rows="5"
+                        <textarea
+                            v-model="fallbackUrlsInput"
+                            rows="5"
                             class="form-textarea font-mono text-fluid-xs leading-relaxed"
-                            placeholder="https://down.vidtube.one/embed-wnlmx1uj5tpl.html&#10;https://d0o0d.com/e/jznbywxjbhn4"></textarea>
+                            placeholder="https://down.vidtube.one/embed-wnlmx1uj5tpl.html&#10;https://d0o0d.com/e/jznbywxjbhn4"
+                        ></textarea>
                         <p v-if="errors?.fallback_urls" class="form-error">
                             {{ errors.fallback_urls }}
                         </p>
@@ -210,11 +234,18 @@ onMounted(async () => {
 
                     <!-- Is Cancelled Checkbox -->
                     <div
-                        class="col-span-1 md:col-span-2 flex items-center gap-3 bg-card-hover p-fluid rounded-xl border border-line">
-                        <input id="is_cancelled" v-model="formData.is_cancelled" type="checkbox"
-                            class="size-5 accent-accent rounded cursor-pointer" />
-                        <label for="is_cancelled"
-                            class="text-fluid-sm font-semibold text-title cursor-pointer select-none">
+                        class="col-span-1 md:col-span-2 flex items-center gap-3 bg-card-hover p-fluid rounded-xl border border-line"
+                    >
+                        <input
+                            id="is_cancelled"
+                            v-model="formData.is_cancelled"
+                            type="checkbox"
+                            class="size-5 accent-accent rounded cursor-pointer"
+                        />
+                        <label
+                            for="is_cancelled"
+                            class="text-fluid-sm font-semibold text-title cursor-pointer select-none"
+                        >
                             {{ t('tasks.form.isCancelledLabel') }}
                         </label>
                     </div>
@@ -227,8 +258,10 @@ onMounted(async () => {
                     </button>
 
                     <button type="submit" :disabled="taskStore.isLoading" class="btn-primary">
-                        <span v-if="taskStore.isLoading"
-                            class="size-4 border-2 border-on-accent border-t-transparent rounded-full animate-spin">
+                        <span
+                            v-if="taskStore.isLoading"
+                            class="size-4 border-2 border-on-accent border-t-transparent rounded-full animate-spin"
+                        >
                         </span>
 
                         <span>

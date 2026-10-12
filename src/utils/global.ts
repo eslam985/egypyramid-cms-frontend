@@ -45,12 +45,7 @@ async function confirmAndDelete({
     }
 }
 
-
-function sortByProperty<T>(
-    arr: T[],
-    key: keyof T,
-    asc: boolean = true
-): T[] {
+function sortByProperty<T>(arr: T[], key: keyof T, asc: boolean = true): T[] {
     return [...arr].sort((a, b) => {
         const valA: T[keyof T] = a[key]
         const valB: T[keyof T] = b[key]
@@ -72,8 +67,8 @@ function sortByProperty<T>(
             const strB = String(valB)
 
             comparison = strA.localeCompare(strB, undefined, {
-                numeric: true,      // يضمن ترتيب "الموسم 2" قبل "الموسم 10"
-                sensitivity: 'base' // يتجاهل الفروق بين الحروف الكبيرة والصغيرة والتشكيل
+                numeric: true, // يضمن ترتيب "الموسم 2" قبل "الموسم 10"
+                sensitivity: 'base', // يتجاهل الفروق بين الحروف الكبيرة والصغيرة والتشكيل
             })
         }
 
@@ -91,6 +86,6 @@ this.episodes = sortByProperty(episodesList, 'title')
 this.media = sortByProperty(mediaList, 'created_at', false)
 */
 
-const toNumber = (val: any): number => Array.isArray(val) ? Number(val[0]) : Number(val)
+const toNumber = (val: any): number => (Array.isArray(val) ? Number(val[0]) : Number(val))
 
 export { formatDate, confirmAndDelete, sortByProperty, toNumber }
