@@ -54,12 +54,6 @@ const handleEditSeason = (seasonId: number) => {
 }
 
 const handleDeleteSeason = async (seasonId: number) => {
-
-    if (!seasonId) {
-        notiStore.triggerNotification(t('media.seasonInfo.noSeasonToDelete'))
-        return
-    }
-
     confirmAndDelete({
         message: t('media.seasonInfo.confirmDelete', { id: seasonId }),
 

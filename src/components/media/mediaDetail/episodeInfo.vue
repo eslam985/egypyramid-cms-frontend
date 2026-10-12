@@ -51,7 +51,6 @@ const handleAddEpisode = (): void => {
 }
 
 const handleEditEpisode = async (episode: number): Promise<void> => {
-    if (!episode) return
 
     await mediaContentStore.getEpisodeById(Number(episode), true)
 
@@ -61,10 +60,6 @@ const handleEditEpisode = async (episode: number): Promise<void> => {
 }
 
 const handleDeleteEpisode = (episodeId: number): void => {
-    if (!episodeId) {
-        notiStore.triggerNotification(t('media.episodeInfo.noEpisodeToDelete'))
-        return
-    }
 
     confirmAndDelete({
         message: t('media.episodeInfo.confirmDelete', { id: episodeId }),

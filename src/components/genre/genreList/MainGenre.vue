@@ -37,11 +37,6 @@ if (authStore.isEditorAndAbove) {
 
 // التعامل مع حذف تاسك
 const handleDelete = async (id: number): Promise<void> => {
-    if (!id) {
-        notiStore.triggerNotification(t('genres.noGenreToDelete'))
-        return
-    }
-
     confirmAndDelete({
         message: t('genres.confirmDelete'),
         action: () => genresStore.removeGenreById(id),

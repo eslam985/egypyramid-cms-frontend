@@ -6,7 +6,6 @@ import { useI18n } from 'vue-i18n'
 import { Download, Loader } from '@lucide/vue'
 
 import { useAnalyticsStore } from '@/stores/analyticsStore'
-import { useNotificationStore } from '@/stores/notificationStore'
 import BaseTable from '@/components/ui/BaseTable.vue'
 import AppPagination from '@/components/utils/AppPagination.vue'
 import { useAuthStore } from '@/stores/authStore'
@@ -18,7 +17,6 @@ const { t } = useI18n()
 const route = useRoute()
 const router = useRouter()
 const analyticsStore = useAnalyticsStore()
-const notiStore = useNotificationStore()
 
 const { missingLinksByServer, pagination, isLoading } = storeToRefs(analyticsStore)
 
@@ -78,21 +76,10 @@ const handleRowClick = (row: Record<string, any>): void => {
     router.push(`/media/${row.media_id}/details`)
 }
 
-const handleExport = async (): Promise<void> => {
-
-    const isSuccess: boolean = await analyticsStore.exportMissingEpisodesByServer(route.query)
-    if (isSuccess) {
-        notiStore.triggerNotification(analyticsStore.successMessage || 'تم تحميل البيانات بنجاح!')
-    } else {
-        notiStore.triggerNotification(
-            analyticsStore.errorMessage || 'حدث خطأ اثناء تحميل البيانات!',
-        )
-    }
-}
+const handleExport = async (): Promise<boolean> => await analyticsStore.exportMissingEpisodesByServer(route.query)
 
 const handleRefresh = async (): Promise<void> => {
     await loadMissingEpisodes()
-    notiStore.triggerNotification(analyticsStore.successMessage || 'تم تحديث البيانات بنجاح!')
 }
 
 onMounted(() => {

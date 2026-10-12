@@ -1,25 +1,22 @@
 <script setup lang="ts">
-
-import { storeToRefs } from 'pinia'
 import { useRouter, useRoute } from 'vue-router'
 import { Download, Loader } from '@lucide/vue'
+import { storeToRefs } from 'pinia'
 import { useI18n } from 'vue-i18n'
 
-import { useAnalyticsStore } from '@/stores/analyticsStore'
-import { useNotificationStore } from '@/stores/notificationStore'
-import { formatDate } from '@/utils/global'
-
 import AppPagination from '@/components/utils/AppPagination.vue'
+import { useAnalyticsStore } from '@/stores/analyticsStore'
 import BaseTable from '@/components/ui/BaseTable.vue'
 import { useAuthStore } from '@/stores/authStore'
+import { formatDate } from '@/utils/global'
 
-import type { BaseQueryRequest, MediasResponse } from '@/types/globalTypes'
+
+import type { BaseQueryRequest } from '@/types/globalTypes'
 
 const authStore = useAuthStore()
-const { t } = useI18n()
 const router = useRouter()
 const route = useRoute()
-const notiStore = useNotificationStore()
+const { t } = useI18n()
 
 const analyticsStore = useAnalyticsStore()
 const { mediasNotReadyList, pagination, isLoading } = storeToRefs(analyticsStore)
@@ -54,17 +51,10 @@ const handleExport = async (): Promise<void> => {
         params: {},
     })
 
-    const isSuccess = await analyticsStore.exportNotReadyMedia(route.query)
-    if (isSuccess) {
-        notiStore.triggerNotification(analyticsStore.successMessage || 'تم تحميل البيانات بنجاح!')
-    } else {
-        notiStore.triggerNotification(
-            analyticsStore.errorMessage || 'حدث خطأ اثناء تحميل البيانات!',
-        )
-    }
+    await analyticsStore.exportNotReadyMedia(route.query)
 }
 
-const handleRefresh = async (): Promise<null | undefined> => {
+const handleRefresh = async ():  Promise<void> => {
 
     router.push({
         params: {},
@@ -75,20 +65,8 @@ const handleRefresh = async (): Promise<null | undefined> => {
         limit: 20
     }
 
-    const data: MediasResponse[] | null = await analyticsStore.fetchNotReadyMedias(params, true)
+    await analyticsStore.fetchNotReadyMedias(params, true)
 
-    if (data === undefined || data === null) {
-        notiStore.triggerNotification(
-            analyticsStore.errorMessage || 'حدث خطأ اثناء تحديث البيانات!',
-        )
-        return null
-    }
-
-    if (data.length > 0) {
-        notiStore.triggerNotification(analyticsStore.successMessage || 'تم تحديث البيانات بنجاح!')
-    }
-
-    return null
 }
 </script>
 

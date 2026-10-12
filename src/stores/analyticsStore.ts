@@ -13,6 +13,9 @@ import {
 } from '@/api/data/analytics'
 
 import { handleStoreFetch, handleStoreExport } from '@/utils/store'
+import { useNotificationStore } from '@/stores/notificationStore'
+const notiStore = useNotificationStore()
+
 import type { BaseStore } from '@/types/globalTypes'
 import type {
     SystemCountersResponse,
@@ -70,13 +73,21 @@ const useAnalyticsStore = defineStore('analytics', {
         async exportNotReadyMedia(filters: BaseQueryRequest): Promise<boolean> {
             const date: string = new Date().toISOString().slice(0, 10)
 
-            return handleStoreExport<BaseQueryRequest, AnalyticsState>({
+            const isSuccess: boolean = await handleStoreExport<BaseQueryRequest, AnalyticsState>({
                 store: this,
                 apiCall: handleExportNotReadyMedias,
                 args: filters,
                 defaultFileName: `not-ready-medias-${date}.csv`,
                 defaultError: 'حدثت مشكلة أثناء تصدير الاعمال الغير جاهزة!',
             })
+
+            if (isSuccess) {
+                notiStore.triggerNotification(this.successMessage || 'تم تحميل البيانات بنجاح!')
+            } else {
+                notiStore.triggerNotification(this.errorMessage || 'حدث خطأ اثناء تحميل البيانات!')
+            }
+
+            return isSuccess
         },
         async exportBrokenLinks(filters: ServerNameRequest): Promise<boolean> {
             const date: string = new Date().toISOString().slice(0, 10)
@@ -92,24 +103,40 @@ const useAnalyticsStore = defineStore('analytics', {
         async exportMissingEpisodesByServer(filters: ServerNameRequest): Promise<boolean> {
             const date: string = new Date().toISOString().slice(0, 10)
 
-            return handleStoreExport<ServerNameRequest, AnalyticsState>({
+            const isSuccess: boolean = await handleStoreExport<ServerNameRequest, AnalyticsState>({
                 store: this,
                 apiCall: handleExportMissingEpisodesByServer,
                 args: filters,
                 defaultFileName: `export-missing-episodes-by-server-name-${date}.csv`,
                 defaultError: 'حدثت مشكلة أثناء تصدير السرفرات المفقودة من الحلقات!',
             })
+
+            if (isSuccess) {
+                notiStore.triggerNotification(this.successMessage || 'تم تحميل البيانات بنجاح!')
+            } else {
+                notiStore.triggerNotification(this.errorMessage || 'حدث خطأ اثناء تحميل البيانات!')
+            }
+
+            return isSuccess
         },
         async exportLockedTelegramLinks(filters: BaseQueryRequest): Promise<boolean> {
             const date: string = new Date().toISOString().slice(0, 10)
 
-            return handleStoreExport<BaseQueryRequest, AnalyticsState>({
+            const isSuccess: boolean = await handleStoreExport<BaseQueryRequest, AnalyticsState>({
                 store: this,
                 apiCall: handleExportLockedTelegramLinks,
                 args: filters,
                 defaultFileName: `export-locked-telegram-links-${date}.csv`,
                 defaultError: 'حدثت مشكلة أثناء تصدير لينكات تليجرام المحجوزة!',
             })
+
+            if (isSuccess) {
+                notiStore.triggerNotification(this.successMessage || 'تم تحميل البيانات بنجاح!')
+            } else {
+                notiStore.triggerNotification(this.errorMessage || 'حدث خطأ اثناء تحميل البيانات!')
+            }
+
+            return isSuccess
         },
 
         async fetchAllCounters(force = false): Promise<SystemCountersResponse | null> {
@@ -125,7 +152,7 @@ const useAnalyticsStore = defineStore('analytics', {
             params: ServerNameRequest,
             force = false,
         ): Promise<DownloadTasksResponse[] | null> {
-            return handleStoreFetch<
+            const isSuccess: DownloadTasksResponse[] | null = await handleStoreFetch<
                 DownloadTasksResponse[] | null,
                 ServerNameRequest,
                 AnalyticsState
@@ -137,6 +164,14 @@ const useAnalyticsStore = defineStore('analytics', {
                 defaultError: 'حدث خطا أثناء جلب السرفرات المفقودة!',
                 force,
             })
+
+            if (isSuccess && isSuccess?.length > 0) {
+                notiStore.triggerNotification(this.successMessage || 'تم تحميل البيانات بنجاح!')
+            } else {
+                notiStore.triggerNotification(this.errorMessage || 'حدث خطأ اثناء تحميل البيانات!')
+            }
+
+            return isSuccess
         },
         async fetchTotalCountersStatusServers(
             status: StatusTasksRequest,
@@ -164,7 +199,11 @@ const useAnalyticsStore = defineStore('analytics', {
                 force = true
             }
 
-            return handleStoreFetch<MediasResponse[] | null, BaseQueryRequest, AnalyticsState>({
+            const isSuccess: MediasResponse[] | null = await handleStoreFetch<
+                MediasResponse[] | null,
+                BaseQueryRequest,
+                AnalyticsState
+            >({
                 store: this,
                 apiCall: getNotReadyMedias,
                 args: params,
@@ -172,6 +211,14 @@ const useAnalyticsStore = defineStore('analytics', {
                 defaultError: 'حدث خطا أثناء جلب الاعمال الغير جاهزة!',
                 force,
             })
+
+            if (isSuccess && isSuccess?.length > 0) {
+                notiStore.triggerNotification(this.successMessage || 'تم تحميل البيانات بنجاح!')
+            } else {
+                notiStore.triggerNotification(this.errorMessage || 'حدث خطأ اثناء تحميل البيانات!')
+            }
+
+            return isSuccess
         },
         async fetchBrokenLinks(
             params: ServerNameRequest,
@@ -204,7 +251,7 @@ const useAnalyticsStore = defineStore('analytics', {
                 force = true
             }
 
-            return handleStoreFetch<
+            const isSuccess: LockedTelegramResponse[] | null = await handleStoreFetch<
                 LockedTelegramResponse[] | null,
                 BaseQueryRequest,
                 AnalyticsState
@@ -216,6 +263,15 @@ const useAnalyticsStore = defineStore('analytics', {
                 defaultError: 'حدث خطا أثناء جلب اللينكات المحجوزة!',
                 force,
             })
+
+            if (isSuccess && isSuccess?.length > 0) {
+                notiStore.triggerNotification(this.successMessage || 'تم تحميل البيانات بنجاح!')
+            } else {
+                notiStore.triggerNotification(this.errorMessage || 'حدث خطأ اثناء تحميل البيانات!')
+            }
+
+            return isSuccess
+
         },
     },
 })

@@ -66,7 +66,7 @@ const handleRefresh = async (): Promise<void> => {
     notiStore.triggerNotification(t('common.refreshSuccess'))
 }
 
-const sreach = async () => {
+const sreach = async (): Promise<void> => {
     const data: false | SearchResultData = await handleSearch({
         searchInput: searchInput.value,
         notiStore: notiStore,

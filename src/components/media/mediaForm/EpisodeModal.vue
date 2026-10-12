@@ -49,10 +49,10 @@ const formData = reactive<CreateEpisodeSchemaType>({
 
 onMounted(async () => {
     if (route.name === 'addEpisode') {
+
         const media: MediasResponse | null = await mediaStore.getMediaById(mediaId)
 
-        if (!media && !mediaStore.currentMedia) {
-            notiStore.triggerNotification(t('media.episodeForm.mediaNotFound'))
+        if (!media) {
             return router.push({ name: 'NotFound' })
         }
 
@@ -62,11 +62,13 @@ onMounted(async () => {
         } else {
             formData.season_id = null
         }
-    } else if (route.name === 'editEpisode') {
+
+    }
+
+    else if (route.name === 'editEpisode') {
         const episode = await mediaContentStore.getEpisodeById(episodeId, true)
 
         if (!episode) {
-            notiStore.triggerNotification(t('media.episodeForm.episodeNotFound'))
             return router.push({ name: 'NotFound' })
         }
 
@@ -145,7 +147,7 @@ const handleSubmit = async () => {
                     <div v-if="isSeries">
                         <label for="season_id" class="form-label">{{
                             t('media.episodeForm.seasonLabel')
-                            }}</label>
+                        }}</label>
                         <select id="season_id" v-model="formData.season_id" class="form-select">
                             <option v-if="!mediaContentStore.seasons?.length" disabled :value="null">
                                 {{ t('media.episodeForm.noSeasons') }}

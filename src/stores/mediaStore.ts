@@ -1,4 +1,6 @@
 import { defineStore } from 'pinia'
+import { useNotificationStore } from '@/stores/notificationStore'
+
 import {
     handleStoreDelete,
     handleStoreEdit,
@@ -52,8 +54,6 @@ export interface MediaState extends BaseStore {
     }
 }
 
-
-
 const useMediaStore = defineStore('media', {
     state: (): MediaState => ({
         medias: [],
@@ -75,6 +75,8 @@ const useMediaStore = defineStore('media', {
         errorMessage: '',
     }),
     getters: {
+        notiStore: () => useNotificationStore(),
+
         // 👈 يحول الـ filters والـ pagination إلى Flat Query Object نظيف للـ API
         queryParams: (state): GetMediasQueryInputsType => ({
             search: state.filters.search ?? undefined,
@@ -98,7 +100,12 @@ const useMediaStore = defineStore('media', {
             })
         },
         async getMediaById(id: number, force: boolean = true): Promise<MediasResponse | null> {
-            const data: MediasResponse | null = await handleStoreFetch<
+            if (!id) {
+                this.notiStore.triggerNotification('Media Id Is Required!')
+                return null
+            }
+
+            const isSuccess: MediasResponse | null = await handleStoreFetch<
                 MediasResponse,
                 number,
                 MediaState
@@ -111,13 +118,18 @@ const useMediaStore = defineStore('media', {
                 force,
             })
 
-            if (!data) return null
-
-            if (data || Object.keys(data).length > 0) {
-                this.medias = [data]
+            if (isSuccess) {
+                this.notiStore.triggerNotification(
+                    this.successMessage || `Found Media ID ${id} successfuly `,
+                )
+                this.medias = [isSuccess]
+            } else {
+                this.notiStore.triggerNotification(
+                    this.errorMessage ||  'Not Found'
+                )
             }
 
-            return data
+            return isSuccess
         },
         async fetchMediaByAnyId(
             id: number,
@@ -173,14 +185,30 @@ const useMediaStore = defineStore('media', {
             })
         },
         async removeMediaById(id: number): Promise<boolean> {
-            if(!id) return false
-            return handleStoreDelete<boolean, number, MediaState>({
+            if (!id) {
+                this.notiStore.triggerNotification('Id Is required!')
+                return false
+            }
+
+            const isSuccess: boolean = await handleStoreDelete<boolean, number, MediaState>({
                 store: this,
                 apiCall: deleteMediaById,
                 id,
                 listKey: 'medias',
                 defaultError: 'حدث خطأ اثناء حذف الميديا!',
             })
+
+            if (isSuccess) {
+                this.notiStore.triggerNotification(
+                    this.successMessage || `Media ID ${id} Deleted successfuly `,
+                )
+            } else {
+                this.notiStore.triggerNotification(
+                    this.errorMessage || `Media ID ${id} was not deleted!`,
+                )
+            }
+
+            return isSuccess
         },
         async fetchMedias(
             query?: GetMediasQueryInputsType,
@@ -211,11 +239,11 @@ const useMediaStore = defineStore('media', {
 
             // ✅ تمرير الكائن مسطحاً مباشرة بدون كلمة query
             return await this.fetchMedias(this.queryParams, true)
-
         },
 
-        async setFilters(newFilters: Partial<MediaState['filters']>): Promise<MediasResponse[] | null> {
-
+        async setFilters(
+            newFilters: Partial<MediaState['filters']>,
+        ): Promise<MediasResponse[] | null> {
             this.filters = { ...this.filters, ...newFilters }
             this.pagination.page = 1
 

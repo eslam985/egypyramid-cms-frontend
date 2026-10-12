@@ -1,26 +1,26 @@
 <script setup lang="ts">
 
 import { useRouter, useRoute } from 'vue-router'
+import { Download, Loader } from '@lucide/vue'
 import { storeToRefs } from 'pinia'
 import { useI18n } from 'vue-i18n'
-import { Download, Loader } from '@lucide/vue'
 
 import { useAnalyticsStore } from '@/stores/analyticsStore'
-import { useNotificationStore } from '@/stores/notificationStore'
-import { formatDate } from '@/utils/global'
-import { useAuthStore } from '@/stores/authStore'
-
 import BaseTable from '@/components/ui/BaseTable.vue'
+import { useAuthStore } from '@/stores/authStore'
+import { formatDate } from '@/utils/global'
 
-import type { BaseQueryRequest, LockedTelegramResponse } from '@/types/globalTypes'
 
+import type { BaseQueryRequest } from '@/types/globalTypes'
+
+const analyticsStore = useAnalyticsStore()
 const authStore = useAuthStore()
-const { t } = useI18n()
 const router = useRouter()
 const route = useRoute()
-const notiStore = useNotificationStore()
-const analyticsStore = useAnalyticsStore()
+const { t } = useI18n()
+
 const { telegramLocked, isLoading } = storeToRefs(analyticsStore)
+
 const columns: {
     label: string;
     key: string;
@@ -39,20 +39,12 @@ const handleExport = async (): Promise<void> => {
         params: {},
     })
 
-    const isSuccess: boolean = await analyticsStore.exportLockedTelegramLinks(route.query)
-
-    if (isSuccess) {
-        notiStore.triggerNotification(analyticsStore.successMessage || 'تم تحميل البيانات بنجاح!')
-    } else {
-        notiStore.triggerNotification(
-            analyticsStore.errorMessage || 'حدث خطأ اثناء تحميل البيانات!',
-        )
-    }
+    await analyticsStore.exportLockedTelegramLinks(route.query)
 
 }
 
 
-const handleRefresh = async (): Promise<null | undefined> => {
+const handleRefresh = async (): Promise<void> => {
 
     router.push({
         params: {},
@@ -62,23 +54,7 @@ const handleRefresh = async (): Promise<null | undefined> => {
         page: 1,
         limit: 20
     }
-
-    const data: LockedTelegramResponse[] | null =
-        await analyticsStore.fetchLockedTelegramLinks(params, true)
-
-    if (data === undefined || data === null) {
-        notiStore.triggerNotification(
-            analyticsStore.errorMessage || 'حدث خطأ اثناء تحديث البيانات!',
-        )
-
-        return null
-    }
-
-    if (data.length > 0) {
-        notiStore.triggerNotification(analyticsStore.successMessage || 'تم تحديث البيانات بنجاح!')
-    }
-
-    return null
+    await analyticsStore.fetchLockedTelegramLinks(params, true)
 }
 
 

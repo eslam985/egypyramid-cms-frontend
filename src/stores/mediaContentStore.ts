@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia'
+import { useNotificationStore } from '@/stores/notificationStore'
 import {
     handleStoreDelete,
     handleStoreEdit,
@@ -84,6 +85,9 @@ const useMediaContentStore = defineStore('mediaContent', {
         successMessage: '',
         errorMessage: '',
     }),
+    getters: {
+        notiStore: () => useNotificationStore(),
+    },
     actions: {
         resetContentState() {
             this.seasons = []
@@ -98,19 +102,37 @@ const useMediaContentStore = defineStore('mediaContent', {
         async exportSeasons(filters: SeasonQueryRequest): Promise<boolean> {
             const date: string = new Date().toISOString().slice(0, 10)
 
-            return handleStoreExport<SeasonQueryRequest, MediaContentState>({
+            const isSuccess: boolean = await handleStoreExport<
+                SeasonQueryRequest,
+                MediaContentState
+            >({
                 store: this,
                 apiCall: handleFindAllSeasons,
                 args: filters,
                 defaultFileName: `season-${date}.csv`,
                 defaultError: 'حدثت مشكلة أثناء تصدير المواسم! ',
             })
+
+            if (isSuccess) {
+                this.notiStore.triggerNotification(
+                    this.successMessage || 'Download completed successfully.',
+                )
+            } else {
+                this.notiStore.triggerNotification(this.errorMessage || `The operation failed!`)
+            }
+
+            return isSuccess
         },
         async getSeasonsByMediaId(
             mediaId: number,
             force: boolean = false,
         ): Promise<SeasonsResponse[] | SeasonsResponse | null> {
-            const data: SeasonsResponse | SeasonsResponse[] | null = await handleStoreFetch<
+            if (!mediaId) {
+                this.notiStore.triggerNotification('Media Id Is Required!')
+                return null
+            }
+
+            const isSuccess: SeasonsResponse | SeasonsResponse[] | null = await handleStoreFetch<
                 SeasonsResponse[] | SeasonsResponse,
                 number,
                 MediaContentState
@@ -123,15 +145,29 @@ const useMediaContentStore = defineStore('mediaContent', {
                 force,
             })
 
-            // التعديل الأفضل (استخدام Array.isArray كما فعلت في الحلقات)
-            if (Array.isArray(data)) {
-                this.seasons = sortByProperty(data, 'season_number')
+            if (!isSuccess) {
+                this.notiStore.triggerNotification(this.errorMessage || 'Not Found')
+            } else {
+                this.notiStore.triggerNotification(
+                    this.successMessage || 'Data successfully retrieved.',
+                )
+                const seasons = Array.isArray(isSuccess) ? isSuccess : [isSuccess]
+                this.seasons = sortByProperty(seasons, 'season_number')
             }
 
-            return data
+            return isSuccess
         },
         async getSeasonById(id: number, force: boolean = false): Promise<SeasonsResponse | null> {
-            return handleStoreFetch<SeasonsResponse, number, MediaContentState>({
+            if (!id) {
+                this.notiStore.triggerNotification('Season Id Is Required!')
+                return null
+            }
+
+            const isSuccess: SeasonsResponse | null = await handleStoreFetch<
+                SeasonsResponse,
+                number,
+                MediaContentState
+            >({
                 store: this,
                 apiCall: findSeasonById,
                 args: id,
@@ -139,13 +175,32 @@ const useMediaContentStore = defineStore('mediaContent', {
                 defaultError: 'حدثت مشكلة اثناء جلب الموسم',
                 force,
             })
+
+            if (!isSuccess) {
+                this.notiStore.triggerNotification(this.errorMessage || `Not Found Season Id ${id}`)
+            } else {
+                this.notiStore.triggerNotification(
+                    this.successMessage || 'Data successfully retrieved.',
+                )
+            }
+
+            return isSuccess
         },
         async addSeason(
             media_id: number,
             data: CreateSeasonSchemaType,
             force: boolean = true,
         ): Promise<SeasonsResponse | null> {
-            return handleStoreAdd<SeasonsResponse, CreateSeasonSchemaType, MediaContentState>({
+            if (!media_id || data) {
+                this.notiStore.triggerNotification('Id And Data Is Required!')
+                return null
+            }
+
+            const isSuccess: SeasonsResponse | null = await handleStoreAdd<
+                SeasonsResponse,
+                CreateSeasonSchemaType,
+                MediaContentState
+            >({
                 store: this,
                 apiCall: createSeason,
                 id: media_id,
@@ -154,12 +209,27 @@ const useMediaContentStore = defineStore('mediaContent', {
                 defaultError: 'حدثت مشكلة اثناء إضافة الموسم',
                 force,
             })
+
+            if (!isSuccess) {
+                this.notiStore.triggerNotification(this.errorMessage || 'The addition failed!')
+            } else {
+                this.notiStore.triggerNotification(
+                    this.successMessage || 'The addition was successful.',
+                )
+            }
+
+            return isSuccess
         },
         async editSeasonById(
             id: number,
             data: UpdateSeasonSchemaType,
         ): Promise<SeasonsResponse | null> {
-            return handleStoreEdit<
+            if (!id || data) {
+                this.notiStore.triggerNotification('Id And Data Is Required!')
+                return null
+            }
+
+            const isSuccess: SeasonsResponse | null = await handleStoreEdit<
                 SeasonsResponse,
                 UpdateSeasonSchemaType,
                 number,
@@ -172,19 +242,53 @@ const useMediaContentStore = defineStore('mediaContent', {
                 listKey: 'seasons',
                 defaultError: 'حدثت مشكلة اثناء تعديل الموسم',
             })
+
+            if (!isSuccess) {
+                this.notiStore.triggerNotification(this.errorMessage || 'The addition failed!')
+            } else {
+                this.notiStore.triggerNotification(
+                    this.successMessage || 'The addition was successful.',
+                )
+            }
+
+            return isSuccess
         },
         async removeSeasonById(id: number): Promise<boolean> {
-            return handleStoreDelete<SeasonsResponse, number, MediaContentState>({
+            if (!id) {
+                this.notiStore.triggerNotification('Season Id Is Required!')
+                return false
+            }
+
+            const isSuccess: boolean = await handleStoreDelete<
+                SeasonsResponse,
+                number,
+                MediaContentState
+            >({
                 store: this,
                 apiCall: deleteSeasonById,
                 id,
                 listKey: 'seasons',
                 defaultError: 'حدث خطأ اثناء حذف الموسم',
             })
+
+            if (!isSuccess) {
+                this.notiStore.triggerNotification(this.errorMessage || 'Not Found')
+            } else {
+                this.notiStore.triggerNotification(
+                    this.successMessage || `Season Id ${id} Deleted successfuly `,
+                )
+            }
+
+            return isSuccess
         },
         // --- Episodes ---
         async getEpisodeById(id: number, force: boolean = false): Promise<EpisodeResponse | null> {
-            const data: EpisodeResponse | null = await handleStoreFetch<
+            if (!id) {
+                this.notiStore.triggerNotification('Episode Id Is Required!')
+                return null
+            }
+
+            const isSuccess: EpisodeResponse | null = await handleStoreFetch<
                 EpisodeResponse,
                 number,
                 MediaContentState
@@ -197,47 +301,66 @@ const useMediaContentStore = defineStore('mediaContent', {
                 force,
             })
 
-            if (data && Object.keys(data).length > 0 && 'id' in data) {
-                this.currentEpisodeId = data.id ?? null
+            if (!isSuccess) {
+                this.notiStore.triggerNotification(
+                    this.errorMessage || `Not Found Episode ID ${id}`,
+                )
+            } else {
+                this.notiStore.triggerNotification(this.successMessage || 'Not Found')
+                this.currentEpisodeId = isSuccess.id ?? null
             }
-
-            return data
+            return isSuccess
         },
         async getEpisodesByMediaId(
             media_id: number,
-            params: BaseQueryRequest,
+            params?: BaseQueryRequest,
             force: boolean = false,
         ) {
+            if (!media_id) {
+                this.notiStore.triggerNotification('Media Id Is Required!')
+                return null
+            }
+
             if (typeof params === 'boolean') {
                 params = {}
                 force = true
             }
 
-            const resultData: EpisodeResponse | EpisodeResponse[] | null = await handleStoreFetch<
+            const isSuccess: EpisodeResponse | EpisodeResponse[] | null = await handleStoreFetch<
                 EpisodeResponse[] | EpisodeResponse,
                 [number, BaseQueryRequest],
                 MediaContentState
             >({
                 store: this,
                 apiCall: findEpisodesByMediaId,
-                args: [media_id, params],
+                args: [media_id, params ?? {}],
                 targetKey: 'episodes',
                 defaultError: 'حدث خطأ أثناء جلب الحلقات',
                 force,
             })
 
-            // الترتيب فقط في حال نجاح الجلب ورجوع مصفوفة
-            if (Array.isArray(resultData)) {
-                this.episodes = sortByProperty(resultData, 'episode_number')
+            if (!isSuccess) {
+                this.notiStore.triggerNotification(this.errorMessage || `Not Found Episode`)
+            } else {
+                this.notiStore.triggerNotification(this.successMessage || 'Not Found')
+
+                const seasons = Array.isArray(isSuccess) ? isSuccess : [isSuccess]
+
+                this.episodes = sortByProperty(seasons, 'episode_number')
             }
 
-            return resultData
+            return isSuccess
         },
         async getEpisodesBySeasonId(
             season_id: number,
             force: boolean = false,
         ): Promise<EpisodeResponse[] | EpisodeResponse | null> {
-            const resultData = await handleStoreFetch<
+            if (!season_id) {
+                this.notiStore.triggerNotification('Season Id Is Required!')
+                return null
+            }
+
+            const isSuccess = await handleStoreFetch<
                 EpisodeResponse[] | EpisodeResponse | null,
                 number,
                 MediaContentState
@@ -250,18 +373,27 @@ const useMediaContentStore = defineStore('mediaContent', {
                 force,
             })
 
-            // الترتيب فقط في حال نجاح الجلب ورجوع مصفوفة
-            if (Array.isArray(resultData)) {
-                this.episodes = sortByProperty(resultData, 'episode_number')
+            if (!isSuccess) {
+                this.notiStore.triggerNotification(this.errorMessage || `Not Found Episode`)
+            } else {
+                this.notiStore.triggerNotification(this.successMessage || 'Not Found')
+
+                const seasons = Array.isArray(isSuccess) ? isSuccess : [isSuccess]
+                this.episodes = sortByProperty(seasons, 'episode_number')
             }
 
-            return resultData
+            return isSuccess
         },
         async addEpisode(
             mediaId: number,
             data: CreateEpisodeSchemaType,
         ): Promise<EpisodeResponse | null> {
-            return handleStoreAdd<
+            if (!mediaId || !data) {
+                this.notiStore.triggerNotification('Media Id And Data Is Required!')
+                return null
+            }
+
+            const isSuccess: EpisodeResponse | null = await handleStoreAdd<
                 EpisodeResponse | null,
                 CreateEpisodeSchemaType,
                 MediaContentState
@@ -273,12 +405,27 @@ const useMediaContentStore = defineStore('mediaContent', {
                 listKey: 'episodes',
                 defaultError: 'حدث خطأ اثناء اضافة الحلقة!',
             })
+
+            if (!isSuccess) {
+                this.notiStore.triggerNotification(this.errorMessage || 'The addition failed!')
+            } else {
+                this.notiStore.triggerNotification(
+                    this.successMessage || 'The addition was successful.',
+                )
+            }
+
+            return isSuccess
         },
         async editEpisodeById(
             id: number,
             data: UpdateEpisodeSchemaType,
         ): Promise<EpisodeResponse | null> {
-            return handleStoreEdit<
+            if (!id || !data) {
+                this.notiStore.triggerNotification('Id And Data Is Required!')
+                return null
+            }
+
+            const isSuccess: EpisodeResponse | null = await handleStoreEdit<
                 EpisodeResponse | null,
                 UpdateEpisodeSchemaType,
                 number,
@@ -291,48 +438,108 @@ const useMediaContentStore = defineStore('mediaContent', {
                 listKey: 'episodes',
                 defaultError: 'حدث خطأ اثناء تعديل الحلقة!',
             })
+
+            if (!isSuccess) {
+                this.notiStore.triggerNotification(this.errorMessage || 'Modification failed!')
+            } else {
+                this.notiStore.triggerNotification(this.successMessage || 'Successfully edited')
+            }
+
+            return isSuccess
         },
         async removeEpisodeById(id: number): Promise<boolean> {
-            return handleStoreDelete<EpisodeResponse, number, MediaContentState>({
+            if (!id) {
+                this.notiStore.triggerNotification('Episode Id Is Required!')
+                return false
+            }
+
+            const isSuccess: boolean = await handleStoreDelete<
+                EpisodeResponse,
+                number,
+                MediaContentState
+            >({
                 store: this,
                 apiCall: deleteEpisodeById,
                 id,
                 listKey: 'episodes',
                 defaultError: 'حدث خطأ اثناء حذف الحلقة',
             })
+
+            if (!isSuccess) {
+                this.notiStore.triggerNotification(
+                    this.errorMessage || `Episode ID ${id} was not deleted!`,
+                )
+            } else {
+                this.notiStore.triggerNotification(
+                    this.successMessage || `Episode Id ${id} Deleted successfuly `,
+                )
+            }
+
+            return isSuccess
         },
 
         // 💡 أكشن تصدير الحلقات المعتمد بالكامل على الـ Utility المشتركة
-        async exportEpisodes(filters: EpisodeQueryRequest): Promise<boolean> {
+        async exportEpisodes(filters?: EpisodeQueryRequest): Promise<boolean> {
             const date: string = new Date().toISOString().slice(0, 10)
 
-            return handleStoreExport<EpisodeQueryRequest, MediaContentState>({
+            const isSuccess: boolean = await handleStoreExport<
+                EpisodeQueryRequest,
+                MediaContentState
+            >({
                 store: this,
                 apiCall: handleFindAllEpisodes,
                 args: filters,
                 defaultFileName: `episodes-${date}.csv`,
                 defaultError: 'حدثت مشكلة أثناء تصدير الحلقات ',
             })
+
+            if (!isSuccess) {
+                this.notiStore.triggerNotification(this.errorMessage || `The operation failed!`)
+            } else {
+                this.notiStore.triggerNotification(
+                    this.successMessage || 'Download completed successfully.',
+                )
+            }
+
+            return isSuccess
         },
 
         // --- Links ---
         // 💡 أكشن تصدير الحلقات المعتمد بالكامل على الـ Utility المشتركة
-        async exportLinks(filters: LinksQueryRequest): Promise<boolean> {
+        async exportLinks(filters?: LinksQueryRequest): Promise<boolean> {
             const date: string = new Date().toISOString().slice(0, 10)
 
-            return handleStoreExport<LinksQueryRequest, MediaContentState>({
+            const isSuccess: boolean = await handleStoreExport<
+                LinksQueryRequest,
+                MediaContentState
+            >({
                 store: this,
                 apiCall: handleFindAllLinks,
                 args: filters, // تمرير الفلاتر الحالية للـ API
                 defaultFileName: `links-${date}.csv`,
                 defaultError: 'حدثت مشكلة أثناء تصدير اللينكات! ',
             })
+
+            if (!isSuccess) {
+                this.notiStore.triggerNotification(this.errorMessage || `The operation failed!`)
+            } else {
+                this.notiStore.triggerNotification(
+                    this.successMessage || 'Download completed successfully.',
+                )
+            }
+
+            return isSuccess
         },
         async getLinksByEpisodeId(
             episode_id: number,
             force: boolean = false,
         ): Promise<LinksResponse[] | LinksResponse | null> {
-            const data: LinksResponse | LinksResponse[] | null = await handleStoreFetch<
+            if (!episode_id) {
+                this.notiStore.triggerNotification('Episode Id Is Required!')
+                return null
+            }
+
+            const isSuccess: LinksResponse | LinksResponse[] | null = await handleStoreFetch<
                 LinksResponse | LinksResponse[] | null,
                 number,
                 MediaContentState
@@ -345,15 +552,29 @@ const useMediaContentStore = defineStore('mediaContent', {
                 force,
             })
 
-            if (data && Array.isArray(this.links)) {
-                // تمرير false للترتيب التنازلي (من الأحدث للأقدم)
-                this.links = sortByProperty(this.links, 'last_check_at')
+            if (!isSuccess) {
+                this.notiStore.triggerNotification(this.errorMessage || `Not Found!`)
+            } else {
+                const links = Array.isArray(isSuccess) ? isSuccess : [isSuccess]
+                this.notiStore.triggerNotification(
+                    this.successMessage || `Found ${links.length} Links successfully`,
+                )
+                this.links = sortByProperty(links, 'last_check_at')
             }
 
-            return data
+            return isSuccess
         },
         async getLinkById(id: number, force: boolean = false): Promise<LinksResponse | null> {
-            return handleStoreFetch<LinksResponse | null, number, MediaContentState>({
+            if (!id) {
+                this.notiStore.triggerNotification('Link Id Is Required!')
+                return null
+            }
+
+            const isSuccess: LinksResponse | null = await handleStoreFetch<
+                LinksResponse | null,
+                number,
+                MediaContentState
+            >({
                 store: this,
                 apiCall: findLinkById,
                 args: id,
@@ -361,12 +582,27 @@ const useMediaContentStore = defineStore('mediaContent', {
                 defaultError: 'حدثت مشكلة اثناء جلب اللينك',
                 force,
             })
+
+            if (!isSuccess) {
+                this.notiStore.triggerNotification(this.errorMessage || `Not Found Link Id ${id}`)
+            } else {
+                this.notiStore.triggerNotification(
+                    this.successMessage || 'Data successfully retrieved.',
+                )
+            }
+
+            return isSuccess
         },
         async addLink(
             episode_id: number,
             data: CreateLinkSchemaType,
         ): Promise<LinksResponse | null> {
-            const resultData: LinksResponse | null = await handleStoreAdd<
+            if (!episode_id || !data) {
+                this.notiStore.triggerNotification('Episode Id And Data Is Required!')
+                return null
+            }
+
+            const isSuccess: LinksResponse | null = await handleStoreAdd<
                 LinksResponse | null,
                 CreateLinkSchemaType,
                 MediaContentState
@@ -379,17 +615,28 @@ const useMediaContentStore = defineStore('mediaContent', {
                 defaultError: 'حدثت مشكلة اثناء اضافة الرابط',
             })
 
-            if (resultData && Array.isArray(this.links)) {
-                this.links = sortByProperty(this.links, 'last_check_at')
+            if (!isSuccess) {
+                this.notiStore.triggerNotification(this.errorMessage || 'The addition failed!')
+            } else {
+                this.notiStore.triggerNotification(
+                    this.successMessage || 'The addition was successful.',
+                )
+                const links = Array.isArray(isSuccess) ? isSuccess : [isSuccess]
+                this.links = sortByProperty(links, 'last_check_at')
             }
 
-            return resultData
+            return isSuccess
         },
         async editLinkById(
             id: number,
             data: UpdateLinkByIdSchemaType,
         ): Promise<LinksResponse | null> {
-            const resultData: LinksResponse | null = await handleStoreEdit<
+            if (!id || !data) {
+                this.notiStore.triggerNotification('Episode Id And Data Is Required!')
+                return null
+            }
+
+            const isSuccess: LinksResponse | null = await handleStoreEdit<
                 LinksResponse | null,
                 UpdateLinkByIdSchemaType,
                 number,
@@ -403,22 +650,46 @@ const useMediaContentStore = defineStore('mediaContent', {
                 defaultError: 'حدث خطأ اثناء تعديل الرابط',
             })
 
-            // إعادة الترتيب بعد نجاح التعديل
-
-            if (resultData && Array.isArray(this.links)) {
-                this.links = sortByProperty(this.links, 'last_check_at')
+            if (!isSuccess) {
+                this.notiStore.triggerNotification(this.errorMessage || 'The addition failed!')
+            } else {
+                this.notiStore.triggerNotification(
+                    this.successMessage || 'The addition was successful.',
+                )
+                const newLinks = Array.isArray(isSuccess) ? isSuccess : [isSuccess]
+                this.links = sortByProperty(newLinks, 'last_check_at')
             }
 
-            return resultData
+            return isSuccess
         },
         async removeLinkById(id: number): Promise<boolean> {
-            return handleStoreDelete<LinksResponse, number, MediaContentState>({
+            if (!id) {
+                this.notiStore.triggerNotification('Episode Id And Data Is Required!')
+                return false
+            }
+            const isSuccess: boolean = await handleStoreDelete<
+                LinksResponse,
+                number,
+                MediaContentState
+            >({
                 store: this,
                 apiCall: deleteLinkById,
                 id,
                 listKey: 'links',
                 defaultError: 'حدث خطأ اثناء حذف الرابط',
             })
+
+            if (!isSuccess) {
+                this.notiStore.triggerNotification(
+                    this.errorMessage || `An error occurred, or we couldn't find it.`,
+                )
+            } else {
+                this.notiStore.triggerNotification(
+                    this.successMessage || `Link Id ${id} Deleted successfuly `,
+                )
+            }
+
+            return isSuccess
         },
     },
 })

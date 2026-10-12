@@ -11,7 +11,7 @@ import { useGenresStore } from '@/stores/genreStore'
 import { useNotificationStore } from '@/stores/notificationStore'
 import { useAuthStore } from '@/stores/authStore'
 
-import type { GenresResponse, SearchResultData } from '@/types/globalTypes'
+import type { SearchResultData } from '@/types/globalTypes'
 
 const authStore = useAuthStore()
 const genresStore = useGenresStore()
@@ -20,7 +20,7 @@ const notiStore = useNotificationStore()
 const router = useRouter()
 const route = useRoute()
 
-const handleRefresh = async (): Promise<null | undefined> => {
+const handleRefresh = async (): Promise<void> => {
     router.push({
         name: 'genresList',
         query: {
@@ -29,16 +29,7 @@ const handleRefresh = async (): Promise<null | undefined> => {
         },
     })
 
-    const data: GenresResponse[] | null = await genresStore.fetchAllGenres(true)
-
-    // كافية جداً لتغطية null و undefined
-    if (!data) return null
-
-    if (data.length > 0) {
-        notiStore.triggerNotification(t('common.refreshSuccess'))
-    }
-
-    return null
+    await genresStore.fetchAllGenres(true)
 }
 
 const searchInput = ref('')
