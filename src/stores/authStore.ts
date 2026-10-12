@@ -5,21 +5,16 @@ import { RolesList } from '@/utils/roles_list'
 import { decodeJwt } from '@/utils/decodeJwt'
 import type { LoginUserInputsType, CreateUserInputsType } from '@/schemas/authSchema'
 import { useNotificationStore } from '@/stores/notificationStore'
+
 import type {
     UserDataResponse,
     RegisterDataResponse,
     JwtUserPayload,
-    BaseStore,
     BaseApiResponse,
+    AuthState
 } from '@/types/globalTypes'
 
-export interface AuthState extends BaseStore {
-    user: UserDataResponse | { id: string } | null
-    userRole: number | null
-    accessToken: string | null
-    isInitialized: boolean
-    isServerError: boolean
-}
+
 
 export const useAuthStore = defineStore('auth', {
     state: (): AuthState => ({

@@ -19,7 +19,6 @@ export function decodeJwt(token: string | undefined): JwtUserPayload | null {
                 .join(''),
         )
 
-        // نؤكد للمترجم أن القيمة الراجعة تطابق الـ Interface بالملي
         return JSON.parse(jsonPayload) as JwtUserPayload
     } catch (error) {
         console.error('Failed to decode token', error)

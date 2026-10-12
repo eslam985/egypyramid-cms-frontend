@@ -15,18 +15,12 @@ import {
 
 import type { UpdateUserInputsType, ChangePasswordInputsType } from '@/schemas/authSchema'
 import type {
-    BaseStore,
     UserDataResponse,
     UserSessionDataResponse,
     SortedSessionRequest,
     OrderingEnum,
+    UserState,
 } from '@/types/globalTypes'
-
-export interface UserState extends BaseStore {
-    userInfo: UserDataResponse | null
-    sessions: UserSessionDataResponse[]
-    filters: SortedSessionRequest
-}
 
 export const useUserStore = defineStore('user', {
     state: (): UserState => ({

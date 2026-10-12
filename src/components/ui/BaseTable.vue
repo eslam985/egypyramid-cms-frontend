@@ -1,13 +1,8 @@
 <script setup lang="ts">
+import type { Column, TableRow } from '@/types/globalTypes'
 import { useI18n } from 'vue-i18n'
 
-export interface Column {
-    key: string
-    label: string
-    sortable?: boolean
-}
 
-type TableRow = Record<string, any>
 
 defineProps<{
     columns: Column[]
@@ -43,15 +38,11 @@ defineEmits<{
             <table class="w-full text-fluid-xs whitespace-nowrap">
                 <thead class="bg-background-alt border-b border-line text-sub font-semibold">
                     <tr>
-                        <th
-                            v-for="col in columns"
-                            :key="col.key"
-                            @click="col.sortable && $emit('sort', col.key)"
+                        <th v-for="col in columns" :key="col.key" @click="col.sortable && $emit('sort', col.key)"
                             :class="[
                                 'p-fluid text-center select-none',
                                 col.sortable ? 'cursor-pointer hover:bg-line/30' : '',
-                            ]"
-                        >
+                            ]">
                             <div class="flex items-center gap-1 justify-center">
                                 <span>{{ col.label }}</span>
                                 <span v-if="col.sortable && sortBy === col.key">
@@ -62,12 +53,8 @@ defineEmits<{
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-line/60 bg-card text-main">
-                    <tr
-                        v-for="(row, index) in rows"
-                        :key="index"
-                        @click="$emit('row-click', row)"
-                        class="hover:bg-line/10 transition-colors text-sub text-fluid-p cursor-pointer"
-                    >
+                    <tr v-for="(row, index) in rows" :key="index" @click="$emit('row-click', row)"
+                        class="hover:bg-line/10 transition-colors text-sub text-fluid-p cursor-pointer">
                         <td v-for="col in columns" :key="col.key" class="p-fluid text-center">
                             <slot :name="`cell-${col.key}`" :value="row[col.key]" :row="row">
                                 {{ row[col.key] ?? '-' }}

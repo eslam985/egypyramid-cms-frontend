@@ -40,7 +40,6 @@ import type { CreateSeasonSchemaType, UpdateSeasonSchemaType } from '@/schemas/s
 import type { CreateEpisodeSchemaType, UpdateEpisodeSchemaType } from '@/schemas/episodeSchema'
 import type { CreateLinkSchemaType, UpdateLinkByIdSchemaType } from '@/schemas/linkSchema'
 import type {
-    BaseStore,
     SeasonsResponse,
     SeasonQueryRequest,
     EpisodeResponse,
@@ -48,23 +47,9 @@ import type {
     EpisodeQueryRequest,
     LinksResponse,
     LinksQueryRequest,
+    MediaContentState
 } from '@/types/globalTypes'
 
-export interface MediaContentState extends BaseStore {
-    seasons: SeasonsResponse[] | null
-    episodes: EpisodeResponse[] | null
-    links: LinksResponse[]
-    currentSeason: SeasonsResponse | null
-    currentEpisode: EpisodeResponse | null
-    currentEpisodeId: number | string | null
-    currentLink: LinksResponse | null
-    pagination: {
-        total: number
-        page: number
-        limit: number
-        totalPage: number
-    }
-}
 
 const useMediaContentStore = defineStore('mediaContent', {
     state: (): MediaContentState => ({

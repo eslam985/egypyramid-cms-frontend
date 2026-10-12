@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import type { CreateGenreSchemaType, UpdateGenreByIdSchemaType } from '@/schemas/genreSchema'
-import type { GenresResponse, BaseStore } from '@/types/globalTypes'
+import type { GenresResponse, Genrestate } from '@/types/globalTypes'
 import { useNotificationStore } from '@/stores/notificationStore'
 
 import {
@@ -19,12 +19,9 @@ import {
     updateGenreById,
     deleteGenreById,
     handleExportGenresToCSV,
+
 } from '@/api/data/genres'
 
-export interface Genrestate extends BaseStore {
-    allGenres: GenresResponse[] | null
-    currentGenre: GenresResponse | null
-}
 
 const useGenresStore = defineStore('genre', {
     state: (): Genrestate => ({

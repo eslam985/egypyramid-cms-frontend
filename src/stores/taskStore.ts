@@ -5,8 +5,8 @@ import { useNotificationStore } from '@/stores/notificationStore'
 import type {
     DownloadTasksResponse,
     TasksQueryRequest,
-    BaseStore,
     DeleteTaskResponseData,
+    TasksState
 } from '@/types/globalTypes'
 
 import {
@@ -28,19 +28,7 @@ import {
     exportTasksToCSV,
 } from '@/api/data/downloadTasks'
 
-export interface TasksState extends BaseStore {
-    allTasks: DownloadTasksResponse[] | []
-    currentTask: null
-    pagination: {
-        total: number
-        page: number
-        limit: number
-        totalPage: number
-    }
-    isLoading: boolean
-    successMessage: string
-    errorMessage: string
-}
+
 const useTaskStore = defineStore('task', {
     state: (): TasksState => ({
         allTasks: [],

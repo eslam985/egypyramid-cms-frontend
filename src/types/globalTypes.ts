@@ -1,7 +1,9 @@
 // /src/types/globalTypes.ts
 import { useNotificationStore } from '@/stores/notificationStore'
+import type { GetMediasQueryInputsType } from '@/schemas/mediaSchema'
 
 export type dataType = string | number | Date
+export type TableRow = Record<string, any>
 
 // =================================
 // ============= Enum ==============
@@ -91,12 +93,6 @@ export interface BaseApiResponse<T = null> {
         limit: number
         totalPage: number
     }
-}
-export interface BaseStore {
-    isLoading: boolean
-    successMessage: string
-    errorMessage: string
-    _lastFetchArgs?: string | null
 }
 
 export interface UserDataResponse {
@@ -265,9 +261,9 @@ export interface LinksResponse {
     old_url?: string
 }
 
-// =================================
-// ========== API Request ==========
-// =================================
+// ===========================================
+// ========== API Request && utils ===========
+// ===========================================
 
 export interface JwtUserPayload {
     userId: string
@@ -382,4 +378,126 @@ export interface SearchParamsType<TData = unknown> {
 export interface SearchResultData {
     targetId: number | null
     rawValue: string | null
+}
+
+// ===========================================
+// ============ interface Store ==============
+// ===========================================
+export interface BaseStore {
+    isLoading: boolean
+    successMessage: string
+    errorMessage: string
+    _lastFetchArgs?: string | null
+}
+
+export interface Column {
+    key: string
+    label: string
+    sortable?: boolean
+}
+
+export interface AuthState extends BaseStore {
+    user: UserDataResponse | { id: string } | null
+    userRole: number | null
+    accessToken: string | null
+    isInitialized: boolean
+    isServerError: boolean
+}
+
+export interface AnalyticsState extends BaseStore {
+    systemCounters: SystemCountersResponse | null
+    totalCountersStatusServeres: TotalStatusLinksResponse[]
+    mediasNotReadyList: MediasResponse[]
+    brokenLinksList: DownloadTasksResponse[]
+    missingLinksByServer: DownloadTasksResponse[]
+    telegramLocked: LockedTelegramResponse[] | []
+    pagination: {
+        total: number
+        page: number
+        limit: number
+        totalPage: number
+    }
+}
+export interface BackupState extends BaseStore {
+    downloadedBytes: number
+    elapsedTime: number
+    timerInterval: ReturnType<typeof setInterval> | null
+}
+export interface Genrestate extends BaseStore {
+    allGenres: GenresResponse[] | null
+    currentGenre: GenresResponse | null
+}
+
+export interface MediaContentState extends BaseStore {
+    seasons: SeasonsResponse[] | null
+    episodes: EpisodeResponse[] | null
+    links: LinksResponse[]
+    currentSeason: SeasonsResponse | null
+    currentEpisode: EpisodeResponse | null
+    currentEpisodeId: number | string | null
+    currentLink: LinksResponse | null
+    pagination: {
+        total: number
+        page: number
+        limit: number
+        totalPage: number
+    }
+}
+
+export interface mediaQueryParams extends GetMediasQueryInputsType {
+    filters: {
+        search: string | null
+        category: 'movie' | 'tv' | null
+        sortBy: 'category' | 'title' | 'year' | 'is_ready' | 'created_at'
+        sortOrder: OrderingEnum
+    }
+}
+// 1. حالة الـ Store النظيفة (بدون extends لـ Query)
+export interface MediaState extends BaseStore {
+    medias: MediasResponse[] | null
+    currentMedia: MediasResponse | null
+    pagination: {
+        total: number
+        page: number
+        limit: number
+        totalPage: number
+    }
+    filters: {
+        search: string | null
+        category: 'movie' | 'tv' | null
+        sortBy: 'category' | 'title' | 'year' | 'is_ready' | 'created_at'
+        sortOrder: OrderingEnum
+    }
+}
+export interface NotificationState {
+    isShowSideBar: boolean
+    notification: {
+        show: boolean
+        message: string
+    }
+    confirmModal: {
+        show: boolean
+        message: string
+        resolvePromise: ((value: boolean) => void) | null
+    }
+}
+
+export interface TasksState extends BaseStore {
+    allTasks: DownloadTasksResponse[] | []
+    currentTask: null
+    pagination: {
+        total: number
+        page: number
+        limit: number
+        totalPage: number
+    }
+    isLoading: boolean
+    successMessage: string
+    errorMessage: string
+}
+
+export interface UserState extends BaseStore {
+    userInfo: UserDataResponse | null
+    sessions: UserSessionDataResponse[]
+    filters: SortedSessionRequest
 }

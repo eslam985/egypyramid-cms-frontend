@@ -26,33 +26,8 @@ import type {
 } from '@/schemas/mediaSchema'
 
 import { OrderingEnum } from '@/types/globalTypes'
-import type { MediasResponse, BaseStore } from '@/types/globalTypes'
+import type { MediasResponse, MediaState } from '@/types/globalTypes'
 
-export interface mediaQueryParams extends GetMediasQueryInputsType {
-    filters: {
-        search: string | null
-        category: 'movie' | 'tv' | null
-        sortBy: 'category' | 'title' | 'year' | 'is_ready' | 'created_at'
-        sortOrder: OrderingEnum
-    }
-}
-// 1. حالة الـ Store النظيفة (بدون extends لـ Query)
-export interface MediaState extends BaseStore {
-    medias: MediasResponse[] | null
-    currentMedia: MediasResponse | null
-    pagination: {
-        total: number
-        page: number
-        limit: number
-        totalPage: number
-    }
-    filters: {
-        search: string | null
-        category: 'movie' | 'tv' | null
-        sortBy: 'category' | 'title' | 'year' | 'is_ready' | 'created_at'
-        sortOrder: OrderingEnum
-    }
-}
 
 const useMediaStore = defineStore('media', {
     state: (): MediaState => ({

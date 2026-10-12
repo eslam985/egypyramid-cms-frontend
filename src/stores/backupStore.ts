@@ -2,14 +2,9 @@ import { defineStore } from 'pinia'
 import { handleDownloadBackupFile } from '@/api/data/backup'
 import { useNotificationStore } from '@/stores/notificationStore'
 
-import type { BaseStore } from '@/types/globalTypes'
+import type { BackupState } from '@/types/globalTypes'
 import type { AxiosProgressEvent } from 'axios'
 
-export interface BackupState extends BaseStore {
-    downloadedBytes: number
-    elapsedTime: number
-    timerInterval: ReturnType<typeof setInterval> | null
-}
 
 export const useBackupStore = defineStore('backup', {
     state: (): BackupState => ({

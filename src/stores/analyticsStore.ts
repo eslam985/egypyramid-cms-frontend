@@ -14,8 +14,6 @@ import {
 
 import { handleStoreFetch, handleStoreExport } from '@/utils/store'
 import { useNotificationStore } from '@/stores/notificationStore'
-
-import type { BaseStore } from '@/types/globalTypes'
 import type {
     SystemCountersResponse,
     StatusTasksRequest,
@@ -25,22 +23,8 @@ import type {
     BaseQueryRequest,
     ServerNameRequest,
     LockedTelegramResponse,
+    AnalyticsState
 } from '@/types/globalTypes'
-
-export interface AnalyticsState extends BaseStore {
-    systemCounters: SystemCountersResponse | null
-    totalCountersStatusServeres: TotalStatusLinksResponse[]
-    mediasNotReadyList: MediasResponse[]
-    brokenLinksList: DownloadTasksResponse[]
-    missingLinksByServer: DownloadTasksResponse[]
-    telegramLocked: LockedTelegramResponse[] | []
-    pagination: {
-        total: number
-        page: number
-        limit: number
-        totalPage: number
-    }
-}
 
 const useAnalyticsStore = defineStore('analytics', {
     state: (): AnalyticsState => ({

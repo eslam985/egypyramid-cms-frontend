@@ -1,17 +1,6 @@
 import { defineStore } from 'pinia'
+import type { NotificationState } from '@/types/globalTypes'
 
-export interface NotificationState {
-    isShowSideBar: boolean
-    notification: {
-        show: boolean
-        message: string
-    }
-    confirmModal: {
-        show: boolean
-        message: string
-        resolvePromise: ((value: boolean) => void) | null
-    }
-}
 
 export const useNotificationStore = defineStore('noti', {
     state: (): NotificationState => ({
