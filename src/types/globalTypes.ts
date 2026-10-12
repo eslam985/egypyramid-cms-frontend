@@ -176,7 +176,7 @@ export interface DownloadTasksResponse {
     id?: string | number
     task_name?: string
     source_url?: string
-    status?: string
+    status?: 'processing' | 'failed' | 'idle'
     progress_percent?: string
     download_speed?: string
     status_message?: string

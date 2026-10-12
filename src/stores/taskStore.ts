@@ -28,7 +28,7 @@ import {
 } from '@/api/data/downloadTasks'
 
 export interface TasksState extends BaseStore {
-    allTasks: DownloadTasksResponse[] | null
+    allTasks: DownloadTasksResponse[] | []
     currentTask: null
     pagination: {
         total: number
@@ -56,7 +56,7 @@ const useTaskStore = defineStore('task', {
     }),
     actions: {
         // 💡 أكشن تصدير مهام التنزيل المعتمد على الفلاتر الحالية المطبقة في الـ UI
-        async exportTasks(filters: TasksQueryRequest): Promise<boolean> {
+        async exportTasks(filters?: TasksQueryRequest): Promise<boolean> {
             const date: string = new Date().toISOString().slice(0, 10)
 
             return handleStoreExport<TasksQueryRequest, TasksState>({

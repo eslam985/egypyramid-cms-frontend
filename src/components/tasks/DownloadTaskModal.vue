@@ -1,87 +1,63 @@
-<script setup>
-import { reactive, onMounted, computed, toRaw } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
+<script setup lang="ts">
 
+import { reactive, ref, onMounted, computed, toRaw } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
+import { useI18n } from 'vue-i18n'
+
+import { createTaskSchema, UpdateTaskByIdSchema } from '@/schemas/downloadTaskSchema'
 import { useFormValidation } from '@/composables/useFormValidation'
 import { useNotificationStore } from '@/stores/notificationStore'
-import { useI18n } from 'vue-i18n'
-// تأكد من حالة الأحرف (camelCase/PascalCase) لتطابق التصدير في ملف السكيما
-import { createTaskSchema, UpdateTaskByIdSchema } from '@/schemas/downloadTaskSchema'
-
 import { useTaskStore } from '@/stores/taskStore'
 
-const { t } = useI18n()
+import type { CreateTaskInputsType, UpdateTaskInputsType } from '@/schemas/downloadTaskSchema'
+import type { DownloadTasksResponse } from '@/types/globalTypes'
 
-const route = useRoute()
-const router = useRouter()
-const taskStore = useTaskStore()
 const notiStore = useNotificationStore()
+const taskStore = useTaskStore()
+const router = useRouter()
+const route = useRoute()
+const { t } = useI18n()
 
 const currentSchema = computed(() =>
     route.name === 'addTask' ? createTaskSchema : UpdateTaskByIdSchema,
 )
+
 const { errors, validate } = useFormValidation(currentSchema)
 
-const taskId = route.params.id
+const taskId: number = Number(route.params.id)
 
-const formData = reactive({
+const formData = reactive<CreateTaskInputsType>({
     task_name: '',
     source_url: '',
-    status: 'idle', // 👈 تم التصحيح لـ String بدلاً من مصفوفة
+    status: 'idle',
     progress_percent: 0,
     download_speed: '',
     status_message: '',
     trailer_url: '',
-    fallback_urls: '',
+    fallback_urls: null,
     is_cancelled: false,
 })
 
-onMounted(async () => {
-    if (route.name === 'editTask') {
-        const task = await taskStore.fetchTaskById(taskId)
-        // إذا كان التاسك غير موجود في الداتا بيز (رجع null)
-        if (!task) {
-            notiStore.triggerNotification('التاسك المطلوب غير موجود')
-            return router.push({ name: 'NotFound' }) // 👈 توجيه لصفحة 404
-        }
+const fallbackUrlsInput = ref<string>('')
 
-        formData.task_name = task.task_name ?? ''
-        formData.source_url = task.source_url ?? ''
-        formData.status = task.status ?? 'idle'
-        formData.download_speed = task.download_speed ?? ''
-        formData.status_message = task.status_message ?? ''
-        formData.trailer_url = task.trailer_url ?? ''
-        formData.fallback_urls = Array.isArray(task.fallback_urls)
-            ? task.fallback_urls.join('\n')
-            : ''
-        formData.is_cancelled = task.is_cancelled ?? false
-        formData.progress_percent = task.progress_percent ?? 0
-    }
-})
+const handleSubmit = async (): Promise<void> => {
 
-const handleSubmit = async () => {
-    taskStore.successMessage = ''
-    taskStore.errorMessage = ''
-
-    const rawFormData = toRaw(formData)
-    const payload = {
+    const rawFormData: CreateTaskInputsType = toRaw(formData)
+    const payload: CreateTaskInputsType = {
         ...rawFormData,
-        fallback_urls:
-            typeof rawFormData.fallback_urls === 'string'
-                ? rawFormData.fallback_urls
-                      .split('\n')
-                      .map((url) => url.trim())
-                      .filter(Boolean)
-                : [],
+        fallback_urls: fallbackUrlsInput.value
+            .split('\n')
+            .map((url) => url.trim())
+            .filter(Boolean),
     }
 
     const { isValid, data } = validate(payload)
-    if (!isValid) return
+    if (!isValid || !data) return
 
-    const isSuccess =
+    const isSuccess: DownloadTasksResponse | null =
         route.name === 'addTask'
-            ? await taskStore.addTask(data)
-            : await taskStore.editTaskById(taskId, data)
+            ? await taskStore.addTask(data as CreateTaskInputsType)
+            : await taskStore.editTaskById(taskId, data as UpdateTaskInputsType)
 
     if (isSuccess) {
         const msg = route.name === 'addTask' ? t('tasks.addedSuccess') : t('tasks.updatedSuccess')
@@ -92,6 +68,32 @@ const handleSubmit = async () => {
         notiStore.triggerNotification(taskStore.errorMessage || t('tasks.saveError'))
     }
 }
+
+onMounted(async () => {
+
+    if (route.name === 'editTask') {
+
+        const task: DownloadTasksResponse | null = await taskStore.fetchTaskById(taskId)
+
+        if (!task) {
+            notiStore.triggerNotification('التاسك المطلوب غير موجود')
+            return router.push({ name: 'NotFound' })
+        }
+
+        formData.task_name = task.task_name ?? ''
+        formData.source_url = task.source_url ?? ''
+        formData.status = task.status ?? 'idle'
+        formData.download_speed = task.download_speed ?? ''
+        formData.status_message = task.status_message ?? ''
+        formData.trailer_url = task.trailer_url ?? ''
+        fallbackUrlsInput.value = Array.isArray(task.fallback_urls)
+            ? task.fallback_urls.join('\n')
+            : ''
+        formData.is_cancelled = task.is_cancelled ?? false
+        formData.progress_percent = Number(task.progress_percent ?? 0)
+    }
+
+})
 </script>
 <template>
     <div class="max-w-4xl mx-auto p-fluid sm:p-6">
@@ -123,13 +125,8 @@ const handleSubmit = async () => {
                     <!-- Task Name -->
                     <div class="col-span-1 md:col-span-2">
                         <label class="form-label">{{ t('tasks.form.taskNameLabel') }}</label>
-                        <input
-                            v-model="formData.task_name"
-                            type="text"
-                            class="form-input"
-                            :placeholder="t('tasks.form.taskNamePlaceholder')"
-                            required
-                        />
+                        <input v-model="formData.task_name" type="text" class="form-input"
+                            :placeholder="t('tasks.form.taskNamePlaceholder')" required />
                         <p v-if="errors?.task_name" class="form-error">
                             {{ errors.task_name }}
                         </p>
@@ -138,13 +135,8 @@ const handleSubmit = async () => {
                     <!-- Source URL -->
                     <div class="col-span-1 md:col-span-2">
                         <label class="form-label">{{ t('tasks.form.sourceUrlLabel') }}</label>
-                        <input
-                            v-model="formData.source_url"
-                            type="url"
-                            class="form-input"
-                            placeholder="https://example.com/video.mp4"
-                            required
-                        />
+                        <input v-model="formData.source_url" type="url" class="form-input"
+                            placeholder="https://example.com/video.mp4" required />
                         <p v-if="errors?.source_url" class="form-error">
                             {{ errors.source_url }}
                         </p>
@@ -153,12 +145,8 @@ const handleSubmit = async () => {
                     <!-- Trailer URL -->
                     <div class="col-span-1 md:col-span-2">
                         <label class="form-label">{{ t('tasks.form.trailerUrlLabel') }}</label>
-                        <input
-                            v-model="formData.trailer_url"
-                            type="url"
-                            class="form-input"
-                            placeholder="https://youtube.com/watch?v=..."
-                        />
+                        <input v-model="formData.trailer_url" type="url" class="form-input"
+                            placeholder="https://youtube.com/watch?v=..." />
                         <p v-if="errors?.trailer_url" class="form-error">
                             {{ errors.trailer_url }}
                         </p>
@@ -187,14 +175,8 @@ const handleSubmit = async () => {
                     <!-- Progress Percent -->
                     <div>
                         <label class="form-label">{{ t('tasks.form.progressLabel') }}</label>
-                        <input
-                            v-model.number="formData.progress_percent"
-                            type="number"
-                            min="0"
-                            max="100"
-                            class="form-input"
-                            placeholder="0 - 100"
-                        />
+                        <input v-model.number="formData.progress_percent" type="number" min="0" max="100"
+                            class="form-input" placeholder="0 - 100" />
                         <p v-if="errors?.progress_percent" class="form-error">
                             {{ errors.progress_percent }}
                         </p>
@@ -203,12 +185,8 @@ const handleSubmit = async () => {
                     <!-- Download Speed -->
                     <div>
                         <label class="form-label">{{ t('tasks.form.downloadSpeedLabel') }}</label>
-                        <input
-                            v-model="formData.download_speed"
-                            type="text"
-                            class="form-input"
-                            :placeholder="t('tasks.form.downloadSpeedPlaceholder')"
-                        />
+                        <input v-model="formData.download_speed" type="text" class="form-input"
+                            :placeholder="t('tasks.form.downloadSpeedPlaceholder')" />
                         <p v-if="errors?.download_speed" class="form-error">
                             {{ errors.download_speed }}
                         </p>
@@ -217,11 +195,9 @@ const handleSubmit = async () => {
                     <!-- Status Message -->
                     <div>
                         <label class="form-label">{{ t('tasks.form.statusMessageLabel') }}</label>
-                        <textarea
-                            v-model="formData.status_message"
+                        <textarea v-model="formData.status_message"
                             class="form-textarea min-h-20 max-h-30 text-start font-mono text-fluid-xs leading-relaxed"
-                            :placeholder="t('tasks.form.statusMessagePlaceholder')"
-                        ></textarea>
+                            :placeholder="t('tasks.form.statusMessagePlaceholder')"></textarea>
                         <p v-if="errors?.status_message" class="form-error">
                             {{ errors.status_message }}
                         </p>
@@ -230,12 +206,9 @@ const handleSubmit = async () => {
                     <!-- Fallback URLs -->
                     <div class="col-span-1 md:col-span-2">
                         <label class="form-label">{{ t('tasks.form.fallbackUrlsLabel') }}</label>
-                        <textarea
-                            v-model="formData.fallback_urls"
-                            rows="5"
+                        <textarea v-model="fallbackUrlsInput" rows="5"
                             class="form-textarea font-mono text-fluid-xs leading-relaxed"
-                            placeholder="https://down.vidtube.one/embed-wnlmx1uj5tpl.html&#10;https://d0o0d.com/e/jznbywxjbhn4"
-                        ></textarea>
+                            placeholder="https://down.vidtube.one/embed-wnlmx1uj5tpl.html&#10;https://d0o0d.com/e/jznbywxjbhn4"></textarea>
                         <p v-if="errors?.fallback_urls" class="form-error">
                             {{ errors.fallback_urls }}
                         </p>
@@ -243,18 +216,11 @@ const handleSubmit = async () => {
 
                     <!-- Is Cancelled Checkbox -->
                     <div
-                        class="col-span-1 md:col-span-2 flex items-center gap-3 bg-card-hover p-fluid rounded-xl border border-line"
-                    >
-                        <input
-                            id="is_cancelled"
-                            v-model="formData.is_cancelled"
-                            type="checkbox"
-                            class="size-5 accent-accent rounded cursor-pointer"
-                        />
-                        <label
-                            for="is_cancelled"
-                            class="text-fluid-sm font-semibold text-title cursor-pointer select-none"
-                        >
+                        class="col-span-1 md:col-span-2 flex items-center gap-3 bg-card-hover p-fluid rounded-xl border border-line">
+                        <input id="is_cancelled" v-model="formData.is_cancelled" type="checkbox"
+                            class="size-5 accent-accent rounded cursor-pointer" />
+                        <label for="is_cancelled"
+                            class="text-fluid-sm font-semibold text-title cursor-pointer select-none">
                             {{ t('tasks.form.isCancelledLabel') }}
                         </label>
                     </div>
@@ -267,10 +233,8 @@ const handleSubmit = async () => {
                     </button>
 
                     <button type="submit" :disabled="taskStore.isLoading" class="btn-primary">
-                        <span
-                            v-if="taskStore.isLoading"
-                            class="size-4 border-2 border-on-accent border-t-transparent rounded-full animate-spin"
-                        >
+                        <span v-if="taskStore.isLoading"
+                            class="size-4 border-2 border-on-accent border-t-transparent rounded-full animate-spin">
                         </span>
 
                         <span>

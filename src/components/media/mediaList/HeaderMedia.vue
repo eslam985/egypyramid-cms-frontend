@@ -1,46 +1,57 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import { useI18n } from 'vue-i18n'
-
-const { t } = useI18n()
-
-import { useMediaStore } from '@/stores/mediaStore'
-import { useNotificationStore } from '@/stores/notificationStore'
-
-import SearchMedia from '@/components/media/mediaList/searchMedia.vue'
 import { Loader, Plus, Download } from '@lucide/vue'
 import { useRoute, useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
+import { ref } from 'vue'
+
+import SearchMedia from '@/components/media/mediaList/searchMedia.vue'
+import { useNotificationStore } from '@/stores/notificationStore'
+import { useMediaStore } from '@/stores/mediaStore'
 import { useAuthStore } from '@/stores/authStore'
 
 import type { MediasResponse } from '@/types/globalTypes'
-
+import type {
+    GetMediasQueryInputsType,
+} from '@/schemas/mediaSchema'
 // authStore
-const authStore = useAuthStore()
-const mediaStore = useMediaStore()
 const notiStore = useNotificationStore()
-const route = useRoute()
+const mediaStore = useMediaStore()
+const authStore = useAuthStore()
 const router = useRouter()
+const route = useRoute()
+const { t } = useI18n()
 
-const selectedCategory = ref < 'movie' | 'tv' | undefined > ('movie')
+const selectedCategory = ref<'movie' | 'tv' | null>('movie')
 
 // معالجة التصفية حسب التصنيف
 const handleCategoryChange = (): void => {
+    // بناء كويوري ديناميكي لتنظيف الرابط في حال عدم وجود تصنيف
+    const queryParams: GetMediasQueryInputsType = {
+        ...route.query,
+        page: 1,
+        limit: 20,
+        category: selectedCategory.value ? selectedCategory.value : undefined,
+    }
 
     router.push({
         name: 'mediaList',
-        query: {
-            ...route.query,
-            page: 1,
-            limit: 20,
-            category: selectedCategory.value,
-        },
+        query: queryParams,
     })
 
-    mediaStore.setFilters({ category: selectedCategory.value })
+    if (selectedCategory.value) {
+        let params = { category: selectedCategory.value }
+
+        mediaStore.setFilters(params)
+    }
+
+    if (!selectedCategory.value) {
+        handleRefresh()
+    }
+
 }
 
 const handleRefresh = async () => {
-    selectedCategory.value = undefined
+    selectedCategory.value = null
     mediaStore.filters.search = null
     mediaStore.filters.category = null
 
@@ -52,7 +63,7 @@ const handleRefresh = async () => {
         },
     })
 
-    const data: MediasResponse[] | null = await mediaStore.fetchMedias( { page: 1, limit: 20 }, true )
+    const data: MediasResponse[] | null = await mediaStore.fetchMedias({ page: 1, limit: 20 }, true)
 
 
     if (data && data.length > 0) {
@@ -71,8 +82,8 @@ const handleExport = async () => {
 </script>
 <template>
     <div :class="authStore.isEditorAndAbove
-            ? 'grid grid-cols-2 xs:grid-cols-3 md:grid-cols-25'
-            : 'flex flex-wrap md:gap-fluid-gap'
+        ? 'grid grid-cols-2 xs:grid-cols-3 md:grid-cols-25'
+        : 'flex flex-wrap md:gap-fluid-gap'
         " class="gap-2 my-3">
         <!-- 1111 -->
         <!-- حقل البحث -->
@@ -85,8 +96,9 @@ const handleExport = async () => {
         <div class="md:col-span-4 self-center">
             <select id="media-category" v-model="selectedCategory"
                 class="w-full p-fluid self-center text-center rounded-xl bg-line/10 border border-accent/20 border-linerounded-xl text-fluid-xs text-nowrap"
-                @change="handleCategoryChange">
-                <option class="text-fluid-xs" value="">
+                @change="handleCategoryChange()">
+                <!-- استخدام :value="null" لضمان إرسال قيمة فارغة برمجياً وحذفها من الرابط -->
+                <option class="text-fluid-xs" :value="null">
                     {{ t('media.filter.allCategories') }}
                 </option>
                 <option class="text-fluid-xs" value="movie">{{ t('media.filter.movies') }}</option>

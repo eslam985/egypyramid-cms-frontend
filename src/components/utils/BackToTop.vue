@@ -1,18 +1,20 @@
-<script setup>
+<script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
 
-const isVisible = ref(false)
+const isVisible = ref<boolean>(false)
 
 // التقاط السكرول من المتصفح أو من أي Container داخلي
-const checkScroll = (event) => {
-    const scrollTop =
-        window.scrollY || document.documentElement.scrollTop || event?.target?.scrollTop || 0
+const checkScroll = (event: Event): void => {
+    const scrollTop: number =
+        (event.target as HTMLElement | null)?.scrollTop ||
+        document.documentElement.scrollTop ||
+        window.scrollY || 0
 
     isVisible.value = scrollTop > 300
 }
 
 // العودة للأعلى لكل من Window والعناصر الداخلية
-const scrollToTop = () => {
+const scrollToTop = (): void => {
     window.scrollTo({ top: 0, behavior: 'smooth' })
 
     // تحريك العناصر ذات السكرول الداخلي إن وجدت

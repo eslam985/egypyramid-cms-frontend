@@ -9,7 +9,7 @@ export const handleSearch = async <TData>({
     apiCallByName,
     defaultErrorMsg = 'Not found!',
 }: SearchParamsType<TData>): Promise<SearchResultData | false> => {
-    const data: SearchResultData = {
+    let data: SearchResultData = {
         targetId: null,
         rawValue: null,
     }
@@ -35,7 +35,7 @@ export const handleSearch = async <TData>({
 
     if (isId) {
         console.log('Value type:1', typeof rawValue, rawValue)
-        const foundItemById = await apiCallById(targetId)
+        const foundItemById = await apiCallById(Number(targetId))
 
         // فحص وجود البيانات مباشرة لأن الدالة بترجع العنصر نفسه مش Wrapper
         const hasItem = Boolean(

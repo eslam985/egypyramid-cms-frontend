@@ -1,4 +1,5 @@
-<script setup>
+<script setup lang="ts">
+
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 
@@ -28,7 +29,7 @@ const totalPages = computed(() => props.pagination?.totalPage || 1)
 const totalItems = computed(() => props.pagination?.total || 0)
 
 // تغيير الصفحة
-const goToPage = (newPage) => {
+const goToPage = (newPage: number) => {
     if (
         newPage < 1 ||
         newPage > totalPages.value ||

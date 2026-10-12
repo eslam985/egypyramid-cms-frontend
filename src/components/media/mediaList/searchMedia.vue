@@ -11,14 +11,13 @@ const router = useRouter()
 const route = useRoute()
 const mediaStore = useMediaStore()
 const notiStore = useNotificationStore()
-import { toNumber } from '@/utils/global'
+
 
 import type {
     SearchResultData,
-    MediasResponse
 } from '@/types/globalTypes'
 
-const searchInput = ref<string | number | null>('')
+let searchInput = ref<string | number>('')
 
 const sreach = async (): Promise<void> => {
 
@@ -32,16 +31,10 @@ const sreach = async (): Promise<void> => {
         defaultErrorMsg: mediaStore.errorMessage,
     })
 
-    // 1. استخراج الـ media_id بشكل آمن
-    let finalMediaId: number | null = null
-    const current: MediasResponse | null = mediaStore.currentMedia
+    let finalMediaId: number | null = data ? data.targetId : null
 
-    if (current && Object.keys(current).length > 0 && "id" in current) {
-        finalMediaId = toNumber(current.id)
-    }
-
-    // 2. التحقق والتوجيه
-    if (data && data.targetId && finalMediaId) {
+    // if Search By Id
+    if (data && finalMediaId) {
         if (route.name !== 'mediaDetails') {
             router.push(`/media/${finalMediaId}/details`)
         } else {
@@ -50,6 +43,7 @@ const sreach = async (): Promise<void> => {
         }
     }
 
+    // if Search By Name
     if (data && data.rawValue) {
         router.push({
             name: 'mediaList',
@@ -61,6 +55,7 @@ const sreach = async (): Promise<void> => {
             },
         })
     }
+    searchInput.value = ''
 }
 </script>
 

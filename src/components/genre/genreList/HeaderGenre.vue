@@ -60,6 +60,7 @@ const sreach = async (): Promise<void> => {
             router.push({ name: 'genresList' })
         }
     }
+    searchInput.value = ''
 }
 
 const handleExport = async () => {
