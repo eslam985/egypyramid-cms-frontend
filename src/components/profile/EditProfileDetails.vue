@@ -55,24 +55,14 @@ const utilsSubmit = async <TInputs, TResponse,>(
     apiCall: (data: TInputs) => Promise<TResponse | null>
 ): Promise<TResponse | null> => {
 
-    const rawFormData = toRaw(formData)
+    const rawFormData: TInputs = toRaw(formData)
 
     const { isValid, data } = validateSchema(rawFormData)
 
     if (!isValid || !data) return null
 
 
-    const isSuccess: Awaited<TResponse> | null = await apiCall(data)
-
-    if (isSuccess) {
-        notiStore.triggerNotification(userStore.successMessage || 'تم تحديث البيانات بنجاح')
-        return isSuccess
-    }
-
-    else {
-        notiStore.triggerNotification(userStore.errorMessage || 'حدثت مشكله اثناء تحديث البيانات!')
-
-    }
+    await apiCall(data)
 
     return null
 }

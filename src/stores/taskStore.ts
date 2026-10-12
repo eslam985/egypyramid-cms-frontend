@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import type { CreateTaskInputsType, UpdateTaskInputsType } from '@/schemas/downloadTaskSchema'
+import { useNotificationStore } from '@/stores/notificationStore'
 
 import type {
     DownloadTasksResponse,
@@ -54,18 +55,29 @@ const useTaskStore = defineStore('task', {
         successMessage: '',
         errorMessage: '',
     }),
+    getters: {
+        notiStore: () => useNotificationStore(),
+    },
     actions: {
         // 💡 أكشن تصدير مهام التنزيل المعتمد على الفلاتر الحالية المطبقة في الـ UI
         async exportTasks(filters?: TasksQueryRequest): Promise<boolean> {
             const date: string = new Date().toISOString().slice(0, 10)
 
-            return handleStoreExport<TasksQueryRequest, TasksState>({
+            const isSuccess: boolean = await handleStoreExport<TasksQueryRequest, TasksState>({
                 store: this,
                 apiCall: exportTasksToCSV,
                 args: filters, // تمرير نفس كائن الفلاتر (البحث، الحالة، الترتيب)
                 defaultFileName: `download-tasks-${date}.csv`,
                 defaultError: 'حدثت مشكلة أثناء تصدير مهام التنزيل!',
             })
+
+            if (!isSuccess) {
+                this.notiStore.triggerNotification(this.errorMessage || 'تعذر جلب البيانات')
+            } else {
+                this.notiStore.triggerNotification(this.successMessage || 'تم تحميل البيانات بنجاح')
+            }
+
+            return isSuccess
         },
 
         async fetchAllTasks(
@@ -78,7 +90,11 @@ const useTaskStore = defineStore('task', {
                 data = {}
             }
 
-            return handleStoreFetch<DownloadTasksResponse[], TasksQueryRequest , TasksState>({
+            const isSuccess: DownloadTasksResponse[] | null = await handleStoreFetch<
+                DownloadTasksResponse[],
+                TasksQueryRequest,
+                TasksState
+            >({
                 store: this,
                 apiCall: getAllTasks,
                 args: data,
@@ -87,12 +103,29 @@ const useTaskStore = defineStore('task', {
                 defaultError: 'حدث خطأ اثناء جلب البيانات!',
                 force,
             })
+
+            if (!isSuccess) {
+                this.notiStore.triggerNotification(this.errorMessage || 'تعذر جلب البيانات')
+            } else {
+                this.notiStore.triggerNotification(this.successMessage || 'تم جلب البيانات بنجاح')
+            }
+
+            return isSuccess
         },
         async fetchTaskById(
             id: number,
             force: boolean = false,
         ): Promise<DownloadTasksResponse | null> {
-            const data: DownloadTasksResponse | null = await handleStoreFetch<DownloadTasksResponse,number, TasksState >({
+            if (!id) {
+                this.notiStore.triggerNotification('Id is Required!')
+                return null
+            }
+
+            const isSuccess: DownloadTasksResponse | null = await handleStoreFetch<
+                DownloadTasksResponse,
+                number,
+                TasksState
+            >({
                 store: this,
                 apiCall: findByTaskId,
                 args: id,
@@ -101,31 +134,58 @@ const useTaskStore = defineStore('task', {
                 force,
             })
 
-            if (!data || data === undefined) {
-                return null
+            if (isSuccess && Object.keys(isSuccess).length > 0) {
+                this.notiStore.triggerNotification(
+                    this.successMessage || `Found ${isSuccess.id} successfully!`,
+                )
+                this.allTasks = [isSuccess]
+            } else {
+                this.notiStore.triggerNotification(this.successMessage || 'Not Found')
             }
 
-            if (data || Object.keys(data).length > 0) {
-                this.allTasks = [data]
-            }
-
-            return data
+            return isSuccess
         },
 
         async addTask(data: CreateTaskInputsType): Promise<DownloadTasksResponse | null> {
-            return handleStoreAdd<DownloadTasksResponse, CreateTaskInputsType, TasksState>({
+            if (!data) {
+                this.notiStore.triggerNotification('Data is Required!')
+            }
+
+            const isSuccess: DownloadTasksResponse | null = await handleStoreAdd<
+                DownloadTasksResponse,
+                CreateTaskInputsType,
+                TasksState
+            >({
                 store: this,
                 apiCall: createTask,
                 data,
                 listKey: 'allTasks',
                 defaultError: 'حدث خطا اثناء اضافة تاسك جديد!',
             })
+
+            if (isSuccess && Object.keys(isSuccess).length > 0) {
+                this.notiStore.triggerNotification(this.successMessage || 'تم اضافة المهمه بنجاح')
+            } else {
+                this.notiStore.triggerNotification(this.errorMessage || 'لم يتم اضافة المهمة')
+            }
+
+            return isSuccess
         },
         async editTaskById(
             id: number,
             data: UpdateTaskInputsType,
         ): Promise<DownloadTasksResponse | null> {
-            return handleStoreEdit<DownloadTasksResponse, UpdateTaskInputsType, number ,TasksState>({
+            if (!id) {
+                this.notiStore.triggerNotification('Id is Required!')
+                return null
+            }
+
+            const isSuccess: DownloadTasksResponse | null = await handleStoreEdit<
+                DownloadTasksResponse,
+                UpdateTaskInputsType,
+                number,
+                TasksState
+            >({
                 store: this,
                 apiCall: updateTaskById,
                 id,
@@ -133,35 +193,87 @@ const useTaskStore = defineStore('task', {
                 listKey: 'allTasks',
                 defaultError: 'حدث خطأ اثناء تعديل التاسك!',
             })
+
+            if (isSuccess && Object.keys(isSuccess).length > 0) {
+                this.notiStore.triggerNotification(this.successMessage || 'تم تعديل المهمه بنجاح')
+            } else {
+                this.notiStore.triggerNotification(this.errorMessage || 'لم يتم المهمه')
+            }
+
+            return isSuccess
         },
         async removeTaskById(id: number): Promise<boolean> {
-            return handleStoreDelete<DeleteTaskResponseData, number, TasksState>({
+            if (!id) {
+                this.notiStore.triggerNotification('Id is Required!')
+                return false
+            }
+
+            const isSuccess: boolean = await handleStoreDelete<
+                DeleteTaskResponseData,
+                number,
+                TasksState
+            >({
                 store: this,
                 apiCall: deleteTaskById,
                 id,
                 listKey: 'allTasks',
                 defaultError: 'حدث خطأ اثناء حذف التاسك!',
             })
+
+            if (isSuccess) {
+                this.notiStore.triggerNotification(this.successMessage || 'تم حذف المهمه بنجاح')
+            } else {
+                this.notiStore.triggerNotification(this.errorMessage || 'لم يتم الحذف')
+            }
+
+            return isSuccess
         },
 
         async removeAllFailedTasks(): Promise<boolean> {
-            return handleStoreDelete<DownloadTasksResponse, never, TasksState>({
+            const isSuccess: boolean = await handleStoreDelete<
+                DownloadTasksResponse,
+                never,
+                TasksState
+            >({
                 store: this,
                 apiCall: deleteAllTasksFailed,
                 listKey: 'allTasks',
                 defaultError: 'حدث خطأ اثناء حذف التاسكات الفاشلة!',
                 filterFn: (tasks) => tasks.filter((t) => t.status !== 'failed'),
             })
+
+            if (isSuccess) {
+                this.notiStore.triggerNotification(this.successMessage || 'تم الحذف بنجاح')
+            } else {
+                this.notiStore.triggerNotification(this.errorMessage || 'لم يتم الحذف')
+            }
+
+            return isSuccess
         },
 
         async removeTasksByIds(ids: number[]): Promise<boolean> {
-            return handleStoreDelete<DownloadTasksResponse, number[], TasksState>({
+
+            if (!ids) {
+                this.notiStore.triggerNotification('Id is Required!')
+                return false
+
+            }
+
+            const isSuccess: boolean = await handleStoreDelete<DownloadTasksResponse, number[], TasksState>({
                 store: this,
                 apiCall: deleteTasksByIds,
                 id: ids, // [1,5,10]
                 listKey: 'allTasks',
                 defaultError: 'حدث خطأ اثناء حذف التاسكات!',
             })
+
+            if (isSuccess) {
+                this.notiStore.triggerNotification(this.successMessage || 'تم الحذف بنجاح')
+            } else {
+                this.notiStore.triggerNotification(this.errorMessage || 'لم يتم الحذف')
+            }
+
+            return isSuccess
         },
     },
 })

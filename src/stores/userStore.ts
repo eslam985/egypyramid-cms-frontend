@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import { handleStoreDelete, handleStoreEdit, handleStoreFetch } from '@/utils/store'
+import { useNotificationStore } from '@/stores/notificationStore'
 
 import {
     handleFindUserById,
@@ -39,44 +40,90 @@ export const useUserStore = defineStore('user', {
             sortOrder: 'ASC' as OrderingEnum,
         },
     }),
-
+    getters: {
+        notiStore: () => useNotificationStore(),
+    },
     actions: {
-        async updateUserInfo(data: UpdateUserInputsType = {}) {
-            return handleStoreEdit<UserDataResponse, UpdateUserInputsType, never, UserState>({
+        async updateUserInfo(data: UpdateUserInputsType): Promise<UserDataResponse | null> {
+            if (!data) {
+                this.notiStore.triggerNotification('data is required')
+                return null
+            }
+
+            const isSuccess: UserDataResponse | null = await handleStoreEdit<
+                UserDataResponse,
+                UpdateUserInputsType,
+                never,
+                UserState
+            >({
                 store: this,
                 apiCall: handleUpdateUserInfo,
                 data,
                 listKey: 'userInfo',
                 defaultError: 'حدثت مشكلة اثناء تعديل بيانات المستخدم',
             })
+
+            return isSuccess
         },
 
-        async ChangePassword(data: ChangePasswordInputsType) {
-            return handleStoreEdit<null, ChangePasswordInputsType, never, UserState>({
+        async ChangePassword(data: ChangePasswordInputsType): Promise<null> {
+            if (!data) {
+                this.notiStore.triggerNotification('Data Is Required')
+                return null
+            }
+
+            const isSuccess: null = await handleStoreEdit<
+                null,
+                ChangePasswordInputsType,
+                never,
+                UserState
+            >({
                 store: this,
                 apiCall: handleChangePassword,
                 data,
                 defaultError: 'حدثت مشكلة اثناء تغيير كلمة مرور المستخدم',
             })
+
+            if (isSuccess === null) {
+                this.notiStore.triggerNotification(this.successMessage || 'تم تغير الباسورد بنجاح')
+            } else {
+                this.notiStore.triggerNotification(this.errorMessage)
+            }
+
+            return isSuccess // null
         },
 
-        async getUserById(force = true) {
-            return handleStoreFetch<UserDataResponse, unknown, UserState>({
+        async getUserById(force = true): Promise<UserDataResponse | null> {
+            const isSuccess: UserDataResponse | null = await handleStoreFetch<
+                UserDataResponse,
+                unknown,
+                UserState
+            >({
                 store: this,
                 apiCall: handleFindUserById,
                 targetKey: 'userInfo',
                 defaultError: 'حدثت مشكلة اثناء جلب بيانات المستخدم!',
                 force,
             })
+
+            if (isSuccess && Object.keys(isSuccess).length > 0) {
+                this.notiStore.triggerNotification(
+                    this.successMessage || `found user ${isSuccess.username}`,
+                )
+            } else {
+                this.notiStore.triggerNotification(this.errorMessage || 'Not Found')
+            }
+
+            return isSuccess
         },
 
-        async getSessionsByUserId(
-            {
-                sortBy = 'expires_at',
-                sortOrder = 'ASC' as OrderingEnum,
-                force = true,
-            }: SortedSessionRequest & { force?: boolean } = {},
-        ) {
+        async getSessionsByUserId({
+            sortBy = 'expires_at',
+            sortOrder = 'ASC' as OrderingEnum,
+            force = true,
+        }: SortedSessionRequest & { force?: boolean } = {}): Promise<
+            UserSessionDataResponse[] | null
+        > {
             return handleStoreFetch<UserSessionDataResponse[], SortedSessionRequest, UserState>({
                 store: this,
                 apiCall: handleGetSessionsByUserId,
@@ -87,7 +134,7 @@ export const useUserStore = defineStore('user', {
             })
         },
 
-        async removeSessionById(sessionId: string | number) {
+        async removeSessionById(sessionId: string | number): Promise<boolean> {
             return handleStoreDelete<null, string, UserState>({
                 store: this,
                 apiCall: handleRemoveSessionById as any,
@@ -97,43 +144,92 @@ export const useUserStore = defineStore('user', {
             })
         },
 
-        async uploadAvatar(data: FormData) {
-            return handleStoreEdit<UserDataResponse, FormData, never, UserState>({
+        async uploadAvatar(data: FormData): Promise<UserDataResponse | null> {
+            if (!data) {
+                this.notiStore.triggerNotification('Data Is Required')
+                return null
+            }
+
+            const isSuccess: UserDataResponse | null = await handleStoreEdit<
+                UserDataResponse,
+                FormData,
+                never,
+                UserState
+            >({
                 store: this,
                 apiCall: handleUploadAvatar,
                 data,
                 listKey: 'userInfo',
                 defaultError: 'حدثت مشكلة اثناء رفع صورة الافاتار!',
             })
+
+            if (isSuccess && Object.keys(isSuccess).length > 0) {
+                this.notiStore.triggerNotification(this.successMessage || 'تم رفع الصوره بنجاح')
+            } else {
+                this.notiStore.triggerNotification(this.errorMessage)
+            }
+
+            return isSuccess
         },
 
-        async deleteAvatar() {
-            return handleStoreDelete<UserDataResponse, never, UserState>({
+        async deleteAvatar(): Promise<boolean> {
+            const isSuccess: boolean = await handleStoreDelete<UserDataResponse, never, UserState>({
                 store: this,
                 apiCall: handleDeleteAvatar,
                 listKey: 'userInfo',
                 defaultError: 'حدث خطأ اثناء حذف صورة المستخدم!',
             })
+
+            if (isSuccess) {
+                this.notiStore.triggerNotification(this.successMessage || 'تم حذف الصوره بنجاح')
+            } else {
+                this.notiStore.triggerNotification(this.errorMessage)
+            }
+
+            return isSuccess
         },
 
-        async setAvatarFromHistory(avatarUrl: string) {
-            return handleStoreEdit<UserDataResponse, string, never, UserState>({
+        async setAvatarFromHistory(avatarUrl: string): Promise<UserDataResponse | null> {
+            if (!avatarUrl) {
+                this.notiStore.triggerNotification('avatar Url is required')
+                return null
+            }
+
+            const isSuccess: UserDataResponse | null = await handleStoreEdit<
+                UserDataResponse,
+                string,
+                never,
+                UserState
+            >({
                 store: this,
                 apiCall: handleSetAvatarFromHistory,
                 data: avatarUrl,
                 listKey: 'userInfo',
                 defaultError: 'حدثت مشكلة أثناء تعيين الصورة من السجل!',
             })
+
+            if (!isSuccess) {
+                this.notiStore.triggerNotification(this.errorMessage)
+            } else {
+                this.notiStore.triggerNotification(this.successMessage || 'تم استرجاع الصوره بنجاح')
+            }
+
+            return isSuccess
         },
 
-        async setFilters(newFilters: Partial<SortedSessionRequest>) {
+        async setFilters(
+            newFilters: Partial<SortedSessionRequest>,
+        ): Promise<UserSessionDataResponse[] | null> {
             this.filters = { ...this.filters, ...newFilters }
             return await this.getSessionsByUserId({ ...this.filters })
         },
 
-        async setSort(column: string) {
+        async setSort(column: string): Promise<UserSessionDataResponse[] | null> {
             if (this.filters.sortBy === column) {
-                this.filters.sortOrder = this.filters.sortOrder === 'ASC' ? 'DESC' as OrderingEnum : 'ASC' as OrderingEnum
+                this.filters.sortOrder =
+                    this.filters.sortOrder === 'ASC'
+                        ? ('DESC' as OrderingEnum)
+                        : ('ASC' as OrderingEnum)
             } else {
                 this.filters.sortBy = column
                 this.filters.sortOrder = 'ASC' as OrderingEnum

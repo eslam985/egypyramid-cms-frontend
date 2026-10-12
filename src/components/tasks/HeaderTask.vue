@@ -11,7 +11,7 @@ import { useTaskStore } from '@/stores/taskStore'
 import { confirmAndDelete } from '@/utils/global'
 import { useAuthStore } from '@/stores/authStore'
 
-import type { DownloadTasksResponse, TasksQueryRequest, SearchResultData } from '@/types/globalTypes'
+import type { TasksQueryRequest, SearchResultData } from '@/types/globalTypes'
 
 const notiStore = useNotificationStore()
 const taskStore = useTaskStore()
@@ -33,18 +33,7 @@ const handleChooseState = async (value: string): Promise<void> => {
             page: 1,
         },
     })
-
-    const isSuccess: DownloadTasksResponse[] | null =
-        await taskStore.fetchAllTasks({ status: value as TasksQueryRequest['status'] }, true)
-
-    // 2. معالجة الإشعارات
-    if (isSuccess) {
-        notiStore.triggerNotification(taskStore.successMessage || t('tasks.toolbar.allStatusesShown'))
-    } else {
-        // يمكنك هنا ترك رسالة نجاح عامة للفلترة
-        notiStore.triggerNotification(taskStore.successMessage || t('tasks.toolbar.filterSuccess'))
-    }
-
+    await taskStore.fetchAllTasks({ status: value as TasksQueryRequest['status'] }, true)
 
     if (!value) {
         handleRefresh()
@@ -62,8 +51,6 @@ const handleRefresh = async (): Promise<void> => {
     })
 
     await taskStore.fetchAllTasks({}, true)
-
-    notiStore.triggerNotification(t('common.refreshSuccess'))
 }
 
 const sreach = async (): Promise<void> => {

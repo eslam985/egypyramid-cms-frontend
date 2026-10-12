@@ -6,13 +6,11 @@ import { useI18n } from 'vue-i18n'
 
 import { createTaskSchema, UpdateTaskByIdSchema } from '@/schemas/downloadTaskSchema'
 import { useFormValidation } from '@/composables/useFormValidation'
-import { useNotificationStore } from '@/stores/notificationStore'
 import { useTaskStore } from '@/stores/taskStore'
 
 import type { CreateTaskInputsType, UpdateTaskInputsType } from '@/schemas/downloadTaskSchema'
 import type { DownloadTasksResponse } from '@/types/globalTypes'
 
-const notiStore = useNotificationStore()
 const taskStore = useTaskStore()
 const router = useRouter()
 const route = useRoute()
@@ -59,13 +57,10 @@ const handleSubmit = async (): Promise<void> => {
             ? await taskStore.addTask(data as CreateTaskInputsType)
             : await taskStore.editTaskById(taskId, data as UpdateTaskInputsType)
 
-    if (isSuccess) {
-        const msg = route.name === 'addTask' ? t('tasks.addedSuccess') : t('tasks.updatedSuccess')
-        notiStore.triggerNotification(taskStore.successMessage || msg)
-        router.push({ name: 'tasksList' })
+    if (!isSuccess) {
+        return
     } else {
-        // نكتفي بإظهار الإشعار فقط ويبقى المستخدم في الصفحة ليعيد المحاولة
-        notiStore.triggerNotification(taskStore.errorMessage || t('tasks.saveError'))
+        router.push({ name: 'tasksList' })
     }
 }
 
@@ -76,7 +71,6 @@ onMounted(async () => {
         const task: DownloadTasksResponse | null = await taskStore.fetchTaskById(taskId)
 
         if (!task) {
-            notiStore.triggerNotification('التاسك المطلوب غير موجود')
             return router.push({ name: 'NotFound' })
         }
 

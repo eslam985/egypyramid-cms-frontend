@@ -5,8 +5,6 @@ import { useRouter, useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 
 import { useFormValidation } from '@/composables/useFormValidation'
-import { useNotificationStore } from '@/stores/notificationStore'
-
 import { createLinkSchema, updateLinkByIdSchema } from '@/schemas/linkSchema'
 import { useMediaContentStore } from '@/stores/mediaContentStore'
 import { toNumber } from '@/utils/global'
@@ -21,7 +19,6 @@ const { t } = useI18n()
 const route = useRoute()
 const router = useRouter()
 const mediaContentStore = useMediaContentStore()
-const notiStore = useNotificationStore()
 
 const currentSchema = computed(() =>
     route.name === 'addLink' ? createLinkSchema : updateLinkByIdSchema,
@@ -48,9 +45,6 @@ onMounted(async () => {
         const foundEpisode: EpisodeResponse | null = await mediaContentStore.getEpisodeById(episodeId, true)
 
         if (!foundEpisode) {
-            notiStore.triggerNotification(
-                mediaContentStore.errorMessage || t('media.linkForm.episodeNotFound'),
-            )
             router.push({ name: 'NotFound' })
         }
 
@@ -59,9 +53,6 @@ onMounted(async () => {
         const link: LinksResponse | null = await mediaContentStore.getLinkById(linkId, true)
 
         if (!link) {
-            notiStore.triggerNotification(
-                mediaContentStore.errorMessage || t('media.linkForm.linkNotFound'),
-            )
             router.push({ name: 'NotFound' })
         }
 
@@ -101,20 +92,7 @@ const handleSubmit = async (): Promise<void> => {
             : await mediaContentStore.editLinkById(linkId, data as UpdateLinkByIdSchemaType)
 
     if (isSuccess) {
-
-        const msg: string =
-            route.name === 'addLink'
-                ? t('media.linkForm.addedSuccess')
-                : t('media.linkForm.updatedSuccess')
-
-        notiStore.triggerNotification(mediaContentStore.successMessage || msg)
-
         router.push({ name: 'mediaDetails' })
-
-    } else {
-        notiStore.triggerNotification(
-            mediaContentStore.errorMessage || t('media.linkForm.saveError'),
-        )
     }
 }
 </script>

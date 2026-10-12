@@ -28,12 +28,6 @@ const handleSort = (column: string): void => {
 }
 
 const handleDelete = (sessionId: number): void => {
-
-    if (!sessionId) {
-        notiStore.triggerNotification(`session Id required!, sessionId: ${sessionId}`)
-        return
-    }
-
     confirmAndDelete({
         message: 'هل انت متأكد من حذف الجلسة ؟ّ',
         action: () => userStore.removeSessionById(sessionId),

@@ -5,16 +5,14 @@ import { useI18n } from 'vue-i18n'
 import { ref } from 'vue'
 
 import SearchMedia from '@/components/media/mediaList/searchMedia.vue'
-import { useNotificationStore } from '@/stores/notificationStore'
 import { useMediaStore } from '@/stores/mediaStore'
 import { useAuthStore } from '@/stores/authStore'
 
-import type { MediasResponse } from '@/types/globalTypes'
+
 import type {
     GetMediasQueryInputsType,
 } from '@/schemas/mediaSchema'
-// authStore
-const notiStore = useNotificationStore()
+
 const mediaStore = useMediaStore()
 const authStore = useAuthStore()
 const router = useRouter()
@@ -63,16 +61,7 @@ const handleRefresh = async () => {
         },
     })
 
-    const data: MediasResponse[] | null = await mediaStore.fetchMedias({ page: 1, limit: 20 }, true)
-
-
-    if (data && data.length > 0) {
-        notiStore.triggerNotification(t('common.refreshSuccess'))
-    }
-
-    if (mediaStore.errorMessage) {
-        notiStore.triggerNotification(mediaStore.errorMessage)
-    }
+    await mediaStore.fetchMedias({ page: 1, limit: 20 }, true)
 }
 
 const handleExport = async () => {

@@ -71,11 +71,6 @@ const handleEdit = (id: number | string): void => {
 
 // التعامل مع حذف تاسك
 const handleDelete = (id: number) => {
-    if (!id) {
-        notiStore.triggerNotification(t('tasks.noTaskToDelete'))
-        return
-    }
-
     confirmAndDelete({
         message: t('tasks.confirmDelete'),
         action: () => taskStore.removeTaskById(id),

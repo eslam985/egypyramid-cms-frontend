@@ -1,5 +1,7 @@
 import { defineStore } from 'pinia'
 import { handleDownloadBackupFile } from '@/api/data/backup'
+import { useNotificationStore } from '@/stores/notificationStore'
+
 import type { BaseStore } from '@/types/globalTypes'
 import type { AxiosProgressEvent } from 'axios'
 
@@ -18,7 +20,9 @@ export const useBackupStore = defineStore('backup', {
         elapsedTime: 0,
         timerInterval: null,
     }),
-
+    getters: {
+        notiStore: () => useNotificationStore(),
+    },
     actions: {
         async downloadBackup(): Promise<boolean> {
             this.isLoading = true
@@ -53,11 +57,14 @@ export const useBackupStore = defineStore('backup', {
                 window.URL.revokeObjectURL(url)
 
                 this.successMessage = 'تم إنشاء وتحميل النسخة الاحتياطية بنجاح'
+                this.notiStore.triggerNotification(this.successMessage )
                 return true
             } catch (err: any) {
                 console.error('Backup download error:', err)
                 this.errorMessage =
                     err?.response?.data?.message || 'حدثت مشكلة أثناء إنشاء النسخة الاحتياطية'
+
+                this.notiStore.triggerNotification(this.errorMessage )
                 return false
             } finally {
                 this.isLoading = false

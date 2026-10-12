@@ -6,8 +6,6 @@ import { useI18n } from 'vue-i18n'
 
 import { useFormValidation } from '@/composables/useFormValidation'
 import { createSeasonSchema, updateSeasonSchema } from '@/schemas/seasonSchema'
-import { useNotificationStore } from '@/stores/notificationStore'
-
 import { useMediaContentStore } from '@/stores/mediaContentStore'
 import { useMediaStore } from '@/stores/mediaStore'
 import { toNumber } from '@/utils/global'
@@ -24,7 +22,6 @@ const mediaContentStore = useMediaContentStore()
 const mediaStore = useMediaStore()
 const router = useRouter()
 const route = useRoute()
-const notiStore = useNotificationStore()
 
 const mediaId: number | null = toNumber(route.params.media_id) ?? null
 const seasonId: number | null = toNumber(route.params.id) ?? null
@@ -44,7 +41,6 @@ onMounted(async () => {
         const foundMedia: MediasResponse | null = await mediaStore.getMediaById(mediaId)
 
         if (!foundMedia && !mediaStore.currentMedia) {
-            notiStore.triggerNotification(mediaStore.errorMessage || t('media.form.notFound'))
             router.push({ name: 'NotFound' })
         }
     }
@@ -54,9 +50,6 @@ onMounted(async () => {
         const foundSeason: SeasonsResponse | null = await mediaContentStore.getSeasonById(seasonId, true)
 
         if (!foundSeason && !mediaContentStore.currentSeason) {
-            notiStore.triggerNotification(
-                mediaContentStore.errorMessage || t('media.seasonForm.notFound'),
-            )
             router.push({ name: 'NotFound' })
         }
 
@@ -66,27 +59,20 @@ onMounted(async () => {
     }
 })
 
-const handleSubmit = async (): Promise<void> => {
+const handleSubmit = async (): Promise<void | null> => {
 
     const { isValid, data } = validate(toRaw(formData))
-    if (!isValid || !data) return
+    if (!isValid || !data) return null
 
     const isSuccess: SeasonsResponse | null =
         route.name === 'editSeason'
             ? await mediaContentStore.editSeasonById(seasonId, data as UpdateSeasonSchemaType)
             : await mediaContentStore.addSeason(mediaId, data as CreateSeasonSchemaType)
 
-    if (isSuccess) {
-        const msg: string =
-            route.name === 'addSeason'
-                ? t('media.seasonForm.addedSuccess')
-                : t('media.seasonForm.updatedSuccess')
-        notiStore.triggerNotification(mediaContentStore.successMessage || msg)
-        router.push({ name: 'mediaDetails' })
+    if (!isSuccess) {
+        return null
     } else {
-        notiStore.triggerNotification(
-            mediaContentStore.errorMessage || t('media.seasonForm.saveError'),
-        )
+        router.push({ name: 'mediaDetails' })
     }
 }
 </script>

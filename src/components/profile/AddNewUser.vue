@@ -53,14 +53,7 @@ const utilsSubmit = async <TInputs, TResponse,>(
 
     if (!isValid || !data) return null
 
-    const isSuccess = await apiCall(data)
-
-    if (isSuccess) {
-        notiStore.triggerNotification(authStore.successMessage || 'تم تحديث البيانات بنجاح')
-        return isSuccess
-    } else {
-        notiStore.triggerNotification(authStore.errorMessage || 'حدثت مشكلة أثناء تحديث البيانات!')
-    }
+    await apiCall(data)
 
     return null
 }

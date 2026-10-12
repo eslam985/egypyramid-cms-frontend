@@ -14,7 +14,6 @@ import {
 
 import { handleStoreFetch, handleStoreExport } from '@/utils/store'
 import { useNotificationStore } from '@/stores/notificationStore'
-const notiStore = useNotificationStore()
 
 import type { BaseStore } from '@/types/globalTypes'
 import type {
@@ -61,6 +60,9 @@ const useAnalyticsStore = defineStore('analytics', {
         successMessage: '',
         errorMessage: '',
     }),
+    getters: {
+        notiStore: () => useNotificationStore(),
+    },
     actions: {
         resetContentState(): void {
             this.systemCounters = null
@@ -70,7 +72,7 @@ const useAnalyticsStore = defineStore('analytics', {
             this.missingLinksByServer = []
             this.telegramLocked = []
         },
-        async exportNotReadyMedia(filters: BaseQueryRequest): Promise<boolean> {
+        async exportNotReadyMedia(filters?: BaseQueryRequest): Promise<boolean> {
             const date: string = new Date().toISOString().slice(0, 10)
 
             const isSuccess: boolean = await handleStoreExport<BaseQueryRequest, AnalyticsState>({
@@ -82,9 +84,13 @@ const useAnalyticsStore = defineStore('analytics', {
             })
 
             if (isSuccess) {
-                notiStore.triggerNotification(this.successMessage || 'تم تحميل البيانات بنجاح!')
+                this.notiStore.triggerNotification(
+                    this.successMessage || 'تم تحميل البيانات بنجاح!',
+                )
             } else {
-                notiStore.triggerNotification(this.errorMessage || 'حدث خطأ اثناء تحميل البيانات!')
+                this.notiStore.triggerNotification(
+                    this.errorMessage || 'حدث خطأ اثناء تحميل البيانات!',
+                )
             }
 
             return isSuccess
@@ -92,15 +98,27 @@ const useAnalyticsStore = defineStore('analytics', {
         async exportBrokenLinks(filters: ServerNameRequest): Promise<boolean> {
             const date: string = new Date().toISOString().slice(0, 10)
 
-            return handleStoreExport<ServerNameRequest, AnalyticsState>({
+            const isSuccess: boolean = await handleStoreExport<ServerNameRequest, AnalyticsState>({
                 store: this,
                 apiCall: handleExportBrokenLinks,
                 args: filters,
                 defaultFileName: `export-broken-links-${date}.csv`,
                 defaultError: 'حدثت مشكلة أثناء تصدير اللينكات التالفة!',
             })
+
+            if (isSuccess) {
+                this.notiStore.triggerNotification(
+                    this.successMessage || 'تم تحميل البيانات بنجاح!',
+                )
+            } else {
+                this.notiStore.triggerNotification(
+                    this.errorMessage || 'حدث خطأ اثناء تحميل البيانات!',
+                )
+            }
+
+            return isSuccess
         },
-        async exportMissingEpisodesByServer(filters: ServerNameRequest): Promise<boolean> {
+        async exportMissingEpisodesByServer(filters?: ServerNameRequest): Promise<boolean> {
             const date: string = new Date().toISOString().slice(0, 10)
 
             const isSuccess: boolean = await handleStoreExport<ServerNameRequest, AnalyticsState>({
@@ -112,9 +130,13 @@ const useAnalyticsStore = defineStore('analytics', {
             })
 
             if (isSuccess) {
-                notiStore.triggerNotification(this.successMessage || 'تم تحميل البيانات بنجاح!')
+                this.notiStore.triggerNotification(
+                    this.successMessage || 'تم تحميل البيانات بنجاح!',
+                )
             } else {
-                notiStore.triggerNotification(this.errorMessage || 'حدث خطأ اثناء تحميل البيانات!')
+                this.notiStore.triggerNotification(
+                    this.errorMessage || 'حدث خطأ اثناء تحميل البيانات!',
+                )
             }
 
             return isSuccess
@@ -131,22 +153,42 @@ const useAnalyticsStore = defineStore('analytics', {
             })
 
             if (isSuccess) {
-                notiStore.triggerNotification(this.successMessage || 'تم تحميل البيانات بنجاح!')
+                this.notiStore.triggerNotification(
+                    this.successMessage || 'تم تحميل البيانات بنجاح!',
+                )
             } else {
-                notiStore.triggerNotification(this.errorMessage || 'حدث خطأ اثناء تحميل البيانات!')
+                this.notiStore.triggerNotification(
+                    this.errorMessage || 'حدث خطأ اثناء تحميل البيانات!',
+                )
             }
 
             return isSuccess
         },
 
         async fetchAllCounters(force = false): Promise<SystemCountersResponse | null> {
-            return handleStoreFetch<SystemCountersResponse | null, never, AnalyticsState>({
+            const isSuccess: SystemCountersResponse | null = await handleStoreFetch<
+                SystemCountersResponse | null,
+                never,
+                AnalyticsState
+            >({
                 store: this,
                 apiCall: getSystemCounters,
                 targetKey: 'systemCounters',
                 defaultError: 'حدث خطا أثناء جلب العدادات!',
                 force,
             })
+
+            if (!isSuccess) {
+                this.notiStore.triggerNotification(
+                    this.errorMessage || 'حدث خطأ اثناء تحميل البيانات!',
+                )
+            } else {
+                this.notiStore.triggerNotification(
+                    this.successMessage || 'تم تحميل البيانات بنجاح!',
+                )
+            }
+
+            return isSuccess
         },
         async fetchMissingEpisodesByServer(
             params: ServerNameRequest,
@@ -166,9 +208,13 @@ const useAnalyticsStore = defineStore('analytics', {
             })
 
             if (isSuccess && isSuccess?.length > 0) {
-                notiStore.triggerNotification(this.successMessage || 'تم تحميل البيانات بنجاح!')
+                this.notiStore.triggerNotification(
+                    this.successMessage || 'تم تحميل البيانات بنجاح!',
+                )
             } else {
-                notiStore.triggerNotification(this.errorMessage || 'حدث خطأ اثناء تحميل البيانات!')
+                this.notiStore.triggerNotification(
+                    this.errorMessage || 'حدث خطأ اثناء تحميل البيانات!',
+                )
             }
 
             return isSuccess
@@ -177,7 +223,7 @@ const useAnalyticsStore = defineStore('analytics', {
             status: StatusTasksRequest,
             force = false,
         ): Promise<TotalStatusLinksResponse[] | null> {
-            return handleStoreFetch<
+            const isSuccess: TotalStatusLinksResponse[] | null = await handleStoreFetch<
                 TotalStatusLinksResponse[] | null,
                 StatusTasksRequest,
                 AnalyticsState
@@ -189,6 +235,18 @@ const useAnalyticsStore = defineStore('analytics', {
                 defaultError: 'حدث خطا أثناء جلب الحالات!',
                 force,
             })
+
+            if (!isSuccess) {
+                this.notiStore.triggerNotification(
+                    this.errorMessage || 'حدث خطأ اثناء تحميل البيانات!',
+                )
+            } else {
+                this.notiStore.triggerNotification(
+                    this.successMessage || 'تم تحميل البيانات بنجاح!',
+                )
+            }
+
+            return isSuccess
         },
         async fetchNotReadyMedias(
             params: BaseQueryRequest,
@@ -213,9 +271,13 @@ const useAnalyticsStore = defineStore('analytics', {
             })
 
             if (isSuccess && isSuccess?.length > 0) {
-                notiStore.triggerNotification(this.successMessage || 'تم تحميل البيانات بنجاح!')
+                this.notiStore.triggerNotification(
+                    this.successMessage || 'تم تحميل البيانات بنجاح!',
+                )
             } else {
-                notiStore.triggerNotification(this.errorMessage || 'حدث خطأ اثناء تحميل البيانات!')
+                this.notiStore.triggerNotification(
+                    this.errorMessage || 'حدث خطأ اثناء تحميل البيانات!',
+                )
             }
 
             return isSuccess
@@ -229,7 +291,7 @@ const useAnalyticsStore = defineStore('analytics', {
                 force = true
             }
 
-            return handleStoreFetch<
+            const isSuccess: DownloadTasksResponse[] | null = await handleStoreFetch<
                 DownloadTasksResponse[] | null,
                 ServerNameRequest,
                 AnalyticsState
@@ -241,6 +303,18 @@ const useAnalyticsStore = defineStore('analytics', {
                 defaultError: 'حدث خطا أثناء جلب اللينكات المكسورة!',
                 force,
             })
+
+            if (!isSuccess) {
+                this.notiStore.triggerNotification(
+                    this.errorMessage || 'حدث خطأ اثناء تحميل البيانات!',
+                )
+            } else {
+                this.notiStore.triggerNotification(
+                    this.successMessage || 'تم تحميل البيانات بنجاح!',
+                )
+            }
+
+            return isSuccess
         },
         async fetchLockedTelegramLinks(
             params: BaseQueryRequest,
@@ -265,13 +339,16 @@ const useAnalyticsStore = defineStore('analytics', {
             })
 
             if (isSuccess && isSuccess?.length > 0) {
-                notiStore.triggerNotification(this.successMessage || 'تم تحميل البيانات بنجاح!')
+                this.notiStore.triggerNotification(
+                    this.successMessage || 'تم تحميل البيانات بنجاح!',
+                )
             } else {
-                notiStore.triggerNotification(this.errorMessage || 'حدث خطأ اثناء تحميل البيانات!')
+                this.notiStore.triggerNotification(
+                    this.errorMessage || 'حدث خطأ اثناء تحميل البيانات!',
+                )
             }
 
             return isSuccess
-
         },
     },
 })

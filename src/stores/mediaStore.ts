@@ -91,13 +91,24 @@ const useMediaStore = defineStore('media', {
         async exportMedia(filters: GetMediasQueryInputsType): Promise<boolean> {
             const date: string = new Date().toISOString().slice(0, 10)
 
-            return handleStoreExport<GetMediasQueryInputsType, MediaState>({
+            const isSuccess: boolean = await handleStoreExport<
+                GetMediasQueryInputsType,
+                MediaState
+            >({
                 store: this,
                 apiCall: handleExportMedia,
                 args: filters,
                 defaultFileName: `medias-${date}.csv`,
                 defaultError: 'حدثت مشكلة أثناء تصدير الاعمال!',
             })
+
+            if (!isSuccess) {
+                this.notiStore.triggerNotification(this.errorMessage || 'تعذر جلب البيانات')
+            } else {
+                this.notiStore.triggerNotification(this.successMessage || 'تم تحميل البيانات بنجاح')
+            }
+
+            return isSuccess
         },
         async getMediaById(id: number, force: boolean = true): Promise<MediasResponse | null> {
             if (!id) {
@@ -124,9 +135,7 @@ const useMediaStore = defineStore('media', {
                 )
                 this.medias = [isSuccess]
             } else {
-                this.notiStore.triggerNotification(
-                    this.errorMessage ||  'Not Found'
-                )
+                this.notiStore.triggerNotification(this.errorMessage || 'Not Found')
             }
 
             return isSuccess
@@ -136,12 +145,17 @@ const useMediaStore = defineStore('media', {
             targetTable: string | boolean = 'all',
             force: boolean = false,
         ): Promise<MediasResponse | null> {
+            if (!id) {
+                this.notiStore.triggerNotification('ID Is required!')
+                return null
+            }
+
             if (typeof targetTable === 'boolean') {
                 force = targetTable
                 targetTable = 'all'
             }
 
-            const data: MediasResponse | null = await handleStoreFetch<
+            const isSuccess: MediasResponse | null = await handleStoreFetch<
                 MediasResponse,
                 unknown,
                 MediaState
@@ -154,28 +168,56 @@ const useMediaStore = defineStore('media', {
                 force,
             })
 
-            if (!data) return null
-
-            if (Object.keys(data).length > 0) {
-                this.medias = [data]
+            if (isSuccess && Object.keys(isSuccess).length > 0) {
+                this.notiStore.triggerNotification(
+                    this.successMessage || `Found Media ID ${isSuccess?.id} successfuly `,
+                )
+                this.medias = [isSuccess]
+            } else {
+                this.notiStore.triggerNotification(this.errorMessage || 'Not Found')
             }
 
-            return data
+            return isSuccess
         },
 
         async addMedia(data: CreateMediaInputsType): Promise<MediasResponse | null> {
-            return handleStoreAdd<MediasResponse, CreateMediaInputsType, MediaState>({
+            if (!data) {
+                this.notiStore.triggerNotification('data is required!')
+            }
+
+            const isSuccess: MediasResponse | null = await handleStoreAdd<
+                MediasResponse,
+                CreateMediaInputsType,
+                MediaState
+            >({
                 store: this,
                 apiCall: createMedia,
                 data,
                 listKey: 'medias',
             })
+
+            if (!isSuccess) {
+                this.notiStore.triggerNotification(this.errorMessage || 'Not Found')
+            } else {
+                this.notiStore.triggerNotification(this.successMessage || 'تم اضافة الميديا بنجاح')
+            }
+
+            return isSuccess
         },
         async editMediaById(
             id: number,
             data: UpdateMediaInputsType,
         ): Promise<MediasResponse | null> {
-            return handleStoreEdit<MediasResponse, UpdateMediaInputsType, number, MediaState>({
+            if (!data || !id) {
+                this.notiStore.triggerNotification('ID And Data is required!')
+            }
+
+            const isSuccess: MediasResponse | null = await handleStoreEdit<
+                MediasResponse,
+                UpdateMediaInputsType,
+                number,
+                MediaState
+            >({
                 store: this,
                 apiCall: updateMediaById,
                 id,
@@ -183,6 +225,14 @@ const useMediaStore = defineStore('media', {
                 listKey: 'medias',
                 defaultError: 'حدث خطأ اثناء تعديل الميديا',
             })
+
+            if (!isSuccess) {
+                this.notiStore.triggerNotification(this.errorMessage || 'لم يتم التعديل')
+            } else {
+                this.notiStore.triggerNotification(this.successMessage || 'تم تعديل التصنيف بنجاح')
+            }
+
+            return isSuccess
         },
         async removeMediaById(id: number): Promise<boolean> {
             if (!id) {
@@ -214,7 +264,11 @@ const useMediaStore = defineStore('media', {
             query?: GetMediasQueryInputsType,
             force: boolean = false,
         ): Promise<MediasResponse[] | null> {
-            return handleStoreFetch<MediasResponse[], GetMediasQueryInputsType, MediaState>({
+            const isSuccess: MediasResponse[] | null = await handleStoreFetch<
+                MediasResponse[],
+                GetMediasQueryInputsType,
+                MediaState
+            >({
                 store: this,
                 apiCall: findAllMedia,
                 args: query,
@@ -223,8 +277,19 @@ const useMediaStore = defineStore('media', {
                 defaultError: 'حدث خطأ أثناء جلب الميديا',
                 force,
             })
+
+            if (!isSuccess) {
+                this.notiStore.triggerNotification(this.errorMessage || 'Not Found')
+            } else {
+                this.notiStore.triggerNotification(
+                    this.successMessage || `Found ${isSuccess?.length} Media successfuly `,
+                )
+            }
+
+            return isSuccess
         },
         async setSort(column: MediaState['filters']['sortBy']): Promise<MediasResponse[] | null> {
+            
             if (this.filters.sortBy === column) {
                 this.filters.sortOrder =
                     this.filters.sortOrder === OrderingEnum.ASC

@@ -23,7 +23,7 @@ const DEFAULT_AVATAR: string =
 
 // دالة التقاط الملف وتوليد المعاينة
 const handleFileChange = (event: Event) => {
-    if(!event) return
+    if (!event) return
     const file: File | undefined = (event.target as HTMLInputElement | null)?.files?.[0]
     if (!file) return
 
@@ -42,11 +42,7 @@ const handleUpload = async (): Promise<void | null> => {
     const formData: FormData = new FormData()
     formData.append('profileImage', selectedFile.value)
 
-    const isSuccess: UserDataResponse | null = await userStore.uploadAvatar(formData)
-
-    if (isSuccess) {
-        notiStore.triggerNotification(userStore.successMessage || 'تم تحديث الصورة الشخصية بنجاح')
-    }
+    await userStore.uploadAvatar(formData)
 
     selectedFile.value = null // تصفير الملف بعد النجاح
 }
@@ -64,18 +60,18 @@ const handleDelete = (): void => {
 }
 
 // دالة تفعيل صورة قديمة من السجل
-const handleSelectHistory = async (url: string) => {
+const handleSelectHistory = async (url: string): Promise<null | undefined> => {
 
     const isSuccess: UserDataResponse | null = await userStore.setAvatarFromHistory(url)
 
-    if (isSuccess) {
-        notiStore.triggerNotification(userStore.successMessage || 'تم تعيين الصورة من السجل بنجاح')
-        await userStore.getUserById()
-        isModalOpen.value = false
+    if (!isSuccess) {
+        return null
     } else {
-        notiStore.triggerNotification(userStore.errorMessage || 'حدث خطأ أثناء التبديل')
+        isModalOpen.value = false
+        await userStore.getUserById()
     }
 
+    return null
 }
 
 const role = (): "Admin" | "Editor" | "User" | "N/A" =>
@@ -141,16 +137,13 @@ const role = (): "Admin" | "Editor" | "User" | "N/A" =>
                                     </label>
 
                                     <!-- خيار 2: اختيار من الصور السابقة (قمنا بتغليفه داخل button أصيل) -->
-                                    <button
-                                        v-if="
-                                            userStore.userInfo?.avatar_history &&
-                                            userStore.userInfo?.avatar_history?.length > 0
-                                        "
-                                        type="button"
-                                        @click="
-                                            isModalOpen = true;
-                                        isDropdownOpen = false;
-                                        "
+                                    <button v-if="
+                                        userStore.userInfo?.avatar_history &&
+                                        userStore.userInfo?.avatar_history?.length > 0
+                                    " type="button" @click="
+                                        isModalOpen = true;
+                                    isDropdownOpen = false;
+                                    "
                                         class="w-10 h-10 flex items-center justify-center rounded-xl cursor-pointer hover:bg-accent-light/10 text-accent transition-colors duration-200">
                                         <History class="w-5 h-5" />
                                     </button>
@@ -193,17 +186,13 @@ const role = (): "Admin" | "Editor" | "User" | "N/A" =>
                             <span
                                 class="py-1 px-2 rounded-xl max-w-[270px] text-fluid-p text-foreground dark:bg-[#151f35] bg-accent-light">
                                 Member since
-                                {{userStore.userInfo?.created_at ? formatDate(userStore.userInfo?.created_at) : '-'  }}
+                                {{ userStore.userInfo?.created_at ? formatDate(userStore.userInfo?.created_at) : '-' }}
                             </span>
                         </div>
 
                         <div class="flex gap-3">
-                            <Link
-                            :stroke-width="1"
-                            class="w-full max-w-6 text-accent" />
-                            <a
-                                target="_blank"
-                                :href="userStore.userInfo?.avatar_url ?? DEFAULT_AVATAR"
+                            <Link :stroke-width="1" class="w-full max-w-6 text-accent" />
+                            <a target="_blank" :href="userStore.userInfo?.avatar_url ?? DEFAULT_AVATAR"
                                 class="text-fluid-xs text-link truncate lg:hover:text-link-hover cursor-pointer transition-colors">
                                 Avatar URL
                                 {{

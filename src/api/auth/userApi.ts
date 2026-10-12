@@ -20,7 +20,7 @@ const handleUpdateUserInfo = async (
     return result.data
 }
 
-const handleChangePassword = async (data: ChangePasswordInputsType): Promise<BaseApiResponse> => {
+const handleChangePassword = async (data: ChangePasswordInputsType): Promise<BaseApiResponse<null>> => {
     const result = await api.put('/user/update/password', data)
     return result.data
 }

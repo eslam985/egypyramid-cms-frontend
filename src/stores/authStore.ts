@@ -34,6 +34,8 @@ export const useAuthStore = defineStore('auth', {
     }),
 
     getters: {
+        notiStore: () => useNotificationStore(),
+
         isAuthenticated: (state): boolean => !!state.accessToken,
 
         isAdmin: (state): boolean => state.userRole === RolesList.Admin,
@@ -57,13 +59,13 @@ export const useAuthStore = defineStore('auth', {
     },
     actions: {
         async loginUser(credentials: LoginUserInputsType): Promise<boolean> {
-            const notiStore = useNotificationStore()
             this.isLoading = true
             this.errorMessage = ''
             this.successMessage = ''
 
             try {
                 const result: BaseApiResponse<UserDataResponse> = await login(credentials)
+
                 if (result && result.success) {
                     this.setAccessToken(result.data?.accessToken ?? null)
 
@@ -76,22 +78,21 @@ export const useAuthStore = defineStore('auth', {
 
                     this.successMessage = result.message || 'تم تسجيل الدخول بنجاح'
 
-                    // 👈 إطلاق إشعار النجاح مباشرة من الـ Store
-                    notiStore.triggerNotification(this.successMessage)
+                    this.notiStore.triggerNotification(this.successMessage)
                     return true
                 }
+
                 return false
             } catch (err: any) {
                 const msg: string = err?.response?.data?.message || ''
+
                 if (msg.includes('getaddrinfo ENOTFOUND')) {
                     this.errorMessage = 'حدث خطأ اثناء الاتصال بقاعدة البيانات!'
                 } else {
                     this.errorMessage = msg || 'حدث خطأ ما، يرجى المحاولة لاحقاً'
                 }
 
-                // 👈 إطلاق إشعار الخطأ مباشرة من الـ Store
-                notiStore.triggerNotification(this.errorMessage)
-                console.error('debug: ', msg)
+                this.notiStore.triggerNotification(this.errorMessage)
                 console.error(err)
                 return false
             } finally {
@@ -147,28 +148,56 @@ export const useAuthStore = defineStore('auth', {
             }
         },
 
-        async register(data: CreateUserInputsType) {
-            return handleStoreAdd<RegisterDataResponse, CreateUserInputsType, AuthState>({
+        async register(data: CreateUserInputsType): Promise<RegisterDataResponse | null> {
+            if (!data) {
+                this.notiStore.triggerNotification('data is required!')
+                return null
+            }
+
+            const isSuccess: RegisterDataResponse | null = await handleStoreAdd<
+                RegisterDataResponse,
+                CreateUserInputsType,
+                AuthState
+            >({
                 store: this,
                 apiCall: handleRegister,
                 data,
                 defaultError: 'حدثت مشكلة اثناء إضافة المستخدم!',
             })
+
+            if (!isSuccess) {
+                this.notiStore.triggerNotification(
+                    this.errorMessage || 'An error occurred while adding the user!'
+                )
+            } else {
+                this.notiStore.triggerNotification(
+                    this.successMessage || `user ${data?.username} Created successfully!`,
+                )
+            }
+
+            return isSuccess
         },
 
         async logoutUser(): Promise<boolean | void> {
             this.isLoading = true
             this.errorMessage = ''
             this.successMessage = ''
+
             try {
+
                 const result: BaseApiResponse<null> = await logout()
+
                 if (result?.success) {
                     this.successMessage = result.message || 'Logout successful'
                 }
+                
+                this.notiStore.triggerNotification(this.successMessage)
                 this.clearAccessToken()
             } catch (err: any) {
                 this.errorMessage =
                     err?.response?.data?.message || 'حدث خطأ ما، يرجى المحاولة لاحقاً'
+
+                this.notiStore.triggerNotification(this.errorMessage)
                 console.error(err)
                 return false
             } finally {

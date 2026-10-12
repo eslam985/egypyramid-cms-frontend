@@ -38,11 +38,6 @@ const columns: {
 
 // دالة الحذف والترتيب الحالية كما هي بدون أي تغيير
 const handleDelete = async (id: number, title: string): Promise<void> => {
-    if (!id) {
-        notiStore.triggerNotification(t('media.noMediaToDelete'))
-        return
-    }
-
     confirmAndDelete({
         message: t('media.confirmDelete', { title: title || t('media.thisMedia') }),
         action: () => mediaStore.removeMediaById(id),

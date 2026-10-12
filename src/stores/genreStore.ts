@@ -62,7 +62,9 @@ const useGenresStore = defineStore('genre', {
             if (isSuccess && isSuccess?.length > 0) {
                 this.notiStore.triggerNotification(this.successMessage || 'تم جلب البيانات بنجاح')
             } else {
-                this.notiStore.triggerNotification(this.errorMessage || 'حدث خطأ اثناء تحميل البيانات!')
+                this.notiStore.triggerNotification(
+                    this.errorMessage || 'حدث خطأ اثناء تحميل البيانات!',
+                )
             }
 
             return isSuccess
@@ -75,7 +77,11 @@ const useGenresStore = defineStore('genre', {
             if (!name) {
                 throw new Error('name required!')
             }
-            const data = await handleStoreFetch<GenresResponse, string, Genrestate>({
+            const isSuccess: GenresResponse | null = await handleStoreFetch<
+                GenresResponse,
+                string,
+                Genrestate
+            >({
                 store: this,
                 apiCall: findGenreByName,
                 args: name,
@@ -83,29 +89,38 @@ const useGenresStore = defineStore('genre', {
                 force,
             })
 
-            if (data && Object.keys(data).length > 0) {
-                this.currentGenre = data
-                this.allGenres = [data]
+            if (!isSuccess) {
+                this.notiStore.triggerNotification(this.errorMessage || 'Not Found')
+            } else {
+                this.notiStore.triggerNotification(
+                    this.successMessage || `found ${isSuccess.name} Successfully`,
+                )
+
+                this.currentGenre = isSuccess
+                this.allGenres = [isSuccess]
             }
 
-            return data
+            return isSuccess
         },
 
         async fetchGenreById(id: number, force: boolean = false): Promise<GenresResponse | null> {
-            if(!id) {
+            if (!id) {
                 this.notiStore.triggerNotification('Id is Required!')
                 return null
             }
 
-            const isSuccess: GenresResponse | null =
-                await handleStoreFetch<GenresResponse, number, Genrestate>({
-                    store: this,
-                    apiCall: findGenreById,
-                    args: id,
-                    targetKey: 'currentGenre',
-                    defaultError: 'حدث خطا اثناء جلب التصنيف بالمعرف (id)',
-                    force,
-                })
+            const isSuccess: GenresResponse | null = await handleStoreFetch<
+                GenresResponse,
+                number,
+                Genrestate
+            >({
+                store: this,
+                apiCall: findGenreById,
+                args: id,
+                targetKey: 'currentGenre',
+                defaultError: 'حدث خطا اثناء جلب التصنيف بالمعرف (id)',
+                force,
+            })
 
             if (isSuccess && Object.keys(isSuccess).length > 0) {
                 this.notiStore.triggerNotification(this.successMessage || `found genre Id ${id}`)
@@ -120,28 +135,44 @@ const useGenresStore = defineStore('genre', {
         async exportGenres(): Promise<boolean> {
             const date: string = new Date().toISOString().slice(0, 10)
 
-            return handleStoreExport({
+            const isSuccess: boolean = await handleStoreExport({
                 store: this,
                 apiCall: handleExportGenresToCSV,
                 defaultFileName: `genres-${date}.csv`,
                 defaultError: 'حدثت مشكلة أثناء تصدير الأقسام!',
             })
+
+            if (!isSuccess) {
+                this.notiStore.triggerNotification(this.errorMessage || 'تعذر جلب البيانات')
+            } else {
+                this.notiStore.triggerNotification(this.successMessage || 'تم تحميل البيانات بنجاح')
+            }
+
+            return isSuccess
         },
 
         async addGenre(data: CreateGenreSchemaType): Promise<GenresResponse | null> {
-            const isSuccess: GenresResponse | null =
-                await  handleStoreAdd<GenresResponse, CreateGenreSchemaType, Genrestate>({
-                    store: this,
-                    apiCall: createGenre,
-                    data,
-                    listKey: 'allGenres',
-                    defaultError: 'حدث خطا اثناء انشاء التصنيف',
-                })
+            if (!data) {
+                this.notiStore.triggerNotification('data Is required!')
+                return null
+            }
+
+            const isSuccess: GenresResponse | null = await handleStoreAdd<
+                GenresResponse,
+                CreateGenreSchemaType,
+                Genrestate
+            >({
+                store: this,
+                apiCall: createGenre,
+                data,
+                listKey: 'allGenres',
+                defaultError: 'حدث خطا اثناء انشاء التصنيف',
+            })
 
             if (isSuccess && Object.keys(isSuccess).length > 0) {
-                this.notiStore.triggerNotification(this.successMessage || 'تم اضافة التصنيف بنجاح' )
+                this.notiStore.triggerNotification(this.successMessage || 'تم اضافة التصنيف بنجاح')
             } else {
-                this.notiStore.triggerNotification(this.errorMessage ||'Not Found' )
+                this.notiStore.triggerNotification(this.errorMessage || 'Not Found')
             }
 
             return isSuccess
@@ -156,20 +187,24 @@ const useGenresStore = defineStore('genre', {
                 return null
             }
 
-            const isSuccess: GenresResponse | null =
-                await handleStoreEdit<GenresResponse, UpdateGenreByIdSchemaType, number, Genrestate>({
-                    store: this,
-                    apiCall: updateGenreById, // أصبحت مطابقة 100% لأن كلاهما يتوقع number
-                    id,
-                    data,
-                    listKey: 'allGenres',
-                    defaultError: 'حدث خطأ اثناء تعديل التصنيف',
-                })
+            const isSuccess: GenresResponse | null = await handleStoreEdit<
+                GenresResponse,
+                UpdateGenreByIdSchemaType,
+                number,
+                Genrestate
+            >({
+                store: this,
+                apiCall: updateGenreById, // أصبحت مطابقة 100% لأن كلاهما يتوقع number
+                id,
+                data,
+                listKey: 'allGenres',
+                defaultError: 'حدث خطأ اثناء تعديل التصنيف',
+            })
 
             if (isSuccess && Object.keys(isSuccess).length > 0) {
                 this.notiStore.triggerNotification(this.successMessage || 'تم تعديل التصنيف بنجاح')
             } else {
-                this.notiStore.triggerNotification(this.errorMessage || 'لم يتم التعديل' )
+                this.notiStore.triggerNotification(this.errorMessage || 'لم يتم التعديل')
             }
 
             return isSuccess
@@ -181,13 +216,21 @@ const useGenresStore = defineStore('genre', {
                 return false
             }
 
-            return handleStoreDelete<GenresResponse, number, Genrestate>({
+            const isSuccess: boolean = await handleStoreDelete<GenresResponse, number, Genrestate>({
                 store: this,
                 apiCall: deleteGenreById,
                 id,
                 listKey: 'allGenres',
                 defaultError: 'حدث خطأ أثناء حذف التصنيف',
             })
+
+            if (isSuccess) {
+                this.notiStore.triggerNotification(this.successMessage || 'تم حذف التصنيف بنجاح')
+            } else {
+                this.notiStore.triggerNotification(this.errorMessage || 'لم يتم الحذف')
+            }
+
+            return isSuccess
         },
     },
 })

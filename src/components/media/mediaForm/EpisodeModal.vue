@@ -5,7 +5,6 @@ import { useRouter, useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 
 import { useFormValidation } from '@/composables/useFormValidation'
-import { useNotificationStore } from '@/stores/notificationStore'
 
 import { createEpisodeSchema, updateEpisodeSchema } from '@/schemas/episodeSchema'
 import { useMediaContentStore } from '@/stores/mediaContentStore'
@@ -22,7 +21,6 @@ const route = useRoute()
 const router = useRouter()
 const mediaContentStore = useMediaContentStore()
 const mediaStore = useMediaStore()
-const notiStore = useNotificationStore()
 
 const currentSchema = computed(() =>
     route.name === 'addEpisode' ? createEpisodeSchema : updateEpisodeSchema,
@@ -82,7 +80,7 @@ onMounted(async () => {
     }
 })
 
-const handleSubmit = async () => {
+const handleSubmit = async (): Promise<void | null> => {
 
     const { isValid, data } = validate(toRaw(formData))
     if (!isValid || !data) return
@@ -92,17 +90,10 @@ const handleSubmit = async () => {
             ? await mediaContentStore.addEpisode(mediaId, data as CreateEpisodeSchemaType)
             : await mediaContentStore.editEpisodeById(episodeId, data as UpdateEpisodeSchemaType)
 
-    if (isSuccess) {
-        const msg: string =
-            route.name === 'addEpisode'
-                ? t('media.episodeForm.addedSuccess')
-                : t('media.episodeForm.updatedSuccess')
-        notiStore.triggerNotification(mediaContentStore.successMessage || msg)
-        router.push({ name: 'mediaDetails' })
+    if (!isSuccess) {
+        return null
     } else {
-        notiStore.triggerNotification(
-            mediaContentStore.errorMessage || t('media.episodeForm.saveError'),
-        )
+        router.push({ name: 'mediaDetails' })
     }
 }
 </script>
@@ -147,7 +138,7 @@ const handleSubmit = async () => {
                     <div v-if="isSeries">
                         <label for="season_id" class="form-label">{{
                             t('media.episodeForm.seasonLabel')
-                        }}</label>
+                            }}</label>
                         <select id="season_id" v-model="formData.season_id" class="form-select">
                             <option v-if="!mediaContentStore.seasons?.length" disabled :value="null">
                                 {{ t('media.episodeForm.noSeasons') }}

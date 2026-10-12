@@ -8,17 +8,14 @@ import MainTheme from '@/components/settings/theme/MainTheme.vue'
 import MainBackup from '@/components/settings/backup/MainBackup.vue'
 
 import { useAuthStore } from '@/stores/authStore'
-import { useNotificationStore } from '@/stores/notificationStore'
 
 const { t } = useI18n()
 const authStore = useAuthStore()
-const notiStore = useNotificationStore()
 const router = useRouter()
 
 const handleLogout = async (): Promise<void> => {
 
     await authStore.logoutUser()
-    notiStore.triggerNotification(t('auth.logoutSuccess'))
     router.push('/login')
 
 }
