@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { SquarePen, SaveCheck } from '@lucide/vue'
+import { SquarePen, SaveCheck, Eye, EyeOff } from '@lucide/vue'
 import { ref } from 'vue'
 
 import { useFormValidation } from '@/composables/useFormValidation'
@@ -14,7 +14,7 @@ import type { RegisterDataResponse } from '@/types/globalTypes'
 const { validate: validateProfile, errors: profileErrors } = useFormValidation(createUserSchema)
 
 const authStore = useAuthStore()
-
+const showPassword = ref<boolean>(false)
 let formData = ref<CreateUserInputsType>({
     username: '',
     email: '',
@@ -77,9 +77,21 @@ const handleSubmitFormData = async (): Promise<RegisterDataResponse | null> =>
             </div>
             <div>
                 <label for="password" class="form-label">Password</label>
-                <input id="password" type="password" placeholder="**********" required class="form-input"
-                    v-model="formData.password" />
-                <p v-if="formData?.password" class="form-error">
+
+                <!-- حقل الباسورد -->
+                <div class="relative">
+                    <input id="password" :type="showPassword ? 'text' : 'password'" placeholder="**********" required
+                        class="form-input pr-10" v-model="formData.password" />
+
+                    <!-- زر إظهار وإخفاء الباسورد -->
+                    <button type="button" @click="showPassword = !showPassword"
+                        class="absolute inset-y-0 right-0 flex items-center pr-3 text-sub hover:text-accent">
+                        <EyeOff v-if="showPassword" class="w-5 h-5" />
+                        <Eye v-else class="w-5 h-5" />
+                        </button>
+                </div>
+
+                <p v-if="profileErrors?.password" class="form-error">
                     {{ profileErrors.password }}
                 </p>
             </div>

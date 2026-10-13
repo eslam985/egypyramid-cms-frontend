@@ -9,6 +9,8 @@ export const handleSearch = async <TData>({
     apiCallByName,
     defaultErrorMsg = 'Not found!',
 }: SearchParamsType<TData>): Promise<SearchResultData | false> => {
+    if (!searchInput || !notiStore || !targetStore) return false
+
     let data: SearchResultData = {
         targetId: null,
         rawValue: null,

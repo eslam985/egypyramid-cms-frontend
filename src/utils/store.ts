@@ -212,18 +212,23 @@ export async function handleStoreFetch<
     defaultError = 'حدث خطأ أثناء جلب البيانات',
     force = false,
 }: StoreFetchParams<TData, TInput, TStore>): Promise<TData | null> {
-    const currentArgsStr = args ? JSON.stringify(args) : ''
+    
+    const currentArgsStr: string = args ? JSON.stringify(args) : ''
+
     if (!store) throw new Error('store is undefined or null')
+
+    const hasArgsChanged: boolean = store._lastFetchArgs !== currentArgsStr
 
     if (
         !force &&
         targetKey &&
         store[targetKey] !== null &&
         store[targetKey] !== undefined &&
-        store._lastFetchArgs === currentArgsStr
+        (!hasArgsChanged || currentArgsStr === '')
     ) {
-        const targetVal = store[targetKey]
-        const hasData = Array.isArray(targetVal)
+        const targetVal: TStore[keyof TStore] & {} = store[targetKey]
+
+        const hasData: boolean = Array.isArray(targetVal)
             ? targetVal.length > 0
             : targetVal && typeof targetVal === 'object'
               ? Object.keys(targetVal).length > 0
@@ -247,6 +252,7 @@ export async function handleStoreFetch<
             result = await (
                 apiCall as (arg1: TInput, arg2: TInput) => Promise<BaseApiResponse<TData>>
             )(firstArg, secondArg)
+
         } else if (Array.isArray(args) && args.length === 1) {
             result = await (apiCall as (data: TInput) => Promise<BaseApiResponse<TData>>)(
                 args[0] as TInput,

@@ -488,7 +488,7 @@ body[data-theme='dark'] {
     .form-input,
     .form-select,
     .form-textarea {
-        @apply w-full px-3 md:px-4 py-2.5 bg-card dark:bg-[#151f35] text-foreground placeholder:text-muted focus:ring-1 disabled:opacity-60 duration-200 md:p-2.5 border border-accent/20;
+        @apply w-full px-3 md:px-4 py-2.5 bg-card dark:bg-[#151f35] text-foreground placeholder:text-muted focus:ring-1 disabled:opacity-60 duration-200 md:p-2.5 border border-accent/20  focus:placeholder:opacity-0 transition-opacity;
     }
 
     .form-textarea {

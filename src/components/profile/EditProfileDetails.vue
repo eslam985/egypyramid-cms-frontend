@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { SquarePen, SaveCheck, ShieldLock, KeyRound } from '@lucide/vue'
+import { SquarePen, SaveCheck, ShieldLock, KeyRound, Eye, EyeOff } from '@lucide/vue'
 import { onMounted, ref } from 'vue'
 
 
@@ -21,7 +21,9 @@ const { validate: validateProfile, errors: profileErrors } = useFormValidation(u
 const { validate: validatePassword, errors: passwordErrors } =
     useFormValidation(changePasswordSchema)
 
-const userInfo = async () => await userStore.getUserById()
+const showCurrentPassword = ref(false)
+const showNewPassword = ref(false)
+const showConfirmPassword = ref(false)
 
 let formData = ref<UpdateUserInputsType>({
     username: '',
@@ -36,6 +38,7 @@ let formPasswordData = ref<ChangePasswordInputsType>({
     confirmNewPassword: '',
 })
 
+
 const data = () => {
     formData.value.username = userStore.userInfo?.username ?? ''
     formData.value.email = userStore.userInfo?.email ?? ''
@@ -46,14 +49,24 @@ const data = () => {
 const handleSubmitFormData = async (): Promise<UserDataResponse | null> =>
     utilsSubmit(undefined, formData.value, validateProfile, userStore.updateUserInfo)
 
-const handleSubmitFormPasswordData = async (): Promise<void | null> =>
+const handleSubmitFormPasswordData = async (): Promise<void | null> => {
+    const isPassSame: boolean = formPasswordData.value.newPassword !== formPasswordData.value.confirmNewPassword
+
+    if (isPassSame) {
+        userStore.notiStore.triggerNotification('The password does not match.')
+        return null
+    }
+
     utilsSubmit(undefined, formPasswordData.value, validatePassword, userStore.ChangePassword)
+}
 
 
+const userInfo = async () => await userStore.getUserById(false)
 onMounted(async () => {
     await userInfo()
     data()
 })
+
 </script>
 <template>
     <!-- container -->
@@ -133,8 +146,17 @@ onMounted(async () => {
 
                 <div>
                     <label for="currentPassword" class="form-label">Current Password</label>
-                    <input id="currentPassword" type="password" placeholder="********" required class="form-input"
-                        v-model="formPasswordData.currentPassword" />
+                    <div class="relative">
+                        <input id="currentPassword" :type="showCurrentPassword ? 'text' : 'password'"
+                            placeholder="********" required class="form-input"
+                            v-model="formPasswordData.currentPassword" />
+
+                        <button type="button" @click="showCurrentPassword = !showCurrentPassword"
+                            class="absolute inset-y-0 right-0 flex items-center pr-3 text-sub hover:text-accent">
+                            <EyeOff v-if="showCurrentPassword" class="w-5 h-5" />
+                            <Eye v-else class="w-5 h-5" />
+                        </button>
+                    </div>
                     <p v-if="passwordErrors?.currentPassword" class="form-error">
                         {{ passwordErrors.currentPassword }}
                     </p>
@@ -142,8 +164,16 @@ onMounted(async () => {
 
                 <div>
                     <label for="newPassword" class="form-label">New Password</label>
-                    <input id="newPassword" type="password" placeholder="**********" required class="form-input"
-                        v-model="formPasswordData.newPassword" />
+                    <div class="relative">
+                        <input id="newPassword" :type="showNewPassword ? 'text' : 'password'" placeholder="**********"
+                            required class="form-input" v-model="formPasswordData.newPassword" />
+
+                        <button type="button" @click="showNewPassword = !showNewPassword"
+                            class="absolute inset-y-0 right-0 flex items-center pr-3 text-sub hover:text-accent">
+                            <EyeOff v-if="showNewPassword" class="w-5 h-5" />
+                            <Eye v-else class="w-5 h-5" />
+                        </button>
+                    </div>
                     <p v-if="passwordErrors?.newPassword" class="form-error">
                         {{ passwordErrors.newPassword }}
                     </p>
@@ -151,8 +181,17 @@ onMounted(async () => {
 
                 <div>
                     <label for="confirmNewPassword" class="form-label">Confirm New Password</label>
-                    <input id="confirmNewPassword" type="password" class="form-input" placeholder="**********" required
-                        v-model="formPasswordData.confirmNewPassword" />
+                    <div class="relative">
+                        <input id="confirmNewPassword" :type="showConfirmPassword ? 'text' : 'password'"
+                            class="form-input" placeholder="**********" required
+                            v-model="formPasswordData.confirmNewPassword" />
+
+                        <button type="button" @click="showConfirmPassword = !showConfirmPassword"
+                            class="absolute inset-y-0 right-0 flex items-center pr-3 text-sub hover:text-accent">
+                            <EyeOff v-if="showConfirmPassword" class="w-5 h-5" />
+                            <Eye v-else class="w-5 h-5" />
+                        </button>
+                    </div>
                     <p v-if="passwordErrors?.confirmNewPassword" class="form-error">
                         {{ passwordErrors.confirmNewPassword }}
                     </p>

@@ -6,11 +6,10 @@ import { useI18n } from 'vue-i18n'
 const { t } = useI18n()
 import { useRoute, useRouter } from 'vue-router'
 
-import { useMediaStore } from '@/stores/mediaStore'
 import { useNotificationStore } from '@/stores/notificationStore'
 import { useMediaContentStore } from '@/stores/mediaContentStore'
-
-import { confirmAndDelete } from '@/utils/global'
+import { useMediaStore } from '@/stores/mediaStore'
+import { confirmAndDelete, toNumber } from '@/utils/global'
 import { useAuthStore } from '@/stores/authStore'
 
 const authStore = useAuthStore()
@@ -21,10 +20,7 @@ const mediaContentStore = useMediaContentStore()
 const mediaStore = useMediaStore()
 const notiStore = useNotificationStore()
 
-const id: string | string[] | undefined = Array.isArray(route.params.id)
-    ? route.params.id[0]
-    : route.params.id
-const mediaId: number = Number(id)
+const mediaId: number | null = toNumber(route.params.id)
 
 const handleSelectEpisode = async (episodeId: number): Promise<void | null> => {
     if (!episodeId) return null
@@ -47,6 +43,7 @@ const handleSelectEpisode = async (episodeId: number): Promise<void | null> => {
 
 // 3. إدارة الحلقات
 const handleAddEpisode = (): void => {
+    if(!mediaId) return
     router.push({ name: 'addEpisode', params: { media_id: mediaId } })
 }
 
@@ -55,7 +52,7 @@ const handleEditEpisode = async (episode: number): Promise<void> => {
 
     if (!mediaContentStore.currentEpisode) return
 
-    router.push({ name: 'editEpisode', params: { id: mediaContentStore.currentEpisode.id } })
+    router.push({ name: 'editEpisode', params: { id: mediaContentStore.currentEpisode?.id } })
 }
 
 const handleDeleteEpisode = (episodeId: number): void => {

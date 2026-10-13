@@ -62,7 +62,7 @@ const handleSelectHistory = async (url: string): Promise<null | undefined> => {
         return null
     } else {
         isModalOpen.value = false
-        await userStore.getUserById()
+        await userStore.getUserById(true)
     }
 
     return null

@@ -87,7 +87,7 @@ export const useUserStore = defineStore('user', {
             return isSuccess // null
         },
 
-        async getUserById(force = true): Promise<UserDataResponse | null> {
+        async getUserById(force: boolean = false): Promise<UserDataResponse | null> {
             const isSuccess: UserDataResponse | null = await handleStoreFetch<
                 UserDataResponse,
                 unknown,
@@ -114,7 +114,7 @@ export const useUserStore = defineStore('user', {
         async getSessionsByUserId({
             sortBy = 'expires_at',
             sortOrder = 'ASC' as OrderingEnum,
-            force = true,
+            force = false,
         }: SortedSessionRequest & { force?: boolean } = {}): Promise<
             UserSessionDataResponse[] | null
         > {
