@@ -30,12 +30,12 @@ const handleSubmit = async (): Promise<boolean | null> =>
 </script>
 
 <template>
-    <div class="min-h-screen bg-background flex select-none">
+    <div class="min-h-screen flex select-none">
 
         <!-- القسم الأيسر: فورم تسجيل الدخول -->
         <div class="w-full lg:w-1/2 flex items-center justify-center p-6 sm:p-12 ">
             <!-- صندوق تسجيل الدخول -->
-            <div class="w-full max-w-md bg-card rounded-2xl border border-accent shadow-xl p-8 space-y-6">
+            <div class="card p-fluid-section flex flex-col gap-4 bg-card/80">
                 <!-- شعار ومقدمة ترحيبية -->
                 <div class="text-center space-y-2">
                     <div
