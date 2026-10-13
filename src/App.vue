@@ -23,7 +23,6 @@ onMounted(() => {
 })
 </script>
 <template>
-    <!-- 🟢 الحالة الأولى: جاري تهيئة النظام عند فتح التطبيق أول مرة -->
     <div
         v-if="!authStore.isInitialized && authStore.isLoading"
         class="flex flex-col justify-center items-center h-screen bg-gray-50 font-sans"
@@ -41,10 +40,8 @@ onMounted(() => {
         </div>
     </div>
 
-    <!-- 🔴 الحالة الثانية: السيرفر متوقف أو لا يستجيب (تظهر صفحة الخطأ بتصميمها المستقل) -->
     <ServerError v-else-if="authStore.isServerError" />
 
-    <!-- 🔵 الحالة الثالثة: الجلسة سليمة والسيرفر يعمل (عرض التطبيق والصفحات) -->
     <div v-else>
         <RouterView />
         <NotificationApp />

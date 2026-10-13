@@ -85,7 +85,14 @@ this.episodes = sortByProperty(episodesList, 'title')
 // 3. ترتيب تنازلي بناءً على تاريخ الإنشاد أو أي نص/رقم آخر
 this.media = sortByProperty(mediaList, 'created_at', false)
 */
+const toNumber = (val: unknown): number | null => {
+    if (val === undefined || val === null || val === '') return null
 
-const toNumber = (val: any): number => (Array.isArray(val) ? Number(val[0]) : Number(val))
+    const target = Array.isArray(val) ? val[0] : val
+    const parsed = Number(target)
+
+    // التأكد من أن الناتج رقم صالح وليس NaN
+    return Number.isNaN(parsed) ? null : parsed
+}
 
 export { formatDate, confirmAndDelete, sortByProperty, toNumber }

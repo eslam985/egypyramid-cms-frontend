@@ -4,7 +4,10 @@ import type { GetMediasQueryInputsType } from '@/schemas/mediaSchema'
 
 export type dataType = string | number | Date
 export type TableRow = Record<string, any>
-
+export type ValidationResult = {
+    isValid: boolean
+    data: any | null
+}
 // =================================
 // ============= Enum ==============
 // =================================
@@ -307,9 +310,9 @@ export interface StoreAddParams<
     TStore extends BaseStore = BaseStore,
 > {
     store?: TStore
-    apiCall: (
-        ...args: any[]
-    ) => Promise<BaseApiResponse<TData | null>> | BaseApiResponse<TData | null>
+    apiCall: (...args: any[]) => Promise<BaseApiResponse<TData | null>> | BaseApiResponse<TData | null>
+
+
     id?: number | string
     data: TInput
     listKey?: keyof TStore
@@ -325,12 +328,10 @@ export interface StoreEditParams<
 > {
     store?: TStore
     apiCall:
-        | ((
-              id: TId,
-              data: TInput,
-          ) => Promise<BaseApiResponse<TData | null>> | BaseApiResponse<TData | null>)
+        | (( id: TId,data: TInput, ) => Promise<BaseApiResponse<TData | null>> | BaseApiResponse<TData | null>)
         | ((data: TInput) => Promise<BaseApiResponse<TData | null>> | BaseApiResponse<TData | null>)
         | ((id: TId) => Promise<BaseApiResponse<TData | null>> | BaseApiResponse<TData | null>)
+
     id?: TId
     data?: TInput
     listKey?: keyof TStore

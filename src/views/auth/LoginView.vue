@@ -3,12 +3,13 @@ import { useRouter } from 'vue-router'
 import { reactive } from 'vue'
 import { useI18n } from 'vue-i18n'
 
-import { useAuthStore } from '../../stores/authStore'
-import { loginUserSchema } from '../../schemas/authSchema'
-import type { LoginUserInputsType } from '../../schemas/authSchema'
 import { useFormValidation } from '../../composables/useFormValidation'
+import { loginUserSchema } from '../../schemas/authSchema'
+import { utilsSubmit } from '@/composables/useUtilsSubmit'
+import { useAuthStore } from '../../stores/authStore'
 
-const { t } = useI18n()
+import type { LoginUserInputsType } from '../../schemas/authSchema'
+
 
 const formData = reactive<LoginUserInputsType>({
     email: '',
@@ -17,34 +18,23 @@ const formData = reactive<LoginUserInputsType>({
 
 const { errors, validate } = useFormValidation(loginUserSchema)
 
-const router = useRouter()
 const authStore = useAuthStore()
+const router = useRouter()
+const { t } = useI18n()
 
-const handleSubmit = async (): Promise<void> => {
-    const { isValid, data } = validate(formData)
-    if (!isValid || !data) return
+const handleSubmit = async (): Promise<boolean | null> =>
+    utilsSubmit(undefined, formData, validate, authStore.loginUser, () => router.push('/'))
 
-    const isSuccess = await authStore.loginUser(data)
-
-    if (isSuccess) {
-        router.push('/')
-    }
-}
 </script>
 
 <template>
-    <div
-        class="min-h-screen bg-background flex items-center justify-center p-6 sm:p-6 select-none relative"
-    >
+    <div class="min-h-screen bg-background flex items-center justify-center p-6 sm:p-6 select-none relative">
         <!-- صندوق تسجيل الدخول -->
-        <div
-            class="w-full max-w-md bg-card rounded-2xl border border-custom-border shadow-xl p-8 space-y-6"
-        >
+        <div class="w-full max-w-md bg-card rounded-2xl border border-custom-border shadow-xl p-8 space-y-6">
             <!-- شعار ومقدمة ترحيبية -->
             <div class="text-center space-y-2">
                 <div
-                    class="inline-flex w-12 h-12 bg-accent rounded-2xl items-center justify-center text-white font-black text-lg shadow-lg shadow-accent/20 mb-2"
-                >
+                    class="inline-flex w-12 h-12 bg-accent rounded-2xl items-center justify-center text-white font-black text-lg shadow-lg shadow-accent/20 mb-2">
                     D
                 </div>
                 <h2 class="text-2xl font-bold text-title tracking-tight">
@@ -59,16 +49,11 @@ const handleSubmit = async (): Promise<void> => {
                 <div class="flex flex-col gap-1.5">
                     <label for="email" class="form-label">email</label>
                     <div class="relative">
-                        <input
-                            id="email"
-                            type="text"
-                            :placeholder="t('auth.usernamePlaceholder')"
-                            v-model="formData.email"
-                            :class="[
+                        <input id="email" type="text" :placeholder="t('auth.usernamePlaceholder')"
+                            v-model="formData.email" :class="[
                                 errors.email ? 'border-red-500 focus:ring-red-100' : '',
                                 'form-input pl-11!',
-                            ]"
-                        />
+                            ]" />
 
                         <!-- رسالة الخطأ الخاص بالحقل -->
                         <p v-if="errors.email" class="text-fluid-xs text-red-500 mt-1">
@@ -83,23 +68,15 @@ const handleSubmit = async (): Promise<void> => {
                         <label for="password" class="form-label mb-0">{{
                             t('auth.password')
                         }}</label>
-                        <a
-                            href="#"
-                            class="text-fluid-xs font-semibold text-accent hover:text-accent-dark transition-colors"
-                            >{{ t('auth.forgotPassword') }}</a
-                        >
+                        <a href="#"
+                            class="text-fluid-xs font-semibold text-accent hover:text-accent-dark transition-colors">{{
+                                t('auth.forgotPassword') }}</a>
                     </div>
                     <div class="relative">
-                        <input
-                            id="password"
-                            type="password"
-                            placeholder="••••••••"
-                            v-model="formData.password"
-                            :class="[
-                                errors.password ? 'border-red-500 focus:ring-red-100' : '',
-                                'form-input pl-11',
-                            ]"
-                        />
+                        <input id="password" type="password" placeholder="••••••••" v-model="formData.password" :class="[
+                            errors.password ? 'border-red-500 focus:ring-red-100' : '',
+                            'form-input pl-11',
+                        ]" />
 
                         <!-- رسالة الخطأ الخاص بالحقل -->
                         <p v-if="errors.password" class="text-fluid-xs text-red-500 mt-1">
@@ -109,11 +86,8 @@ const handleSubmit = async (): Promise<void> => {
                 </div>
 
                 <!-- زر تسجيل الدخول -->
-                <button
-                    type="submit"
-                    class="btn-primary w-full mt-4 flex items-center justify-center gap-2"
-                    :disabled="authStore.isLoading"
-                >
+                <button type="submit" class="btn-primary w-full mt-4 flex items-center justify-center gap-2"
+                    :disabled="authStore.isLoading">
                     <span>{{ authStore.isLoading ? t('auth.signingIn') : t('auth.signIn') }}</span>
                 </button>
             </form>
