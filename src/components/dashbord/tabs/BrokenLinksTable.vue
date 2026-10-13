@@ -1,24 +1,24 @@
 <script setup lang="ts">
-import { storeToRefs } from 'pinia'
 import { useRouter, useRoute } from 'vue-router'
-import { ref, onMounted } from 'vue'
-import { useI18n } from 'vue-i18n'
 import { Download, Loader } from '@lucide/vue'
-
-import { useAnalyticsStore } from '@/stores/analyticsStore'
-import { formatDate } from '@/utils/global'
+import { ref, onMounted } from 'vue'
+import { storeToRefs } from 'pinia'
+import { useI18n } from 'vue-i18n'
 
 import AppPagination from '@/components/utils/AppPagination.vue'
+import { useAnalyticsStore } from '@/stores/analyticsStore'
 import BaseTable from '@/components/ui/BaseTable.vue'
 import { useAuthStore } from '@/stores/authStore'
+import { formatDate } from '@/utils/global'
 
 import type { ServerNameRequest } from '@/types/globalTypes'
 
-const authStore = useAuthStore()
-const { t } = useI18n()
-const route = useRoute()
-const router = useRouter()
 const analyticsStore = useAnalyticsStore()
+const authStore = useAuthStore()
+const router = useRouter()
+const route = useRoute()
+const { t } = useI18n()
+
 const { brokenLinksList, pagination, isLoading } = storeToRefs(analyticsStore)
 
 const selectedServer = ref<string>('mixdrop')
@@ -29,24 +29,25 @@ const availableServers: {
     { label: 'تليجرام مباشر', value: 'telegram_direct' },
     { label: 'Doodstream', value: 'doodstream' },
     { label: 'Lulustream', value: 'lulustream' },
-    { label: 'Mixdrop', value: 'mixdrop' },
     { label: 'Streamtape', value: 'streamtape' },
+    { label: 'archive', value: 'archive' },
+    { label: 'Mixdrop', value: 'mixdrop' },
     { label: 'Voe', value: 'voe' },
     { label: 'VK', value: 'vk' },
-    { label: 'archive', value: 'archive' },
 ]
 
 const columns: {
     label: string
     key: string
 }[] = [
-    { label: t('brokenLinks.table.name'), key: 'title' },
-    { label: t('brokenLinks.table.type'), key: 'type' },
-    { label: t('brokenLinks.table.serverQuality'), key: 'server_name' },
-    { label: t('brokenLinks.table.url'), key: 'url' },
     { label: t('brokenLinks.table.errorReason'), key: 'error_message' },
+    { label: t('brokenLinks.table.serverQuality'), key: 'server_name' },
     { label: t('brokenLinks.table.lastCheck'), key: 'last_check_at' },
     { label: t('brokenLinks.table.status'), key: 'is_ready' },
+    { label: t('brokenLinks.table.name'), key: 'title' },
+    { label: t('brokenLinks.table.type'), key: 'type' },
+    { label: t('brokenLinks.table.url'), key: 'url' },
+
 ]
 
 const query = (query: ServerNameRequest): void => {
