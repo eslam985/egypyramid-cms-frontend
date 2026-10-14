@@ -28,7 +28,6 @@ import type {
 import { OrderingEnum } from '@/types/globalTypes'
 import type { MediasResponse, MediaState } from '@/types/globalTypes'
 
-
 const useMediaStore = defineStore('media', {
     state: (): MediaState => ({
         medias: [],
@@ -117,7 +116,7 @@ const useMediaStore = defineStore('media', {
         },
         async fetchMediaByAnyId(
             id: number,
-            targetTable: string | boolean = 'all',
+            targetTable: 'all' | 'episodes' | 'links' | 'medias' | 'seasons',
             force: boolean = false,
         ): Promise<MediasResponse | null> {
             if (!id) {
@@ -148,6 +147,7 @@ const useMediaStore = defineStore('media', {
                     this.successMessage || `Found Media ID ${isSuccess?.id} successfuly `,
                 )
                 this.medias = [isSuccess]
+                this.currentMedia = isSuccess
             } else {
                 this.notiStore.triggerNotification(this.errorMessage || 'Not Found')
             }

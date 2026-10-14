@@ -7,12 +7,14 @@ import { createLinkSchema, updateLinkByIdSchema } from '@/schemas/linkSchema'
 import { useFormValidation } from '@/composables/useFormValidation'
 import { useMediaContentStore } from '@/stores/mediaContentStore'
 import { utilsSubmit } from '@/composables/useUtilsSubmit'
+import { useMediaStore } from '@/stores/mediaStore'
 import { toNumber } from '@/utils/global'
 
 import type { EpisodeResponse, LinksResponse } from '@/types/globalTypes'
 import type { CreateLinkSchemaType } from '@/schemas/linkSchema'
 
 const mediaContentStore = useMediaContentStore()
+const mediaStore = useMediaStore()
 const router = useRouter()
 const route = useRoute()
 const { t } = useI18n()
@@ -22,8 +24,8 @@ const currentSchema = computed(() =>
 )
 
 const { errors, validate } = useFormValidation(currentSchema)
-const episodeId = toNumber(route.params.episode_id)
-const linkId = toNumber(route.params.id)
+const episodeId: number | null = toNumber(route.params.episode_id)
+const linkId: number | null = toNumber(route.params.id)
 
 const formData = reactive<CreateLinkSchemaType>({
     server_name: '',
@@ -37,16 +39,25 @@ const formData = reactive<CreateLinkSchemaType>({
 
 const handleSubmit = async (): Promise<void> => {
     route.name === 'addLink' && episodeId
-        ? utilsSubmit(episodeId, formData, validate, mediaContentStore.addLink, () => router.push({ name: 'mediaDetails' })) : null
+        ? utilsSubmit(episodeId, formData, validate, mediaContentStore.addLink, () => {
+            const mediaId = mediaStore.currentMedia?.id
+            if (!mediaId) return
+            router.push(`/media/${mediaId}/details`)
+        }) : null
 
     route.name === 'editLink' && linkId
-        ? utilsSubmit(linkId, formData, validate, mediaContentStore.editLinkById, () => router.push({ name: 'mediaDetails' })) : null
+        ? utilsSubmit(linkId, formData, validate, mediaContentStore.editLinkById, () => {
+            const mediaId = mediaStore.currentMedia?.id
+
+            if (!mediaId) return
+            router.push(`/media/${mediaId}/details`)
+        }) : null
 }
 
 const loadData = async () => {
 
     if (route.name === 'addLink') {
-        if(!episodeId) return
+        if (!episodeId) return
         const foundEpisode: EpisodeResponse | null = await mediaContentStore.getEpisodeById(
             episodeId,
             true,
@@ -56,7 +67,7 @@ const loadData = async () => {
             router.push({ name: 'NotFound' })
         }
     } else if (route.name === 'editLink') {
-        if(!linkId) return
+        if (!linkId) return
         const link: LinksResponse | null = await mediaContentStore.getLinkById(linkId, true)
 
         if (!link) {

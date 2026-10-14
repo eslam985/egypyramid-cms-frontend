@@ -20,7 +20,7 @@ const router = useRouter()
 const route = useRoute()
 const { t } = useI18n()
 
-const mediaId: number | null = toNumber(route.params.media_id)
+const mediaId: number | null = toNumber(route.params?.media_id)
 const seasonId: number | null = toNumber(route.params.id)
 
 const currentSchema = computed(() => (mediaId ? createSeasonSchema : updateSeasonSchema))
@@ -65,12 +65,12 @@ const loadData = async () => {
 
 
 const handleSubmit = async (): Promise<void | null> => {
-
-    route.name === 'editSeason' && seasonId
-        ? utilsSubmit(seasonId, formData, validate, mediaContentStore.editSeasonById, () => router.push({ name: 'mediaDetails' })) : null
-
     route.name === 'addSeason' && mediaId
-        ? utilsSubmit(mediaId, formData, validate, mediaContentStore.addSeason, () => router.push({ name: 'mediaDetails' })) : null
+        ? utilsSubmit(mediaId, formData, validate, mediaContentStore.addSeason, () => router.push(`/media/${mediaId}/details`)) : null
+
+    route.name === 'editSeason' && seasonId && mediaId
+        ? utilsSubmit(seasonId, formData, validate, mediaContentStore.editSeasonById, () => router.push(`/media/${mediaId}/details`) ) : null
+
 }
 
 onMounted(async () => {

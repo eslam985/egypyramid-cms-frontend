@@ -12,7 +12,6 @@ export const utilsSubmit = async <TInputs, TResponse>(
         | ((id: number, data: TInputs) => Promise<TResponse | null>),
     onSuccess?: () => Promise<unknown> | unknown,
 ): Promise<TResponse | null> => {
-
     if (!formData) {
         notiStore.triggerNotification('يجب ارسال بيانات اولا!')
         return null

@@ -5,6 +5,7 @@ import { useI18n } from 'vue-i18n'
 
 import { createMediaSchema, updateMediaSchema } from '@/schemas/mediaSchema'
 import { useFormValidation } from '@/composables/useFormValidation'
+import { useMediaContentStore } from '@/stores/mediaContentStore'
 import { utilsSubmit } from '@/composables/useUtilsSubmit'
 import { useGenresStore } from '@/stores/genreStore'
 import { useMediaStore } from '@/stores/mediaStore'
@@ -14,7 +15,8 @@ import { toNumber } from '@/utils/global'
 import type { MediasResponse, GenresResponse } from '@/types/globalTypes'
 import type { CreateMediaInputsType } from '@/schemas/mediaSchema'
 
-// استدعاء الـ Composable وتمرين الـ Schema
+
+const mediaContentStore = useMediaContentStore()
 const genresStore = useGenresStore()
 const mediaStore = useMediaStore()
 const router = useRouter()
@@ -47,9 +49,24 @@ const formData = reactive<CreateMediaInputsType>({
 // جلب التصنيفات من السيرفر عند تحميل الصفحة
 
 const handleSubmit = async (): Promise<void | null> => {
+    if (!mediaId) return
+    if (!formData.genres) {
+        formData.genres = []
+    }
+
     mediaId
-        ? utilsSubmit(mediaId, formData, validate, mediaStore.editMediaById, () => router.push({ name: 'mediaList' }))
-        : utilsSubmit(undefined, formData, validate, mediaStore.addMedia, () => router.push({ name: 'mediaList' }))
+        ? utilsSubmit(mediaId, formData, validate, mediaStore.editMediaById, () => {
+            router.push(`/media/${mediaId}/details`)
+            mediaStore.currentMedia?.category === 'movie'
+                ? mediaContentStore.getEpisodesByMediaId(mediaId, undefined, true)
+                : mediaContentStore.getSeasonsByMediaId(mediaId, true)
+        })
+
+        : utilsSubmit(undefined, formData, validate, mediaStore.addMedia, () => {
+            router.push({ name: 'mediaList' })
+            mediaStore.fetchMedias({ page: 1, limit: 20 }, true)
+        })
+
 }
 
 const loadData = async () => {

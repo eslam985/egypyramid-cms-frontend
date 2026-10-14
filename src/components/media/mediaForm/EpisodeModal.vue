@@ -83,10 +83,10 @@ const loadData = async () => {
 const handleSubmit = async (): Promise<void | null> => {
 
     route.name === 'addEpisode' && mediaId
-        ? utilsSubmit(mediaId, formData, validate, mediaContentStore.addEpisode, () => router.push({ name: 'mediaDetails' })) : null
+        ? utilsSubmit(mediaId, formData, validate, mediaContentStore.addEpisode, () => router.push(`/media/${mediaId}/details`)) : null
 
     route.name === 'editEpisode' && episodeId
-        ? utilsSubmit(episodeId, formData, validate, mediaContentStore.addEpisode, () => router.push({ name: 'mediaDetails' })) : null
+        ? utilsSubmit(episodeId, formData, validate, mediaContentStore.addEpisode,  () => router.push(`/media/${mediaId}/details`) ) : null
 }
 
 onMounted(async () => {
