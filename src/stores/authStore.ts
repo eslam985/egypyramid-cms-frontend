@@ -16,6 +16,7 @@ import type {
 
 
 
+
 export const useAuthStore = defineStore('auth', {
     state: (): AuthState => ({
         user: null,
@@ -85,6 +86,7 @@ export const useAuthStore = defineStore('auth', {
                     this.errorMessage = 'حدث خطأ اثناء الاتصال بقاعدة البيانات!'
                 } else {
                     this.errorMessage = msg || 'حدث خطأ ما، يرجى المحاولة لاحقاً'
+                    this.isServerError = true
                 }
 
                 this.notiStore.triggerNotification(this.errorMessage)
