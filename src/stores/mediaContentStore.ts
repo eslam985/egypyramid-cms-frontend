@@ -176,7 +176,7 @@ const useMediaContentStore = defineStore('mediaContent', {
             data: CreateSeasonSchemaType,
             force: boolean = true,
         ): Promise<SeasonsResponse | null> {
-            if (!media_id || data) {
+            if (!media_id || !data) {
                 this.notiStore.triggerNotification('Id And Data Is Required!')
                 return null
             }
@@ -209,7 +209,7 @@ const useMediaContentStore = defineStore('mediaContent', {
             id: number,
             data: UpdateSeasonSchemaType,
         ): Promise<SeasonsResponse | null> {
-            if (!id || data) {
+            if (!id || !data) {
                 this.notiStore.triggerNotification('Id And Data Is Required!')
                 return null
             }

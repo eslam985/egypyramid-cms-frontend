@@ -11,6 +11,7 @@ const handleRetry = async (): Promise<void> => {
         authStore.isServerError = false
     } catch (err) {
         console.error('إعادة المحاولة فشلت:', err)
+        authStore.notiStore.triggerNotification('إعادة المحاولة فشلت')
     }
 }
 </script>

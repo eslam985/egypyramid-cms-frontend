@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { Trash, MonitorCheck } from '@lucide/vue'
 
+import { useNotificationStore } from '@/stores/notificationStore'
+import { confirmAndDelete, formatDate } from '@/utils/global'
 import BaseTable from '@/components/ui/BaseTable.vue'
 import { useUserStore } from '@/stores/userStore'
-import { confirmAndDelete, formatDate } from '@/utils/global'
-import { useNotificationStore } from '@/stores/notificationStore'
 
 const userStore = useUserStore()
 const notiStore = useNotificationStore()
@@ -17,13 +17,13 @@ const columns = [
     { label: 'Updated At', key: 'updated_at', sortable: true },
     { label: 'Action', key: 'Action' },
 ]
-const handleSort = (column: string): void => {
-    const key: string[] = columns.map((c) => c.key)
 
-    if ([...key].includes(column)) {
-        userStore.setSort(
-            column as 'user_agent' | 'ip_address' | 'expires_at' | 'created_at' | 'updated_at',
-        )
+const handleSort = (sortColumns: string): void => {
+
+    const availableColumn: string[] = columns.map((c) => c.key)
+
+    if ([...availableColumn].includes(sortColumns)) {
+        userStore.setSort(sortColumns)
     }
 }
 
@@ -39,9 +39,7 @@ const handleDelete = (sessionId: number): void => {
 }
 </script>
 <template>
-    <section
-        class="grid grid-cols-1 gap-fluid-gap max-w-6xl mx-auto mb-8 w-full min-w-0 overflow-x-hidden"
-    >
+    <section class="grid grid-cols-1 gap-fluid-gap max-w-6xl mx-auto mb-8 w-full min-w-0 overflow-x-hidden">
         <div>
             <div class="flex gap-2">
                 <MonitorCheck :stroke-width="1" class="text-accent" />
@@ -52,20 +50,12 @@ const handleDelete = (sessionId: number): void => {
             </p>
         </div>
 
-        <BaseTable
-            :columns="columns"
-            :rows="userStore.sessions"
-            :isLoading="userStore.isLoading"
-            :sortBy="userStore.filters.sortBy?.toString()"
-            :sortOrder="userStore.filters.sortOrder"
-            @sort="handleSort"
-        >
+        <BaseTable :columns="columns" :rows="userStore.sessions" :isLoading="userStore.isLoading"
+            :sortBy="userStore.filters.sortBy?.toString()" :sortOrder="userStore.filters.sortOrder" @sort="handleSort">
             <template #cell-Action="{ row }">
                 <button
                     class="mx-auto flex gap-2 px-3 py-2 rounded-xl border border-danger/20 hover:bg-danger/10 font-medium transition-all active:scale-95 disabled:opacity-50 cursor-pointer"
-                    type="button"
-                    @click="handleDelete(row.id)"
-                >
+                    type="button" @click="handleDelete(row.id)">
                     <Trash class="self-center text-danger" />
                     <span class="self-center">Delete</span>
                 </button>

@@ -219,6 +219,7 @@ export const useUserStore = defineStore('user', {
         },
 
         async setSort(column: string): Promise<UserSessionDataResponse[] | null> {
+
             if (this.filters.sortBy === column) {
                 this.filters.sortOrder =
                     this.filters.sortOrder === 'ASC'
