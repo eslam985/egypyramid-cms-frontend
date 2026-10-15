@@ -50,8 +50,15 @@ const handleDelete = (sessionId: number): void => {
             </p>
         </div>
 
-        <BaseTable :columns="columns" :rows="userStore.sessions" :isLoading="userStore.isLoading"
-            :sortBy="userStore.filters.sortBy?.toString()" :sortOrder="userStore.filters.sortOrder" @sort="handleSort">
+        <BaseTable
+            :columns="columns"
+            :rows="userStore.sessions ?? []"
+            :isLoading="userStore.isLoading"
+            :sortBy="userStore.filters.sortBy ?? '' "
+            :sortOrder="userStore.filters.sortOrder ?? '' "
+            @sort="handleSort"
+            >
+
             <template #cell-Action="{ row }">
                 <button
                     class="mx-auto flex gap-2 px-3 py-2 rounded-xl border border-danger/20 hover:bg-danger/10 font-medium transition-all active:scale-95 disabled:opacity-50 cursor-pointer"

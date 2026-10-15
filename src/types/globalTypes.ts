@@ -2,43 +2,35 @@
 import { useNotificationStore } from '@/stores/notificationStore'
 import type { GetMediasQueryInputsType } from '@/schemas/mediaSchema'
 
-export type dataType = string | number | Date
-export type TableRow = Record<string, any>
 export type ValidationResult = {
     isValid: boolean
     data: any | null
 }
-// =================================
-// ============= Enum ==============
-// =================================
 
-export enum StatusTasksRequest {
-    valid = 'valid',
-    broken = 'broken',
-    pending = 'pending',
+export type EpisodeAllowedColumnsSorted = 'episode_number' | 'created_at' | 'media_id'
+
+export type LinksAllowedColumnsSorted = 'quality' | 'server_name' | 'created_at'
+
+export type SeasonAllowedColumns = 'season_number' | 'created_at'
+
+export type StatusLinksRequest = 'valid' | 'broken' | 'pending'
+
+export interface StatusTasksRequest {
+    status: 'failed' | 'idle' | 'processing'
 }
 
-export enum OrderingEnum {
-    DESC = 'DESC',
-    ASC = 'ASC',
-}
+export type dataType = string | number | Date
 
-export enum SeasonAllowedColumns {
-    season_number = 'season_number',
-    created_at = 'created_at',
-}
+export type TableRow = Record<string, any>
 
-export enum EpisodeAllowedColumnsSorted {
-    episode_number = 'episode_number',
-    created_at = 'created_at',
-    media_id = 'media_id',
-}
+// 1. تعريف الكائن القيم (Value)
+export const OrderingEnum = {
+    DESC: 'DESC',
+    ASC: 'ASC',
+} as const
 
-export enum LinksAllowedColumnsSorted {
-    quality = 'quality',
-    server_name = 'server_name',
-    created_at = 'created_at',
-}
+// 2. استخراج النوع (Type) بنفس الاسم تماماً ليمثل القيم النصية فقط
+export type OrderingEnum = (typeof OrderingEnum)[keyof typeof OrderingEnum]
 
 // =================================
 // ============= Query ==============
@@ -51,7 +43,7 @@ export interface BaseQueryRequest {
 }
 
 export interface SortedSessionRequest {
-    sortBy?: string | number | null
+    sortBy?: string | null
     sortOrder?: OrderingEnum
 }
 
@@ -75,7 +67,7 @@ export interface TotalStatusTasksResponse {
 }
 
 export interface ServerNameRequest extends BaseQueryRequest {
-    serverName?: string
+    serverName: string
 }
 
 export interface SeasonQueryRequest extends BaseQueryRequest {
@@ -167,7 +159,7 @@ export interface LockedTelegramResponse {
 
 export interface TotalStatusLinksResponse {
     server_name: string
-    last_check_status: StatusTasksRequest
+    last_check_status: StatusLinksRequest
     total: number
 }
 
@@ -187,9 +179,11 @@ export interface DownloadTasksResponse {
     task_year?: string
     fallback_urls?: string[]
 }
+
 export interface DeleteTaskResponseData {
     deletedCount: number
 }
+
 export interface MediasResponse {
     id?: string | number
     tmdb_id?: string
@@ -310,8 +304,9 @@ export interface StoreAddParams<
     TStore extends BaseStore = BaseStore,
 > {
     store?: TStore
-    apiCall: (...args: any[]) => Promise<BaseApiResponse<TData | null>> | BaseApiResponse<TData | null>
-
+    apiCall: (
+        ...args: any[]
+    ) => Promise<BaseApiResponse<TData | null>> | BaseApiResponse<TData | null>
 
     id?: number | string
     data: TInput
@@ -328,7 +323,10 @@ export interface StoreEditParams<
 > {
     store?: TStore
     apiCall:
-        | (( id: TId,data: TInput, ) => Promise<BaseApiResponse<TData | null>> | BaseApiResponse<TData | null>)
+        | ((
+              id: TId,
+              data: TInput,
+          ) => Promise<BaseApiResponse<TData | null>> | BaseApiResponse<TData | null>)
         | ((data: TInput) => Promise<BaseApiResponse<TData | null>> | BaseApiResponse<TData | null>)
         | ((id: TId) => Promise<BaseApiResponse<TData | null>> | BaseApiResponse<TData | null>)
 

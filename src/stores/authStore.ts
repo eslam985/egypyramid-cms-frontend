@@ -1,10 +1,12 @@
 import { defineStore } from 'pinia'
+
 import { login, logout, refresh, handleRegister } from '@/api/auth/auth'
+import { useNotificationStore } from '@/stores/notificationStore'
 import { handleStoreAdd } from '@/utils/store'
 import { RolesList } from '@/utils/roles_list'
 import { decodeJwt } from '@/utils/decodeJwt'
+
 import type { LoginUserInputsType, CreateUserInputsType } from '@/schemas/authSchema'
-import { useNotificationStore } from '@/stores/notificationStore'
 
 import type {
     UserDataResponse,
@@ -13,9 +15,6 @@ import type {
     BaseApiResponse,
     AuthState
 } from '@/types/globalTypes'
-
-
-
 
 export const useAuthStore = defineStore('auth', {
     state: (): AuthState => ({

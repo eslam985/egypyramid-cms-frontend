@@ -99,7 +99,7 @@ const handleExport = async () => {
         <!-- 4444 -->
         <!-- refreshData -->
         <button @click="handleRefresh" :disabled="genresStore.isLoading" type="button"
-            class="md:col-span-5 btn-outline gap-1 shadow-glow/10 text-fluid-xs lg:text-fluid-p text-accent-dark hover:text-slate-900 hover:bg-accent/70">
+            class=" md:col-span-5 btn-outline gap-1 shadow-glow/10 text-fluid-xs lg:text-fluid-p text-accent-dark hover:text-slate-900 hover:bg-accent/70">
             <Loader class="size-5 text-accent" :class="{ 'animate-spin': genresStore.isLoading }" :stroke-width="2" />
             {{ t('common.refreshData') }}
         </button>
@@ -107,7 +107,7 @@ const handleExport = async () => {
         <!-- 5555 -->
         <!-- addNew -->
         <router-link v-if="authStore.isEditorAndAbove" to="/new-genre"
-            class="md:col-span-5 btn-outline gap-1 px-0 shadow-glow/10 text-fluid-xs lg:text-fluid-p text-accent-dark hover:text-slate-900 hover:bg-accent/70">
+            class=" md:col-span-5 btn-outline gap-1 px-0 shadow-glow/10 text-fluid-xs lg:text-fluid-p text-accent-dark hover:text-slate-900 hover:bg-accent/70">
             {{ t('genres.addNew') }}
         </router-link>
     </div>

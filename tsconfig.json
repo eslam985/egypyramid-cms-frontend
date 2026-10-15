@@ -8,7 +8,7 @@
     "lib": ["esnext", "dom"],
     "esModuleInterop": true,
     "types": ["vite/client", "node"],
-    "allowJs": true,
+    "allowJs": false,
 
     // 🔒 خيارات الفحص الصارم والأمان
     "strict": true,
@@ -18,7 +18,9 @@
     "noUnusedParameters": true,
     "noUncheckedIndexedAccess": true,
     "allowUnreachableCode": false,
-    "exactOptionalPropertyTypes": false,
+    "exactOptionalPropertyTypes": true,
+    "noFallthroughCasesInSwitch": true,
+    "noPropertyAccessFromIndexSignature": false,
     // ⚡ إعدادات التوافق مع Vite
     "jsx": "preserve",
     "resolveJsonModule": true,

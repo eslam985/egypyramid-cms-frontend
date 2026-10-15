@@ -85,7 +85,7 @@ const handleExport = async () => {
             <select
                 id="media-category"
                 v-model="selectedCategory"
-                class="w-full p-fluid self-center text-center rounded-xl bg-line/10 border border-accent/20 border-linerounded-xl text-fluid-xs text-nowrap"
+                class="form-select md:col-span-5 rounded-xl border border-line text-fluid-xs focus:outline-none focus:border-accent font-medium cursor-pointer"
                 @change="handleCategoryChange()"
             >
                 <!-- استخدام :value="null" لضمان إرسال قيمة فارغة برمجياً وحذفها من الرابط -->
@@ -114,7 +114,7 @@ const handleExport = async () => {
         <!-- refreshData -->
         <button
             type="button"
-            class="md:col-span-5 btn-outline gap-1 shadow-glow/10 text-fluid-xs lg:text-fluid-p text-accent-dark hover:text-slate-900 hover:bg-accent/70"
+            class=" md:col-span-5 btn-outline gap-1 shadow-glow/10 text-fluid-xs lg:text-fluid-p text-accent-dark hover:text-slate-900 hover:bg-accent/70"
             @click="handleRefresh"
             :disabled="mediaStore.isLoading"
         >
@@ -131,7 +131,7 @@ const handleExport = async () => {
         <router-link
             v-if="authStore.isEditorAndAbove"
             to="/new-media"
-            class="md:col-span-5 btn-outline gap-1 px-0 shadow-glow/10 text-fluid-xs lg:text-fluid-p text-accent-dark hover:text-slate-900 hover:bg-accent/70"
+            class=" md:col-span-5 btn-outline gap-1 px-0 shadow-glow/10 text-fluid-xs lg:text-fluid-p text-accent-dark hover:text-slate-900 hover:bg-accent/70"
         >
             <Plus class="max-w-4" />
             <span class="text-fluid-xs">{{ t('media.toolbar.addNewMedia') }}</span>

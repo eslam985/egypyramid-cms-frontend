@@ -63,7 +63,7 @@ const handleRowClick = (row: Record<string, any>): void => {
                 @click="handleRefresh"
                 :disabled="isLoading"
                 type="button"
-                class="md:col-span-5 btn-outline gap-1 shadow-glow/10 text-fluid-xs lg:text-fluid-p text-accent-dark hover:text-slate-900 hover:bg-accent/70"
+                class=" md:col-span-5 btn-outline gap-1 shadow-glow/10 text-fluid-xs lg:text-fluid-p text-accent-dark hover:text-slate-900 hover:bg-accent/70"
             >
                 <Loader
                     class="size-5 text-accent"

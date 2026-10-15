@@ -48,7 +48,7 @@ const useTaskStore = defineStore('task', {
     },
     actions: {
         // 💡 أكشن تصدير مهام التنزيل المعتمد على الفلاتر الحالية المطبقة في الـ UI
-        async exportTasks(filters?: TasksQueryRequest): Promise<boolean> {
+        async exportTasks(filters: TasksQueryRequest): Promise<boolean> {
             const date: string = new Date().toISOString().slice(0, 10)
 
             const isSuccess: boolean = await handleStoreExport<TasksQueryRequest, TasksState>({

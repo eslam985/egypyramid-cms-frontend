@@ -1,16 +1,17 @@
 <script setup lang="ts">
-import { storeToRefs } from 'pinia'
-import { useAnalyticsStore } from '@/stores/analyticsStore'
-import { Loader } from '@lucide/vue'
-import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
+import { Loader } from '@lucide/vue'
+import { storeToRefs } from 'pinia'
+import { useI18n } from 'vue-i18n'
 
-import type { StatusTasksRequest } from '@/types/globalTypes'
+import { useAnalyticsStore } from '@/stores/analyticsStore'
 
-const { t } = useI18n()
+import type { StatusLinksRequest } from '@/types/globalTypes'
+
 const analyticsStore = useAnalyticsStore()
-const router = useRouter()
 const { isLoading } = storeToRefs(analyticsStore)
+const router = useRouter()
+const { t } = useI18n()
 
 const loadDashboardData = async () => {
     router.push({
@@ -19,7 +20,7 @@ const loadDashboardData = async () => {
     })
 
     await analyticsStore.fetchAllCounters(true)
-    await analyticsStore.fetchTotalCountersStatusServers('broken' as StatusTasksRequest, true)
+    await analyticsStore.fetchTotalCountersStatusServers('broken' as StatusLinksRequest, true)
 }
 </script>
 <template>
@@ -35,7 +36,7 @@ const loadDashboardData = async () => {
 
             <button
                 @click="loadDashboardData"
-                class="btn-outline shadow-glow/10 text-fluid-xs lg:text-fluid-p text-accent-dark hover:text-slate-900 hover:bg-accent/70"
+                class=" btn-outline shadow-glow/10 text-fluid-xs lg:text-fluid-p text-accent-dark hover:text-slate-900 hover:bg-accent/70"
                 :disabled="isLoading"
             >
                 <Loader

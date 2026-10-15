@@ -397,6 +397,7 @@ body[data-theme='dark'] {
     }
 
     @keyframes float {
+
         0%,
         100% {
             transform: translateY(0) rotate(6deg);
@@ -418,6 +419,7 @@ body[data-theme='dark'] {
     }
 
     @keyframes pulse-glow {
+
         0%,
         100% {
             box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 45%, transparent);
@@ -441,6 +443,7 @@ body[data-theme='dark'] {
    5. Components
    -------------------------------------------------------------------------- */
 @layer components {
+
     /* ===== الأزرار والـ Inputs الثابتة الهيكل ===== */
     .btn-primary,
     .btn-secondary,
@@ -452,7 +455,7 @@ body[data-theme='dark'] {
     .form-input,
     .form-select,
     .form-textarea {
-        @apply inline-flex items-center justify-center gap-2 font-semibold rounded-xl transition-[color,background-color,border-color,opacity,transform] duration-200 active:scale-95 disabled:opacity-50 disabled:pointer-events-none text-fluid-xs md:text-fluid-p;
+        @apply max-w-[100px] md:max-w-[170px] inline-flex items-center justify-center gap-2 font-semibold rounded-xl duration-200 active:scale-95 disabled:opacity-50 disabled:pointer-events-none text-fluid-xs md:text-fluid-p;
     }
 
     /* ===== الأزرار: الألوان والتخصيص ===== */
@@ -488,11 +491,15 @@ body[data-theme='dark'] {
     .form-input,
     .form-select,
     .form-textarea {
-        @apply w-full px-3 md:px-4 py-2.5 bg-card dark:bg-[#151f35] text-foreground placeholder:text-muted focus:ring-1 disabled:opacity-60 duration-200 md:p-2.5 border border-accent/20  focus:placeholder:opacity-0 transition-opacity;
+        @apply w-full px-3 md:px-4 py-2.5 bg-card dark:bg-[#151f35] text-foreground placeholder:text-muted focus:ring-1 disabled:opacity-60 duration-200 md:p-2.5 border border-accent/20 focus:placeholder:opacity-0 transition-opacity;
     }
 
     .form-textarea {
         @apply min-h-28 resize-y;
+    }
+
+    .form-select {
+        @apply max-w-[100px] md:max-w-[170px] p-fluid
     }
 
     .form-label {
@@ -516,7 +523,7 @@ body[data-theme='dark'] {
 
     /* تم حل المشكلة هنا بفصل الكلاس وحذف الـ @apply لـ card */
     .card-hover:hover {
-        @apply border-accent/40 bg-card-hover -translate-y-1 transition-[color,background-color,border-color,transform,box-shadow] duration-300;
+        @apply border-accent/40 bg-card-hover -translate-y-1 duration-300;
     }
 
     .glass-card {
@@ -556,12 +563,10 @@ body[data-theme='dark'] {
     .skeleton::after {
         content: '';
         @apply absolute inset-0 -translate-x-full animate-shimmer;
-        background-image: linear-gradient(
-            90deg,
-            transparent,
-            color-mix(in srgb, var(--foreground) 10%, transparent),
-            transparent
-        );
+        background-image: linear-gradient(90deg,
+                transparent,
+                color-mix(in srgb, var(--foreground) 10%, transparent),
+                transparent);
     }
 
     /* ===== شبكات جاهزة ===== */
@@ -627,12 +632,10 @@ body[data-theme='dark'] {
 }
 
 @utility text-gradient-accent {
-    background-image: linear-gradient(
-        120deg,
-        var(--accent-light),
-        var(--accent),
-        var(--accent-dark)
-    );
+    background-image: linear-gradient(120deg,
+            var(--accent-light),
+            var(--accent),
+            var(--accent-dark));
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
@@ -677,17 +680,16 @@ body[data-theme='dark'] {
         content: '';
         position: absolute;
         inset: 0;
-        background: linear-gradient(
-            to top,
-            var(--background) 0%,
-            color-mix(in srgb, var(--background) 60%, transparent) 40%,
-            transparent 100%
-        );
+        background: linear-gradient(to top,
+                var(--background) 0%,
+                color-mix(in srgb, var(--background) 60%, transparent) 40%,
+                transparent 100%);
         pointer-events: none;
     }
 }
 
 @layer utilities {
+
     /* سكرول بار مخصص */
     ::-webkit-scrollbar {
         width: 8px;
@@ -748,6 +750,7 @@ body[data-theme='dark'] {
 }
 
 @media print {
+
     .no-print,
     nav,
     footer,

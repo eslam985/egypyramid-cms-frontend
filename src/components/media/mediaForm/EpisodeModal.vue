@@ -66,8 +66,6 @@ const loadData = async () => {
         const episode = await mediaContentStore.getEpisodeById(episodeId, true)
 
         if (!episode) return router.push({ name: 'NotFound' })
-
-
         formData.status_message = episode.status_message ?? ''
         formData.download_speed = episode.download_speed ?? ''
         formData.status = episode.status ?? ''
@@ -75,7 +73,6 @@ const loadData = async () => {
         formData.season_id = toNumber(episode.season_id)
         formData.progress_percent = toNumber(episode.progress_percent) ?? 0
         formData.episode_number = toNumber(episode.episode_number) ?? 0
-
     }
 }
 

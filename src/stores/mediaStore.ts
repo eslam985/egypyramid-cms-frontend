@@ -42,7 +42,7 @@ const useMediaStore = defineStore('media', {
             search: null,
             category: null,
             sortBy: 'created_at',
-            sortOrder: OrderingEnum.DESC,
+            sortOrder:  OrderingEnum.DESC,
         },
         isLoading: false,
         successMessage: '',

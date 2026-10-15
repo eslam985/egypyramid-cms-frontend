@@ -43,7 +43,7 @@ const { t } = useI18n()
             <router-link
                 :to="{ name: 'tasksList' }"
                 exact-active-class="cursor-pointer btn-outline shadow-glow/30 text-accent hover:text-slate-900 hover:bg-accent/70"
-                class="btn-secondary text-fluid-xs shrink-0 whitespace-nowrap"
+                class=" max-w-[200px] btn-secondary text-fluid-xs shrink-0 whitespace-nowrap"
             >
                 <Download class="size-4 shrink-0" />
                 <span class="text-fluid-xs md:text-fluid-p">{{ t('sidebar.tasks') }}</span>

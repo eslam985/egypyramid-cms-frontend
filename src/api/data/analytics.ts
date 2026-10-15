@@ -34,7 +34,7 @@ const getTotalBrokenAndValidAndPendingLinks = async (
 }
 
 const getBrokenLinks = async (
-    query?: ServerNameRequest,
+    query: ServerNameRequest,
 ): Promise<BaseApiResponse<DownloadTasksResponse[] | null>> => {
     const result = await api.get(`/analytics/links/broken`, { params: { ...query } })
 
@@ -42,7 +42,7 @@ const getBrokenLinks = async (
 }
 
 const getMissingEpisodesByServer = async (
-    query?: ServerNameRequest,
+    query: ServerNameRequest,
 ): Promise<BaseApiResponse<DownloadTasksResponse[] | null>> => {
     const result = await api.get(`/analytics/episodes/links/missing-by-server`, {
         params: { ...query },
@@ -82,7 +82,7 @@ const handleExportNotReadyMedias = async (params?: BaseQueryRequest): Promise<Bl
     return result.data
 }
 
-const handleExportBrokenLinks = async (query?: ServerNameRequest): Promise<Blob> => {
+const handleExportBrokenLinks = async (query: ServerNameRequest): Promise<Blob> => {
     const result = await api.get('/analytics/links/broken', {
         params: {
             ...query,
@@ -93,7 +93,7 @@ const handleExportBrokenLinks = async (query?: ServerNameRequest): Promise<Blob>
     return result.data
 }
 
-const handleExportMissingEpisodesByServer = async (query?: ServerNameRequest): Promise<Blob> => {
+const handleExportMissingEpisodesByServer = async (query: ServerNameRequest): Promise<Blob> => {
     const result = await api.get('/analytics/episodes/links/missing-by-server', {
         params: {
             ...query,

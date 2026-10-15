@@ -10,7 +10,7 @@ import { useTaskStore } from '@/stores/taskStore'
 import { confirmAndDelete } from '@/utils/global'
 import { useAuthStore } from '@/stores/authStore'
 
-import type { TasksQueryRequest, SearchResultData } from '@/types/globalTypes'
+import type { StatusTasksRequest, SearchResultData } from '@/types/globalTypes'
 
 const notiStore = useNotificationStore()
 const taskStore = useTaskStore()
@@ -20,27 +20,29 @@ const route = useRoute()
 const { t } = useI18n()
 
 // 💡 جعل القيمة الابتدائية تقرأ من الرابط مباشرة عند التحميل (الـ Reload)
-const selectState = ref(typeof route.query.status === 'string' ? route.query.status : '')
+const selectState = ref<StatusTasksRequest>({ status: 'processing' })
 let searchInput = ref<string | number>('')
 
-const handleChooseState = async (value: string): Promise<void> => {
-    router.push({
-        query: {
-            ...route.query,
-            status: value || undefined,
-            page: 1,
-        },
-    })
-    await taskStore.fetchAllTasks({ status: value as TasksQueryRequest['status'] }, true)
+const handleChooseState = async (value: StatusTasksRequest): Promise<void> => {
 
     if (!value) {
         handleRefresh()
     }
+
+    router.push({
+        query: {
+            ...route.query,
+            status: typeof value === 'string' ? value : '',
+            page: 1,
+        },
+    })
+    await taskStore.fetchAllTasks({ status: value }, true)
+
 }
 
 const handleRefresh = async (): Promise<void> => {
     searchInput.value = ''
-    selectState.value = ''
+    selectState.value.status = 'processing'
 
     router.push({
         name: 'tasksList',
@@ -98,35 +100,23 @@ const handleExport = async (): Promise<void> => {
 </script>
 <template>
     <!-- أدوات الفلترة والبحث والتحديث -->
-    <div
-        :class="
-            authStore.isEditorAndAbove ? 'grid grid-cols-2 xs:grid-cols-3 md:grid-cols-25' : 'flex '
-        "
-        class="gap-fluid-gap p-fluid"
-    >
+    <div class="flex flex-wrap justify-between md:justify-center gap-fluid-gap mb-6 mt-3">
         <!-- 1111 -->
         <!-- حقل البحث -->
-        <div class="md:col-span-4 flex self-center relative text-fluid-xs">
-            <input
-                id="task-search"
-                type="search"
-                v-model="searchInput"
+        <div class="flex self-center relative text-fluid-xs">
+            <input id="task-search" type="search" v-model="searchInput"
                 :placeholder="t('tasks.toolbar.searchPlaceholder')"
-                class="form-input pl-6 pr-0 text-center bg-line/10 border border-accent/20 border-linerounded-xl text-fluid-xs"
-                @keyup.enter="sreach"
-            />
+                class="form-input pl-6 pr-0 py-fluid text-center bg-line/10 border border-accent/20 border-linerounded-xl text-fluid-xs"
+                @keyup.enter="sreach" />
             <Search @click="sreach" class="self-center absolute left-2 text-accent" />
         </div>
 
         <!-- 2222 -->
         <!-- select -->
         <div class="md:col-span-3 self-center">
-            <select
-                id="task-status"
-                v-model="selectState"
-                class="form-input w-full bg-line/10 border border-accent/20 border-linerounded-xl focus:ring-2 focus:ring-accent/20 cursor-pointer"
-                @change="handleChooseState(selectState)"
-            >
+            <select id="task-status" v-model="selectState"
+                class="form-select md:col-span-5 rounded-xl border border-line text-fluid-xs focus:outline-none focus:border-accent font-medium cursor-pointer"
+                @change="handleChooseState(selectState)">
                 <option value="">{{ t('tasks.toolbar.allStatuses') }}</option>
                 <option value="idle">{{ t('tasks.form.statusOptions.idle') }}</option>
                 <option value="processing">{{ t('tasks.form.statusOptions.processing') }}</option>
@@ -135,57 +125,42 @@ const handleExport = async (): Promise<void> => {
         </div>
 
         <!-- 3333 -->
+        <!-- refreshData -->
+        <button type="button"
+            class="btn-outline shadow-glow/10 text-fluid-xs lg:text-fluid-p text-accent-dark hover:text-slate-900 hover:bg-accent/70"
+            @click="handleRefresh">
+            <Loader class="size-5 text-accent" :class="{ 'animate-spin': taskStore.isLoading }" :stroke-width="2" />
+            {{ t('common.refreshData') }}
+        </button>
+
+        <!-- 4444 -->
+        <!-- addNew -->
+        <router-link v-if="authStore.isEditorAndAbove" to="/new-task"
+            class="btn-outline shadow-glow/10 text-fluid-xs lg:text-fluid-p text-accent-dark hover:text-slate-900 hover:bg-accent/70">
+            {{ t('tasks.toolbar.addNew') }}
+        </router-link>
+
+        <!-- 5555 -->
         <!-- Export -->
         <div v-if="authStore.isEditorAndAbove" class="md:col-span-5 self-center">
-            <button
-                type="button"
+            <button type="button"
                 class="btn-outline shadow-glow/10 text-fluid-xs lg:text-fluid-p text-accent-dark hover:text-slate-900 hover:bg-accent/70"
-                @click="handleExport"
-            >
+                @click="handleExport">
                 <Download class="size-5 text-accent" :stroke-width="2" />
                 Export
             </button>
         </div>
 
-        <!-- 4444 -->
-        <!-- refreshData -->
-        <button
-            type="button"
-            class="md:col-span-4 btn-outline shadow-glow/10 text-fluid-xs lg:text-fluid-p text-accent-dark hover:text-slate-900 hover:bg-accent/70"
-            @click="handleRefresh"
-        >
-            <Loader
-                class="size-5 text-accent"
-                :class="{ 'animate-spin': taskStore.isLoading }"
-                :stroke-width="2"
-            />
-            {{ t('common.refreshData') }}
-        </button>
-
-        <!-- 5555 -->
-        <!-- addNew -->
-        <router-link
-            v-if="authStore.isEditorAndAbove"
-            to="/new-task"
-            class="md:col-span-4 btn-outline shadow-glow/10 text-fluid-xs lg:text-fluid-p text-accent-dark hover:text-slate-900 hover:bg-accent/70"
-        >
-            {{ t('tasks.toolbar.addNew') }}
-        </router-link>
-
         <!-- 6666 -->
         <!-- deleteFailed -->
-        <button
-            v-if="failedCount > 0 && authStore.isAdmin"
-            @click="handleDeleteFailed"
-            :disabled="taskStore.isLoading"
-            class="md:col-span-4 btn-danger text-fluid-xs max-w-[150px]"
-        >
+        <button v-if="failedCount > 0 && authStore.isAdmin" @click="handleDeleteFailed" :disabled="taskStore.isLoading"
+            class="btn-danger text-fluid-xs max-w-[150px]">
             {{
                 taskStore.isLoading
                     ? t('tasks.toolbar.deleting')
                     : t('tasks.toolbar.deleteFailed', {
-                          count: failedCount,
-                      })
+                        count: failedCount,
+                    })
             }}
         </button>
     </div>

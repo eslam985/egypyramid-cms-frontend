@@ -464,7 +464,7 @@ const useMediaContentStore = defineStore('mediaContent', {
         },
 
         // 💡 أكشن تصدير الحلقات المعتمد بالكامل على الـ Utility المشتركة
-        async exportEpisodes(filters?: EpisodeQueryRequest): Promise<boolean> {
+        async exportEpisodes(filters: EpisodeQueryRequest): Promise<boolean> {
             const date: string = new Date().toISOString().slice(0, 10)
 
             const isSuccess: boolean = await handleStoreExport<
@@ -491,7 +491,7 @@ const useMediaContentStore = defineStore('mediaContent', {
 
         // --- Links ---
         // 💡 أكشن تصدير الحلقات المعتمد بالكامل على الـ Utility المشتركة
-        async exportLinks(filters?: LinksQueryRequest): Promise<boolean> {
+        async exportLinks(filters: LinksQueryRequest): Promise<boolean> {
             const date: string = new Date().toISOString().slice(0, 10)
 
             const isSuccess: boolean = await handleStoreExport<

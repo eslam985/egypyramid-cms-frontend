@@ -16,7 +16,7 @@ import { handleStoreFetch, handleStoreExport } from '@/utils/store'
 import { useNotificationStore } from '@/stores/notificationStore'
 import type {
     SystemCountersResponse,
-    StatusTasksRequest,
+    StatusLinksRequest,
     MediasResponse,
     DownloadTasksResponse,
     TotalStatusLinksResponse,
@@ -56,7 +56,7 @@ const useAnalyticsStore = defineStore('analytics', {
             this.missingLinksByServer = []
             this.telegramLocked = []
         },
-        async exportNotReadyMedia(filters?: BaseQueryRequest): Promise<boolean> {
+        async exportNotReadyMedia(filters: BaseQueryRequest): Promise<boolean> {
             const date: string = new Date().toISOString().slice(0, 10)
 
             const isSuccess: boolean = await handleStoreExport<BaseQueryRequest, AnalyticsState>({
@@ -102,7 +102,7 @@ const useAnalyticsStore = defineStore('analytics', {
 
             return isSuccess
         },
-        async exportMissingEpisodesByServer(filters?: ServerNameRequest): Promise<boolean> {
+        async exportMissingEpisodesByServer(filters: ServerNameRequest): Promise<boolean> {
             const date: string = new Date().toISOString().slice(0, 10)
 
             const isSuccess: boolean = await handleStoreExport<ServerNameRequest, AnalyticsState>({
@@ -204,12 +204,12 @@ const useAnalyticsStore = defineStore('analytics', {
             return isSuccess
         },
         async fetchTotalCountersStatusServers(
-            status: StatusTasksRequest,
+            status: StatusLinksRequest,
             force = false,
         ): Promise<TotalStatusLinksResponse[] | null> {
             const isSuccess: TotalStatusLinksResponse[] | null = await handleStoreFetch<
                 TotalStatusLinksResponse[] | null,
-                StatusTasksRequest,
+                StatusLinksRequest,
                 AnalyticsState
             >({
                 store: this,

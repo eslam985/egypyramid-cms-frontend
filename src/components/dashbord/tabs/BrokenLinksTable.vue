@@ -7,6 +7,7 @@ import { useI18n } from 'vue-i18n'
 
 import AppPagination from '@/components/utils/AppPagination.vue'
 import { useAnalyticsStore } from '@/stores/analyticsStore'
+import { fromRouteQuery } from '@/utils/routerHelpers'
 import BaseTable from '@/components/ui/BaseTable.vue'
 import { useAuthStore } from '@/stores/authStore'
 import { formatDate } from '@/utils/global'
@@ -26,34 +27,34 @@ const availableServers: {
     label: string
     value: string
 }[] = [
-    { label: 'تليجرام مباشر', value: 'telegram_direct' },
-    { label: 'Doodstream', value: 'doodstream' },
-    { label: 'Lulustream', value: 'lulustream' },
-    { label: 'Streamtape', value: 'streamtape' },
-    { label: 'archive', value: 'archive' },
-    { label: 'Mixdrop', value: 'mixdrop' },
-    { label: 'Voe', value: 'voe' },
-    { label: 'VK', value: 'vk' },
-]
+        { label: 'تليجرام مباشر', value: 'telegram_direct' },
+        { label: 'Doodstream', value: 'doodstream' },
+        { label: 'Lulustream', value: 'lulustream' },
+        { label: 'Streamtape', value: 'streamtape' },
+        { label: 'archive', value: 'archive' },
+        { label: 'Mixdrop', value: 'mixdrop' },
+        { label: 'Voe', value: 'voe' },
+        { label: 'VK', value: 'vk' },
+    ]
 
 const columns: {
     label: string
     key: string
 }[] = [
-    { label: t('brokenLinks.table.errorReason'), key: 'error_message' },
-    { label: t('brokenLinks.table.serverQuality'), key: 'server_name' },
-    { label: t('brokenLinks.table.lastCheck'), key: 'last_check_at' },
-    { label: t('brokenLinks.table.status'), key: 'is_ready' },
-    { label: t('brokenLinks.table.name'), key: 'title' },
-    { label: t('brokenLinks.table.type'), key: 'type' },
-    { label: t('brokenLinks.table.url'), key: 'url' },
+        { label: t('brokenLinks.table.errorReason'), key: 'error_message' },
+        { label: t('brokenLinks.table.serverQuality'), key: 'server_name' },
+        { label: t('brokenLinks.table.lastCheck'), key: 'last_check_at' },
+        { label: t('brokenLinks.table.status'), key: 'is_ready' },
+        { label: t('brokenLinks.table.name'), key: 'title' },
+        { label: t('brokenLinks.table.type'), key: 'type' },
+        { label: t('brokenLinks.table.url'), key: 'url' },
 
-]
+    ]
 
 const query = (query: ServerNameRequest): void => {
     const params: ServerNameRequest = {
-        page: query.page,
-        limit: query.limit,
+        page: query.page ?? 1,
+        limit: query.limit ?? 20,
         serverName: query.serverName,
     }
 
@@ -85,8 +86,15 @@ const handlePageChange = (newPage: number): void => {
     loadBrokenLinks(newPage)
 }
 
+
 const handleExport = async (): Promise<void> => {
-    await analyticsStore.exportBrokenLinks(route.query)
+    if (!route.query.serverName) return
+    const params: ServerNameRequest = {
+        serverName: fromRouteQuery(route.query.serverName)
+    };
+
+    await analyticsStore.exportBrokenLinks(params)
+
 }
 
 const handleRefresh = async (): Promise<void> => {
@@ -102,56 +110,30 @@ onMounted(() => {
 <template>
     <div class="space-y-4">
         <!-- قائمة اختيار السيرفر -->
-        <div
-            :class="
-                authStore.isEditorAndAbove
-                    ? 'xs:grid-cols-3 md:grid-cols-15'
-                    : 'xs:grid-cols-2 md:grid-cols-30'
-            "
-            class="grid grid-cols-2 gap-fluid-gap w-full"
-        >
+        <div class="flex gap-fluid-gap">
             <!-- 1111 -->
             <!-- refreshData -->
-            <button
-                @click="handleRefresh"
-                :disabled="isLoading"
-                type="button"
-                class="md:col-span-5 btn-outline gap-1 px-0 shadow-glow/10 text-fluid-xs lg:text-fluid-p text-accent-dark hover:text-slate-900 hover:bg-accent/70"
-            >
-                <Loader
-                    class="size-5 text-accent"
-                    :class="{ 'animate-spin': isLoading }"
-                    :stroke-width="2"
-                />
+            <button @click="handleRefresh" :disabled="isLoading" type="button"
+                class="btn-outline gap-1 shadow-glow/10 text-fluid-xs lg:text-fluid-p text-accent-dark hover:text-slate-900 hover:bg-accent/70">
+                <Loader class="size-5 text-accent" :class="{ 'animate-spin': isLoading }" :stroke-width="2" />
                 {{ t('common.refreshData') }}
             </button>
 
             <!-- 2222 -->
             <!-- server-select -->
-            <select
-                id="server-select"
-                v-model="selectedServer"
-                @change="handleServerChange"
-                :disabled="isLoading"
-                class="md:col-span-5 px-3 py-1.5 rounded-xl border border-line bg-card text-fluid-xs focus:outline-none focus:border-accent font-medium min-w-[180px] cursor-pointer transition-colors"
-            >
-                <option
-                    v-for="server in availableServers"
-                    :key="server.value"
-                    :value="server.value"
-                >
+            <select id="server-select" v-model="selectedServer" @change="handleServerChange" :disabled="isLoading"
+                class="form-select rounded-xl border border-line text-fluid-xs focus:outline-none focus:border-accent font-medium cursor-pointer">
+                <option v-for="server in availableServers" :key="server.value" :value="server.value">
                     {{ server.label }}
                 </option>
             </select>
 
             <!-- 3333 -->
             <!-- Export -->
-            <div v-if="authStore.isAdmin" class="md:col-span-5 self-center flex md:justify-end">
-                <button
-                    type="button"
+            <div v-if="authStore.isAdmin" class=" self-center flex md:justify-end">
+                <button type="button"
                     class="btn-outline shadow-glow/10 text-fluid-xs lg:text-fluid-p text-accent-dark hover:text-slate-900 hover:bg-accent/70"
-                    @click="handleExport"
-                >
+                    @click="handleExport">
                     <Download class="size-5 text-accent" :stroke-width="2" />
                     Export
                 </button>
@@ -159,13 +141,8 @@ onMounted(() => {
         </div>
         <div></div>
         <!-- الجدول -->
-        <BaseTable
-            :columns="columns"
-            :rows="brokenLinksList ?? []"
-            :isLoading="isLoading"
-            storeKey="brokenLinks"
-            @row-click="handleRowClick"
-        >
+        <BaseTable :columns="columns" :rows="brokenLinksList ?? []" :isLoading="isLoading" storeKey="brokenLinks"
+            @row-click="handleRowClick">
             <!-- title, season_number, episode_number -->
             <!-- استخدمنا تحديد النوع صراحة (row: any) أو بالنوع الصحيح مباشرة -->
             <template #cell-title="{ value, row }">
@@ -187,14 +164,11 @@ onMounted(() => {
 
             <!-- type -->
             <template #cell-type="{ row }">
-                <span
-                    :class="
-                        row.media_type === 'series'
-                            ? 'bg-accent/10 text-accent border-accent/20'
-                            : 'bg-warning/10 text-warning border-warning/20'
+                <span :class="row.media_type === 'series'
+                    ? 'bg-accent/10 text-accent border-accent/20'
+                    : 'bg-warning/10 text-warning border-warning/20'
                     "
-                    class="px-2.5 py-0.5 rounded-lg text-fluid-xs font-semibold border inline-block whitespace-nowrap cursor-pointer"
-                >
+                    class="px-2.5 py-0.5 rounded-lg text-fluid-xs font-semibold border inline-block whitespace-nowrap cursor-pointer">
                     {{
                         row.media_type === 'series'
                             ? t('brokenLinks.series')
@@ -207,8 +181,7 @@ onMounted(() => {
             <template #cell-server_name="{ value }">
                 <div class="text-sub cursor-pointer">
                     <div
-                        class="font-medium font-mono text-fluid-xs bg-line/30 border-accent/20 px-2 py-0.5 rounded-md w-fit border"
-                    >
+                        class="font-medium font-mono text-fluid-xs bg-line/30 border-accent/20 px-2 py-0.5 rounded-md w-fit border">
                         {{ value }}
                     </div>
                 </div>
@@ -217,11 +190,8 @@ onMounted(() => {
             <!-- url -->
             <template #cell-url="{ value }">
                 <div class="text-center" @click.stop>
-                    <a
-                        :href="value"
-                        target="_blank"
-                        class="text-accent lg:hover:text-link-hover text-fluid-xs font-mono truncate max-w-xs block"
-                    >
+                    <a :href="value" target="_blank"
+                        class="text-accent lg:hover:text-link-hover text-fluid-xs font-mono truncate max-w-xs block">
                         {{ value }}
                     </a>
                 </div>
@@ -231,8 +201,7 @@ onMounted(() => {
             <template #cell-error_message="{ value, row }">
                 <div class="text-center cursor-pointer">
                     <span
-                        class="px-2.5 py-1 whitespace-nowrap rounded-full text-fluid-xs font-semibold bg-danger/10 text-danger border border-danger/20 inline-block font-mono"
-                    >
+                        class="px-2.5 py-1 whitespace-nowrap rounded-full text-fluid-xs font-semibold bg-danger/10 text-danger border border-danger/20 inline-block font-mono">
                         {{ value || 'BROKEN' }}
                     </span>
                     <span class="text-[10px] text-sub mt-1 block">{{
@@ -250,26 +219,18 @@ onMounted(() => {
 
             <!-- Is Ready -->
             <template #cell-is_ready="{ value }">
-                <span
-                    v-if="value === true"
-                    class="text-success font-semibold bg-success/10 px-2.5 py-1 rounded-lg border border-success/20 inline-block"
-                >
+                <span v-if="value === true"
+                    class="text-success font-semibold bg-success/10 px-2.5 py-1 rounded-lg border border-success/20 inline-block">
                     {{ t('brokenLinks.ready') }}
                 </span>
-                <span
-                    v-else
-                    class="text-danger text-center font-semibold bg-danger/10 px-2.5 py-1 rounded-lg border border-danger/20 inline-block"
-                >
+                <span v-else
+                    class="text-danger text-center font-semibold bg-danger/10 px-2.5 py-1 rounded-lg border border-danger/20 inline-block">
                     {{ t('brokenLinks.notReady') }}
                 </span>
             </template>
         </BaseTable>
 
         <!-- مكون الترقيم -->
-        <AppPagination
-            :pagination="pagination"
-            :is-loading="isLoading"
-            @change-page="handlePageChange"
-        />
+        <AppPagination :pagination="pagination" :is-loading="isLoading" @change-page="handlePageChange" />
     </div>
 </template>
