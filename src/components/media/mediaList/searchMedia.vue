@@ -17,6 +17,7 @@ import type { SearchResultData } from '@/types/globalTypes'
 let searchInput = ref<string | number>('')
 
 const sreach = async (): Promise<void> => {
+
     const data: false | SearchResultData = await handleSearch({
         searchInput: searchInput.value,
         notiStore: notiStore,
@@ -27,15 +28,17 @@ const sreach = async (): Promise<void> => {
         defaultErrorMsg: mediaStore.errorMessage,
     })
 
-    let finalMediaId: number | null = data ? data.targetId : null
+    const targetMedia: string | number | null | undefined =
+        mediaStore.currentMedia ? mediaStore.currentMedia.media_id : null
 
     // if Search By Id
-    if (data && finalMediaId) {
+    if (data && targetMedia) {
+        if(!targetMedia) return
         if (route.name !== 'mediaDetails') {
-            router.push(`/media/${finalMediaId}/details`)
+            router.push(`/media/${targetMedia}/details`)
         } else {
             // إذا كنا بالفعل في صفحة التفاصيل وأردنا الانتقال لميديا أخرى
-            router.push({ path: `/media/${finalMediaId}/details`, force: true })
+            router.push({ path: `/media/${targetMedia}/details`, force: true })
         }
     }
 

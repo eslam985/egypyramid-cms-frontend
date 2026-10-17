@@ -10,6 +10,11 @@
     "types": ["vite/client", "node"],
     "allowJs": false,
 
+    // Other Outputs
+    // "sourceMap": true,
+    // "declaration": true,
+    // "declarationMap": true,
+
     // 🔒 خيارات الفحص الصارم والأمان
     "strict": true,
     "noImplicitAny": true,
@@ -21,6 +26,10 @@
     "exactOptionalPropertyTypes": true,
     "noFallthroughCasesInSwitch": true,
     "noPropertyAccessFromIndexSignature": false,
+    // "noImplicitOverride": true,
+    // "verbatimModuleSyntax": true,
+    // "noUncheckedSideEffectImports": true,
+
     // ⚡ إعدادات التوافق مع Vite
     "jsx": "preserve",
     "resolveJsonModule": true,

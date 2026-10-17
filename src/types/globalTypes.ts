@@ -186,6 +186,7 @@ export interface DeleteTaskResponseData {
 
 export interface MediasResponse {
     id?: string | number
+    media_id?:string | number
     tmdb_id?: string
     title?: string
     story?: string

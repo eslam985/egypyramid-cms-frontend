@@ -270,6 +270,11 @@ const useAnalyticsStore = defineStore('analytics', {
             params: ServerNameRequest,
             force = false,
         ): Promise<DownloadTasksResponse[] | null> {
+            if(!params.serverName) {
+                this.notiStore.triggerNotification('server name is Requied!')
+                return null
+            }
+
             if (params.serverName === undefined) {
                 params.serverName = 'telegram_direct'
                 force = true

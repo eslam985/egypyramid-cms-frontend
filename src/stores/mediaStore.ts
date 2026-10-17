@@ -42,7 +42,7 @@ const useMediaStore = defineStore('media', {
             search: null,
             category: null,
             sortBy: 'created_at',
-            sortOrder:  OrderingEnum.DESC,
+            sortOrder: OrderingEnum.DESC,
         },
         isLoading: false,
         successMessage: '',
@@ -129,7 +129,7 @@ const useMediaStore = defineStore('media', {
                 targetTable = 'all'
             }
 
-            const isSuccess: MediasResponse | null = await handleStoreFetch<
+            const isSuccess: MediasResponse[] | MediasResponse | null = await handleStoreFetch<
                 MediasResponse,
                 unknown,
                 MediaState
@@ -142,14 +142,15 @@ const useMediaStore = defineStore('media', {
                 force,
             })
 
-            if (isSuccess && Object.keys(isSuccess).length > 0) {
+            if (!isSuccess) {
+                this.notiStore.triggerNotification(this.errorMessage || 'Not Found')
+            } else {
                 this.notiStore.triggerNotification(
-                    this.successMessage || `Found Media ID ${isSuccess?.id} successfuly `,
+                    this.successMessage || `Found Media ID ${isSuccess.id} successfuly `,
                 )
                 this.medias = [isSuccess]
-                this.currentMedia = isSuccess
-            } else {
-                this.notiStore.triggerNotification(this.errorMessage || 'Not Found')
+                this.currentMedia =
+                    Array.isArray(isSuccess) &&  isSuccess !== null ? isSuccess[0] : isSuccess
             }
 
             return isSuccess

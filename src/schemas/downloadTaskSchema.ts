@@ -1,4 +1,4 @@
-// /src/schemas/downloadTaskSchema.js
+// /src/schemas/downloadTaskSchema.ts
 import { z } from 'zod'
 
 const baseTaskSchema = z.object({
