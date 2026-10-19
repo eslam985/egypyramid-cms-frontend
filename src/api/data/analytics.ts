@@ -16,7 +16,7 @@ const getSystemCounters = async (): Promise<BaseApiResponse<SystemCountersRespon
 
 const getTotalBrokenAndValidAndPendingLinks = async (
     status?: StatusTasksRequest,
-): Promise<BaseApiResponse<TotalStatusLinksResponse[] | null>> => {
+): Promise<BaseApiResponse<TotalStatusLinksResponse[]>> => {
     const result = await api.get(`/analytics/links/status/total`, {
         params: {
             ...(status && { status }),
@@ -28,7 +28,7 @@ const getTotalBrokenAndValidAndPendingLinks = async (
 
 const getBrokenLinks = async (
     query: ServerNameRequest,
-): Promise<BaseApiResponse<DownloadTasksResponse[] | null>> => {
+): Promise<BaseApiResponse<DownloadTasksResponse[]>> => {
     const result = await api.get(`/analytics/links/broken`, { params: { ...query } })
 
     return result.data
@@ -36,7 +36,7 @@ const getBrokenLinks = async (
 
 const getMissingEpisodesByServer = async (
     query: ServerNameRequest,
-): Promise<BaseApiResponse<DownloadTasksResponse[] | null>> => {
+): Promise<BaseApiResponse<DownloadTasksResponse[]>> => {
     const result = await api.get(`/analytics/episodes/links/missing-by-server`, {
         params: { ...query },
     })
@@ -45,7 +45,7 @@ const getMissingEpisodesByServer = async (
 
 const getLockedTelegramLinks = async (
     query?: BaseQueryRequest,
-): Promise<BaseApiResponse<LockedTelegramResponse[] | null>> => {
+): Promise<BaseApiResponse<LockedTelegramResponse[]>> => {
     const result = await api.get(`/analytics/links/telegram/locked`, { params: { ...query } })
 
     return result.data
@@ -53,7 +53,7 @@ const getLockedTelegramLinks = async (
 
 const getNotReadyMedias = async (
     query?: BaseQueryRequest,
-): Promise<BaseApiResponse<MediasResponse[] | null>> => {
+): Promise<BaseApiResponse<MediasResponse[]>> => {
     const result = await api.get(`/analytics/medias/not-ready`, {
         params: {
             ...query,

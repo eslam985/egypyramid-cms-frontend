@@ -58,14 +58,14 @@ export const useUserStore = defineStore('user', {
             return isSuccess
         },
 
-        async ChangePassword(data: ChangePasswordInputsType): Promise<null> {
+        async ChangePassword(data: ChangePasswordInputsType): Promise<number | null> {
             if (!data) {
                 this.notiStore.triggerNotification('Data Is Required')
                 return null
             }
 
-            const isSuccess: null = await handleStoreEdit<
-                null,
+            const isSuccess: number | null = await handleStoreEdit<
+                number | null,
                 ChangePasswordInputsType,
                 never,
                 UserState
@@ -76,13 +76,13 @@ export const useUserStore = defineStore('user', {
                 defaultError: 'حدثت مشكلة اثناء تغيير كلمة مرور المستخدم',
             })
 
-            if (isSuccess === null) {
-                this.notiStore.triggerNotification(this.successMessage || 'تم تغير الباسورد بنجاح')
-            } else {
+            if (!isSuccess) {
                 this.notiStore.triggerNotification(this.errorMessage)
+            } else {
+                this.notiStore.triggerNotification(this.successMessage || 'تم تغير الباسورد بنجاح')
             }
 
-            return isSuccess // null
+            return isSuccess
         },
 
         async getUserById(force: boolean = false): Promise<UserDataResponse | null> {

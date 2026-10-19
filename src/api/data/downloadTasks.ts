@@ -27,7 +27,7 @@ const updateTaskById = async (
 
 const getAllTasks = async (
     query?: TasksQueryRequest,
-): Promise<BaseApiResponse<DownloadTasksResponse[] | null>> => {
+): Promise<BaseApiResponse<DownloadTasksResponse[]>> => {
     const result = await api.get('/tasks', { params: { ...query } })
 
     return result.data

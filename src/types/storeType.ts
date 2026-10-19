@@ -1,7 +1,11 @@
 // ===========================================
 // ============  Store Type ==================
 // ===========================================
-import type { TotalStatusLinksResponse, SystemCountersResponse, LockedTelegramResponse } from '@/types/analyticsType'
+import type {
+    TotalStatusLinksResponse,
+    SystemCountersResponse,
+    LockedTelegramResponse,
+} from '@/types/analyticsType'
 import type { UserSessionDataResponse, UserDataResponse } from '@/types/userType'
 import type { SortedSessionRequest, SeasonsResponse } from '@/types/seasonType'
 import type { DownloadTasksResponse } from '@/types/downloadTasksType'
@@ -47,13 +51,13 @@ export interface BackupState extends BaseStore {
     timerInterval: ReturnType<typeof setInterval> | null
 }
 export interface Genrestate extends BaseStore {
-    allGenres: GenresResponse[] | null
+    allGenres: GenresResponse[]
     currentGenre: GenresResponse | null
 }
 
 export interface MediaContentState extends BaseStore {
-    seasons: SeasonsResponse[] | null
-    episodes: EpisodeResponse[] | null
+    seasons: SeasonsResponse[]
+    episodes: EpisodeResponse[]
     links: LinksResponse[]
     currentSeason: SeasonsResponse | null
     currentEpisode: EpisodeResponse | null
@@ -77,7 +81,7 @@ export interface mediaQueryParams extends GetMediasQueryInputsType {
 }
 // 1. حالة الـ Store النظيفة (بدون extends لـ Query)
 export interface MediaState extends BaseStore {
-    medias: MediasResponse[] | null
+    medias: MediasResponse[]
     currentMedia: MediasResponse | null
     pagination: {
         total: number

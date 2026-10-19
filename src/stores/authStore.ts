@@ -6,7 +6,7 @@ import { handleStoreAdd } from '@/utils/store'
 import { RolesList } from '@/utils/roles_list'
 import { decodeJwt } from '@/utils/decodeJwt'
 
-import type { UserDataResponse, RegisterDataResponse, JwtUserPayload } from '@/types/userType'
+import type { UserDataResponse, JwtUserPayload } from '@/types/userType'
 import type { LoginUserInputsType, CreateUserInputsType } from '@/schemas/authSchema'
 import type { BaseApiResponse } from '@/types/globalTypes'
 import type { AuthState } from '@/types/storeType'
@@ -106,10 +106,10 @@ export const useAuthStore = defineStore('auth', {
             this.errorMessage = ''
             this.successMessage = ''
             try {
-                const result: BaseApiResponse<string> = await refresh()
+                const result: BaseApiResponse<UserDataResponse['accessToken']> = await refresh()
 
                 if (result && result.success) {
-                    this.setAccessToken(result.data)
+                    this.setAccessToken(result.data ?? null)
 
                     const decoded: JwtUserPayload | null = decodeJwt(
                         result.data,
@@ -139,14 +139,14 @@ export const useAuthStore = defineStore('auth', {
             }
         },
 
-        async register(data: CreateUserInputsType): Promise<RegisterDataResponse | null> {
+        async register(data: CreateUserInputsType): Promise<UserDataResponse | null> {
             if (!data) {
                 this.notiStore.triggerNotification('data is required!')
                 return null
             }
 
-            const isSuccess: RegisterDataResponse | null = await handleStoreAdd<
-                RegisterDataResponse,
+            const isSuccess: UserDataResponse | null = await handleStoreAdd<
+                UserDataResponse,
                 CreateUserInputsType,
                 AuthState
             >({

@@ -12,15 +12,14 @@ import type { BaseApiResponse } from '@/types/globalTypes'
 
 const handleUpdateUserInfo = async (
     data: UpdateUserInputsType,
-): Promise<BaseApiResponse<UserDataResponse>> => {
+): Promise<BaseApiResponse<UserDataResponse | null>> => {
     const result = await api.put(`user/update/info`, data)
     return result.data
 }
 
 const handleChangePassword = async (
     data: ChangePasswordInputsType,
-): Promise<BaseApiResponse<null>> => {
-    ;``
+): Promise<BaseApiResponse<number | null>> => {
     const result = await api.put('/user/update/password', data)
     return result.data
 }

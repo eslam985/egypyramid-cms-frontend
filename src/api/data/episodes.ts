@@ -30,7 +30,7 @@ const findEpisodeById = async (id: number): Promise<BaseApiResponse<EpisodeRespo
 const findEpisodesByMediaId = async (
     media_id: number,
     query?: BaseQueryRequest,
-): Promise<BaseApiResponse<EpisodeResponse | EpisodeResponse[] | null>> => {
+): Promise<BaseApiResponse<EpisodeResponse | EpisodeResponse[]>> => {
     const result = await api.get(`/episodes/media/${media_id}`, { params: { ...query } })
 
     return result.data
@@ -51,7 +51,7 @@ const deleteEpisodeById = async (id: number): Promise<number> => {
 
 const handleFindAllEpisodes = async (
     params: EpisodeQueryRequest,
-): Promise<BaseApiResponse<Blob | EpisodeResponse | EpisodeResponse[] | null>> => {
+): Promise<BaseApiResponse<Blob | EpisodeResponse | EpisodeResponse[]>> => {
     const result = await api.get('/episodes', {
         params: { ...params, export: 'true' },
         responseType: 'blob',

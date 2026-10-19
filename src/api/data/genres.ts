@@ -37,7 +37,7 @@ const deleteGenreById = async (id: number): Promise<BaseApiResponse<GenresRespon
     return result.data
 }
 
-const findAllGenres = async (): Promise<BaseApiResponse<GenresResponse[] | null>> => {
+const findAllGenres = async (): Promise<BaseApiResponse<GenresResponse[]>> => {
     const result = await api.get('/genres')
     return result.data
 }

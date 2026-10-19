@@ -1,12 +1,12 @@
 // /src/api/auth.ts
 import api from './interceptors'
 import type { LoginUserInputsType, CreateUserInputsType } from '@/schemas/authSchema'
-import type { RegisterDataResponse, UserDataResponse } from '@/types/userType'
+import type { UserDataResponse } from '@/types/userType'
 import type { BaseApiResponse } from '@/types/globalTypes'
 
 export async function handleRegister(
     userData: CreateUserInputsType,
-): Promise<BaseApiResponse<RegisterDataResponse>> {
+): Promise<BaseApiResponse<UserDataResponse>> {
     const result = await api.post('/auth/register', userData)
     return result.data
 }
@@ -18,7 +18,7 @@ export async function login(
     return result.data
 }
 
-export async function refresh(): Promise<BaseApiResponse<string>> {
+export async function refresh(): Promise<BaseApiResponse<UserDataResponse['accessToken']>> {
     const result = await api.post('/auth/refresh')
     return result.data
 }

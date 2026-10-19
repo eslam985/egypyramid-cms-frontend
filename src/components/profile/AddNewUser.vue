@@ -9,7 +9,7 @@ import { useAuthStore } from '@/stores/authStore'
 
 
 import type { CreateUserInputsType } from '@/schemas/authSchema'
-import type { RegisterDataResponse } from '@/types/userType'
+import type { UserDataResponse } from '@/types/userType'
 
 const { validate: validateProfile, errors: profileErrors } = useFormValidation(createUserSchema)
 
@@ -31,7 +31,7 @@ const resetForm = () => {
     }
 }
 
-const handleSubmitFormData = async (): Promise<RegisterDataResponse | null> =>
+const handleSubmitFormData = async (): Promise<UserDataResponse | null> =>
     utilsSubmit(undefined, formData.value, validateProfile, authStore.register)
 
 </script>
@@ -88,7 +88,7 @@ const handleSubmitFormData = async (): Promise<RegisterDataResponse | null> =>
                         class="absolute inset-y-0 right-0 flex items-center pr-3 text-sub hover:text-accent">
                         <EyeOff v-if="showPassword" class="w-5 h-5" />
                         <Eye v-else class="w-5 h-5" />
-                        </button>
+                    </button>
                 </div>
 
                 <p v-if="profileErrors?.password" class="form-error">
