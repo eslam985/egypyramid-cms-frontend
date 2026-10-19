@@ -57,7 +57,8 @@ const handleSort = (column: string): void => {
     }
 }
 
-const goToMediaDetails = (mediaId: number) => {
+const goToMediaDetails = (mediaId: string) => {
+    if(!mediaId) return
     return router.push(`/media/${mediaId}/details`)
 }
 </script>
@@ -161,7 +162,7 @@ const goToMediaDetails = (mediaId: number) => {
             <BaseGrid :rows="mediaStore.medias ?? []" :isLoading="mediaStore.isLoading">
                 <template #card="{ row }">
                     <!-- منطقة البوستر (Poster Header) -->
-                    <div @click="goToMediaDetails(Number(row.id))"
+                    <div @click="goToMediaDetails(row.id)"
                         class="relative aspect-square w-full overflow-hidden bg-line/10 group-hover:scale-105 transition-transform duration-500 cursor-pointer">
                         <img v-if="row.poster_url" :src="row.poster_url" :alt="row.title"
                             class="w-full h-full object-cover" />
@@ -185,7 +186,7 @@ const goToMediaDetails = (mediaId: number) => {
                     <div class="flex flex-col grow justify-between gap-3 p-fluid">
                         <div class="flex flex-col gap-1">
                             <!-- العنوان والسنة -->
-                            <h3 @click="goToMediaDetails(Number(row.id))"
+                            <h3 @click="goToMediaDetails(row.id)"
                                 class="font-bold text-fluid-p text-accent line-clamp-1 cursor-pointer"
                                 :title="row.title">
                                 {{ row.title }}

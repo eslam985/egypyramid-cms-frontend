@@ -1,5 +1,4 @@
 import { defineStore } from 'pinia'
-
 import { login, logout, refresh, handleRegister } from '@/api/auth/auth'
 import { useNotificationStore } from '@/stores/notificationStore'
 import { handleStoreAdd } from '@/utils/store'
@@ -10,6 +9,7 @@ import type { UserDataResponse, JwtUserPayload } from '@/types/userType'
 import type { LoginUserInputsType, CreateUserInputsType } from '@/schemas/authSchema'
 import type { BaseApiResponse } from '@/types/globalTypes'
 import type { AuthState } from '@/types/storeType'
+import { isAxiosError } from 'axios'
 
 export const useAuthStore = defineStore('auth', {
     state: (): AuthState => ({
@@ -73,14 +73,19 @@ export const useAuthStore = defineStore('auth', {
                 }
 
                 return false
-            } catch (err: any) {
-                const msg: string = err?.response?.data?.message || ''
+            } catch (err: unknown  ) {
+                const status: number | undefined = isAxiosError(err) ? err.response?.status : undefined
+                const msg: string = isAxiosError(err) ? err.response?.data?.message || '' : ''
 
                 if (msg.includes('getaddrinfo ENOTFOUND')) {
                     this.errorMessage = 'حدث خطأ اثناء الاتصال بقاعدة البيانات!'
                 } else {
                     this.errorMessage = msg || 'حدث خطأ ما، يرجى المحاولة لاحقاً'
-                    this.isServerError = true
+
+                    // الطريقة الأظطف والنظيفة بدون if فارغ
+                    if (!status || status >= 500) {
+                        this.isServerError = true
+                    }
                 }
 
                 this.notiStore.triggerNotification(this.errorMessage)
@@ -124,14 +129,15 @@ export const useAuthStore = defineStore('auth', {
                 }
                 this.clearAccessToken()
                 return false
-            } catch (err: any) {
+            } catch (err: unknown  ) {
                 this.clearAccessToken()
-                const status: number | undefined = err?.response?.status
-                const isStatusErr: boolean = status === 403 || status === 401
-                if (isStatusErr) return false
+                const status: number | undefined = isAxiosError(err) ? err.response?.status : undefined
+                const msg: string = isAxiosError(err) ? err.response?.data?.message || 'حدث خطا اثناء استرجاع الجلسة' : ''
+                const isStatusErr: boolean = status === 401
 
-                this.errorMessage = err?.response?.data?.message || 'حدث خطا اثناء استرجاع الجلسة'
+                this.errorMessage = msg
                 console.error(err)
+                if (isStatusErr) return false
                 return false
             } finally {
                 this.isLoading = false

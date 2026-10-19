@@ -37,7 +37,9 @@ watch(
     (): string | string[] | undefined => route.params.id,
     (newId: string | string[] | undefined) => {
         const id: string | undefined = Array.isArray(newId) ? newId[0] : newId
-        const mediaId: number = Number(id)
+        const mediaId: number | null = id !== undefined ? Number(id) : null
+
+        if (!mediaId) return
 
         if (id && Number.isFinite(mediaId) && route.name === 'mediaDetails') {
             fetchMediaDetails(mediaId)

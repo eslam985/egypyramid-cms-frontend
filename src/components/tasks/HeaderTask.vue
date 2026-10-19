@@ -110,7 +110,7 @@ const handleExport = async (): Promise<void> => {
         <div class="flex self-center relative text-fluid-xs">
             <input id="task-search" type="search" v-model="searchInput"
                 :placeholder="t('tasks.toolbar.searchPlaceholder')"
-                class="form-input pl-6 pr-0 py-fluid text-center bg-line/10 border border-accent/20 border-linerounded-xl text-fluid-xs"
+                class="form-input w-[150px] md:w-[400px] pl-8 text-center bg-line/10 border border-accent/20 border-linerounded-xl"
                 @keyup.enter="sreach" />
             <Search @click="sreach" class="self-center absolute left-2 text-accent" />
         </div>

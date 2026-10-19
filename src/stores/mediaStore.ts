@@ -26,9 +26,8 @@ import type {
 } from '@/schemas/mediaSchema'
 
 import type { MediasResponse } from '@/types/mediaType'
-import type { MediaState } from "@/types/storeType"
+import type { MediaState } from '@/types/storeType'
 import { OrderingEnum } from '@/types/globalTypes'
-
 
 const useMediaStore = defineStore('media', {
     state: (): MediaState => ({
@@ -87,6 +86,7 @@ const useMediaStore = defineStore('media', {
             return isSuccess
         },
         async getMediaById(id: number, force: boolean = true): Promise<MediasResponse | null> {
+            console.trace('media id From store: ', id)
             if (!id) {
                 this.notiStore.triggerNotification('Media Id Is Required!')
                 return null
@@ -105,13 +105,13 @@ const useMediaStore = defineStore('media', {
                 force,
             })
 
-            if (isSuccess) {
+            if (!isSuccess) {
+                this.notiStore.triggerNotification(this.errorMessage || 'Not Found')
+            } else {
                 this.notiStore.triggerNotification(
                     this.successMessage || `Found Media ID ${id} successfuly `,
                 )
                 this.medias = [isSuccess]
-            } else {
-                this.notiStore.triggerNotification(this.errorMessage || 'Not Found')
             }
 
             return isSuccess
@@ -152,7 +152,7 @@ const useMediaStore = defineStore('media', {
                 )
                 this.medias = [isSuccess]
                 this.currentMedia =
-                    Array.isArray(isSuccess) &&  isSuccess !== null ? isSuccess[0] : isSuccess
+                    Array.isArray(isSuccess) && isSuccess !== null ? isSuccess[0] : isSuccess
             }
 
             return isSuccess
