@@ -10,8 +10,9 @@ import { utilsSubmit } from '@/composables/useUtilsSubmit'
 import { useMediaStore } from '@/stores/mediaStore'
 import { toNumber } from '@/utils/global'
 
-import type { SeasonsResponse, MediasResponse } from '@/types/globalTypes'
 import type { CreateSeasonSchemaType } from '@/schemas/seasonSchema'
+import type { SeasonsResponse } from '@/types/seasonType'
+import type { MediasResponse } from '@/types/mediaType'
 
 
 const mediaContentStore = useMediaContentStore()
@@ -69,7 +70,7 @@ const handleSubmit = async (): Promise<void | null> => {
         ? utilsSubmit(mediaId, formData, validate, mediaContentStore.addSeason, () => router.push(`/media/${mediaId}/details`)) : null
 
     route.name === 'editSeason' && seasonId && mediaId
-        ? utilsSubmit(seasonId, formData, validate, mediaContentStore.editSeasonById, () => router.push(`/media/${mediaId}/details`) ) : null
+        ? utilsSubmit(seasonId, formData, validate, mediaContentStore.editSeasonById, () => router.push(`/media/${mediaId}/details`)) : null
 
 }
 

@@ -31,6 +31,7 @@ const handleSelectSeason = async (seasonId: number): Promise<void> => {
 
     // التمرير السلس إلى الـ div الخاص بالروابط
     const targetElement = document.getElementById(String(seasonId))
+
     if (targetElement) {
         targetElement.scrollIntoView({ behavior: 'smooth' })
     }

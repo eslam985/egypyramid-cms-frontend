@@ -1,4 +1,5 @@
-import type { dataType, ConfirmAndDeleteParams } from '@/types/globalTypes'
+import type { dataType,  } from '@/types/globalTypes'
+import type { ConfirmAndDeleteParams } from '@/types/utilsType'
 
 // أضفنا : string في الآخر لإجبار الدالة على إرجاع نص دائماً
 const formatDate = (dateStr: dataType): string => {

@@ -9,7 +9,8 @@ import { handleSearch } from '@/composables/useSearch'
 import { useGenresStore } from '@/stores/genreStore'
 import { useAuthStore } from '@/stores/authStore'
 
-import type { SearchResultData } from '@/types/globalTypes'
+import type { SearchResultData } from '@/types/utilsType'
+
 
 const searchInput = ref<string | number>('')
 const notiStore = useNotificationStore()
@@ -57,13 +58,11 @@ const handleExport = async () => {
 </script>
 <template>
     <!-- أدوات الفلترة والبحث والتحديث -->
-    <div :class="authStore.isEditorAndAbove
-        ? 'grid grid-cols-2 xs:grid-cols-3 md:grid-cols-25'
-        : 'flex flex-wrap ,md:gap-fluid-gap'
-        " class="gap-2 mb-3">
+    <div class="flex flex-wrap justify-between md:justify-center gap-fluid-gap mb-6 mt-3">
+
         <!-- 1111 -->
         <!-- حقل البحث -->
-        <div class="md:col-span-6 flex self-center relative text-fluid-xs">
+        <div class="flex self-center relative text-fluid-xs">
             <input id="genre-search" type="search" v-model="searchInput" @keyup.enter="sreach"
                 :placeholder="t('genres.searchPlaceholder')"
                 class="form-input w-[150px] md:w-[400px] pl-8 text-center bg-line/10 border border-accent/20 border-linerounded-xl" />
@@ -72,7 +71,7 @@ const handleExport = async () => {
         </div>
 
         <!-- 2222 -->
-        <div class="md:col-span-4 self-center">
+        <div class="self-center">
             <div v-if="(genresStore.allGenres?.length ?? 0) > 0" class="flex justify-center self-center">
                 <div
                     class="w-full p-2.5 self-center text-center rounded-xl bg-line/10 border border-accent/20 border-linerounded-xl text-fluid-xs text-nowrap">
@@ -87,7 +86,7 @@ const handleExport = async () => {
 
         <!-- 3333 -->
         <!-- Export -->
-        <div v-if="authStore.isEditorAndAbove" class="md:col-span-5 self-center">
+        <div v-if="authStore.isEditorAndAbove" class="self-center">
             <button type="button"
                 class="btn-outline shadow-glow/10 text-fluid-xs lg:text-fluid-p text-accent-dark hover:text-slate-900 hover:bg-accent/70"
                 @click="handleExport">
@@ -99,7 +98,7 @@ const handleExport = async () => {
         <!-- 4444 -->
         <!-- refreshData -->
         <button @click="handleRefresh" :disabled="genresStore.isLoading" type="button"
-            class=" md:col-span-5 btn-outline gap-1 shadow-glow/10 text-fluid-xs lg:text-fluid-p text-accent-dark hover:text-slate-900 hover:bg-accent/70">
+            class="btn-outline gap-1 shadow-glow/10 text-fluid-xs lg:text-fluid-p text-accent-dark hover:text-slate-900 hover:bg-accent/70">
             <Loader class="size-5 text-accent" :class="{ 'animate-spin': genresStore.isLoading }" :stroke-width="2" />
             {{ t('common.refreshData') }}
         </button>
@@ -107,7 +106,7 @@ const handleExport = async () => {
         <!-- 5555 -->
         <!-- addNew -->
         <router-link v-if="authStore.isEditorAndAbove" to="/new-genre"
-            class=" md:col-span-5 btn-outline gap-1 px-0 shadow-glow/10 text-fluid-xs lg:text-fluid-p text-accent-dark hover:text-slate-900 hover:bg-accent/70">
+            class="btn-outline gap-1 shadow-glow/10 text-fluid-xs lg:text-fluid-p text-accent-dark hover:text-slate-900 hover:bg-accent/70">
             {{ t('genres.addNew') }}
         </router-link>
     </div>

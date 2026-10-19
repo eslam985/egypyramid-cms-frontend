@@ -1,13 +1,9 @@
 import api from '@/api/auth/interceptors'
 
 import type { CreateEpisodeSchemaType, UpdateEpisodeSchemaType } from '@/schemas/episodeSchema'
+import type { EpisodeResponse, EpisodeQueryRequest } from '@/types/episodeType'
+import type { BaseApiResponse, BaseQueryRequest } from '@/types/globalTypes'
 
-import type {
-    BaseApiResponse,
-    EpisodeResponse,
-    BaseQueryRequest,
-    EpisodeQueryRequest,
-} from '@/types/globalTypes'
 
 const createEpisode = async (
     media_id: number,

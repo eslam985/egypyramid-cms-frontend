@@ -1,8 +1,8 @@
 import api from '@/api/auth/interceptors'
 
 import type { CreateLinkSchemaType, UpdateLinkByIdSchemaType } from '@/schemas/linkSchema'
-
-import type { BaseApiResponse, LinksResponse, LinksQueryRequest } from '@/types/globalTypes'
+import type { LinksResponse, LinksQueryRequest } from '@/types/linkType'
+import type { BaseApiResponse } from '@/types/globalTypes'
 
 const createLink = async (
     episode_id: number,

@@ -1,7 +1,8 @@
 // /src/api/auth.ts
 import api from './interceptors'
 import type { LoginUserInputsType, CreateUserInputsType } from '@/schemas/authSchema'
-import type { BaseApiResponse, UserDataResponse, RegisterDataResponse } from '@/types/globalTypes'
+import type { RegisterDataResponse, UserDataResponse } from '@/types/userType'
+import type { BaseApiResponse } from '@/types/globalTypes'
 
 export async function handleRegister(
     userData: CreateUserInputsType,

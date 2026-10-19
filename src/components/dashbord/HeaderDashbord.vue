@@ -6,7 +6,7 @@ import { useI18n } from 'vue-i18n'
 
 import { useAnalyticsStore } from '@/stores/analyticsStore'
 
-import type { StatusLinksRequest } from '@/types/globalTypes'
+import type { StatusLinksRequest } from '@/types/analyticsType'
 
 const analyticsStore = useAnalyticsStore()
 const { isLoading } = storeToRefs(analyticsStore)
@@ -34,25 +34,17 @@ const loadDashboardData = async () => {
                 </p>
             </div>
 
-            <button
-                @click="loadDashboardData"
+            <button @click="loadDashboardData"
                 class=" btn-outline shadow-glow/10 text-fluid-xs lg:text-fluid-p text-accent-dark hover:text-slate-900 hover:bg-accent/70"
-                :disabled="isLoading"
-            >
-                <Loader
-                    class="size-5 text-accent"
-                    :class="{ 'animate-spin': isLoading }"
-                    :stroke-width="2"
-                />
+                :disabled="isLoading">
+                <Loader class="size-5 text-accent" :class="{ 'animate-spin': isLoading }" :stroke-width="2" />
                 <span>{{ t('dashboard.overview.refresh') }}</span>
             </button>
         </div>
 
         <!-- رسائل الخطأ -->
-        <div
-            v-if="analyticsStore.errorMessage"
-            class="p-fluid bg-danger/10! border border-danger/20 text-danger rounded-2xl text-fluid-xs font-medium"
-        >
+        <div v-if="analyticsStore.errorMessage"
+            class="p-fluid bg-danger/10! border border-danger/20 text-danger rounded-2xl text-fluid-xs font-medium">
             {{ analyticsStore.errorMessage }}
         </div>
     </main>

@@ -6,7 +6,7 @@ import { formatDate, confirmAndDelete } from '@/utils/global'
 import { useNotificationStore } from '@/stores/notificationStore'
 import { useUserStore } from '@/stores/userStore'
 
-import type { UserDataResponse } from '@/types/globalTypes'
+import type { UserDataResponse } from '@/types/userType'
 
 const userStore = useUserStore()
 const notiStore = useNotificationStore()

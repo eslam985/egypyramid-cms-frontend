@@ -10,7 +10,9 @@ import { useTaskStore } from '@/stores/taskStore'
 import { confirmAndDelete } from '@/utils/global'
 import { useAuthStore } from '@/stores/authStore'
 
-import type { StatusTasksRequest, SearchResultData } from '@/types/globalTypes'
+import type { StatusTasksRequest, } from '@/types/downloadTasksType'
+
+import type { SearchResultData } from '@/types/utilsType'
 
 const notiStore = useNotificationStore()
 const taskStore = useTaskStore()
@@ -20,34 +22,36 @@ const route = useRoute()
 const { t } = useI18n()
 
 // 💡 جعل القيمة الابتدائية تقرأ من الرابط مباشرة عند التحميل (الـ Reload)
-const selectState = ref<StatusTasksRequest>({ status: 'processing' })
+const selectState = ref<string>('')
 let searchInput = ref<string | number>('')
 
-const handleChooseState = async (value: StatusTasksRequest): Promise<void> => {
+const handleChooseState = async (value: string): Promise<void> => {
 
     if (!value) {
-        handleRefresh()
+        await handleRefresh()
+        return
     }
 
     router.push({
         query: {
             ...route.query,
-            status: typeof value === 'string' ? value : '',
+            status: value,
             page: 1,
         },
     })
-    await taskStore.fetchAllTasks({ status: value }, true)
+    await taskStore.fetchAllTasks({ status: value as unknown as StatusTasksRequest }, true)
 
 }
 
 const handleRefresh = async (): Promise<void> => {
-    searchInput.value = ''
-    selectState.value.status = 'processing'
-
     router.push({
         name: 'tasksList',
         query: {},
     })
+
+    searchInput.value = ''
+    selectState.value = ''
+
 
     await taskStore.fetchAllTasks({}, true)
 }

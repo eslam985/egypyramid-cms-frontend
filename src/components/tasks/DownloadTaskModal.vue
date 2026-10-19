@@ -10,7 +10,7 @@ import { useTaskStore } from '@/stores/taskStore'
 import { toNumber } from '@/utils/global'
 
 import type { CreateTaskInputsType, } from '@/schemas/downloadTaskSchema'
-import type { DownloadTasksResponse } from '@/types/globalTypes'
+import type { DownloadTasksResponse, } from '@/types/downloadTasksType'
 
 const taskStore = useTaskStore()
 const router = useRouter()

@@ -6,8 +6,10 @@ import type {
     DownloadTasksResponse,
     TasksQueryRequest,
     DeleteTaskResponseData,
-    TasksState
-} from '@/types/globalTypes'
+
+} from '@/types/downloadTasksType'
+
+import type { TasksState, } from "@/types/storeType"
 
 import {
     handleStoreDelete,

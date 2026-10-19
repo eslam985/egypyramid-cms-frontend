@@ -7,11 +7,11 @@ import { useI18n } from 'vue-i18n'
 
 import AppPagination from '@/components/utils/AppPagination.vue'
 import { useAnalyticsStore } from '@/stores/analyticsStore'
+import { fromRouteQuery } from '@/utils/routerHelpers'
 import BaseTable from '@/components/ui/BaseTable.vue'
 import { useAuthStore } from '@/stores/authStore'
 
-import type { ServerNameRequest } from '@/types/globalTypes'
-import { fromRouteQuery } from '@/utils/routerHelpers'
+import type { ServerNameRequest } from '@/types/analyticsType'
 
 const authStore = useAuthStore()
 const { t } = useI18n()

@@ -1,12 +1,14 @@
 import type {
-    BaseApiResponse,
-    BaseStore,
     ExportStoreParams,
     StoreFetchParams,
     StoreAddParams,
     StoreEditParams,
     StoreDeleteParams,
-} from '@/types/globalTypes'
+} from '@/types/utilsType'
+
+import type { BaseApiResponse } from '@/types/globalTypes'
+
+import type { BaseStore } from "@/types/storeType"
 
 export async function handleStoreDelete<
     TData = unknown,
@@ -212,7 +214,7 @@ export async function handleStoreFetch<
     defaultError = 'حدث خطأ أثناء جلب البيانات',
     force = false,
 }: StoreFetchParams<TData, TInput, TStore>): Promise<TData | null> {
-    
+
     const currentArgsStr: string = args ? JSON.stringify(args) : ''
 
     if (!store) throw new Error('store is undefined or null')

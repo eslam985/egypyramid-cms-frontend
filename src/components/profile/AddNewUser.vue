@@ -9,7 +9,7 @@ import { useAuthStore } from '@/stores/authStore'
 
 
 import type { CreateUserInputsType } from '@/schemas/authSchema'
-import type { RegisterDataResponse } from '@/types/globalTypes'
+import type { RegisterDataResponse } from '@/types/userType'
 
 const { validate: validateProfile, errors: profileErrors } = useFormValidation(createUserSchema)
 

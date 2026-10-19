@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
-import type { NotificationState } from '@/types/globalTypes'
 
+import type { NotificationState, } from "@/types/storeType"
 
 export const useNotificationStore = defineStore('noti', {
     state: (): NotificationState => ({

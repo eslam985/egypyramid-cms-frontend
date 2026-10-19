@@ -1,4 +1,4 @@
-import type { SearchParamsType, SearchResultData } from '@/types/globalTypes'
+import type { SearchParamsType, SearchResultData } from '@/types/utilsType'
 
 export const handleSearch = async <TData>({
     searchInput,

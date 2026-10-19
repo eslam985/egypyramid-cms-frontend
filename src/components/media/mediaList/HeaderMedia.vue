@@ -65,27 +65,21 @@ const handleExport = async () => {
 }
 </script>
 <template>
-    <div
-        :class="
-            authStore.isEditorAndAbove
-                ? 'grid grid-cols-2 xs:grid-cols-3 md:grid-cols-25'
-                : 'flex flex-wrap md:gap-fluid-gap'
-        "
-        class="gap-2 my-3"
-    >
+        <div class="flex flex-wrap justify-between md:justify-center gap-fluid-gap mt-3">
+
         <!-- 1111 -->
         <!-- حقل البحث -->
-        <div class="md:col-span-6 flex self-center relative text-fluid-xs">
+        <div class="flex self-center relative text-fluid-xs">
             <SearchMedia class="w-[150px] md:w-[400px]" />
         </div>
 
         <!-- 2222 -->
         <!-- تصفية حسب التصنيف -->
-        <div class="md:col-span-4 self-center">
+        <div class="self-center">
             <select
                 id="media-category"
                 v-model="selectedCategory"
-                class="form-select md:col-span-5 rounded-xl border border-line text-fluid-xs focus:outline-none focus:border-accent font-medium cursor-pointer"
+                class="form-select rounded-xl border border-line text-fluid-xs focus:outline-none focus:border-accent font-medium cursor-pointer"
                 @change="handleCategoryChange()"
             >
                 <!-- استخدام :value="null" لضمان إرسال قيمة فارغة برمجياً وحذفها من الرابط -->
@@ -99,7 +93,7 @@ const handleExport = async () => {
 
         <!-- 3333 -->
         <!-- Export -->
-        <div v-if="authStore.isEditorAndAbove" class="md:col-span-5 self-center flex justify-end">
+        <div v-if="authStore.isEditorAndAbove" class="self-center flex justify-end">
             <button
                 type="button"
                 class="px-fluid btn-outline shadow-glow/10 text-fluid-xs lg:text-fluid-p text-accent-dark hover:text-slate-900 hover:bg-accent/70"
@@ -114,7 +108,7 @@ const handleExport = async () => {
         <!-- refreshData -->
         <button
             type="button"
-            class=" md:col-span-5 btn-outline gap-1 shadow-glow/10 text-fluid-xs lg:text-fluid-p text-accent-dark hover:text-slate-900 hover:bg-accent/70"
+            class="btn-outline gap-1 shadow-glow/10 text-fluid-xs lg:text-fluid-p text-accent-dark hover:text-slate-900 hover:bg-accent/70"
             @click="handleRefresh"
             :disabled="mediaStore.isLoading"
         >
@@ -131,7 +125,7 @@ const handleExport = async () => {
         <router-link
             v-if="authStore.isEditorAndAbove"
             to="/new-media"
-            class=" md:col-span-5 btn-outline gap-1 px-0 shadow-glow/10 text-fluid-xs lg:text-fluid-p text-accent-dark hover:text-slate-900 hover:bg-accent/70"
+            class="btn-outline gap-1 shadow-glow/10 text-fluid-xs lg:text-fluid-p text-accent-dark hover:text-slate-900 hover:bg-accent/70"
         >
             <Plus class="max-w-4" />
             <span class="text-fluid-xs">{{ t('media.toolbar.addNewMedia') }}</span>

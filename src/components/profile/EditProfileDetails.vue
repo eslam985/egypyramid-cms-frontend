@@ -12,7 +12,7 @@ import { useAuthStore } from '@/stores/authStore'
 import AddNewUser from '@/components/profile/AddNewUser.vue'
 
 import type { UpdateUserInputsType, ChangePasswordInputsType } from '@/schemas/authSchema'
-import type { UserDataResponse } from '@/types/globalTypes'
+import type { UserDataResponse } from '@/types/userType'
 
 const userStore = useUserStore()
 const authStore = useAuthStore()

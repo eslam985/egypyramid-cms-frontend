@@ -12,7 +12,7 @@ import BaseTable from '@/components/ui/BaseTable.vue'
 import { useAuthStore } from '@/stores/authStore'
 import { formatDate } from '@/utils/global'
 
-import type { ServerNameRequest } from '@/types/globalTypes'
+import type { ServerNameRequest } from '@/types/analyticsType'
 
 const analyticsStore = useAnalyticsStore()
 const authStore = useAuthStore()
@@ -206,7 +206,7 @@ onMounted(() => {
                     </span>
                     <span class="text-[10px] text-sub mt-1 block">{{
                         t('brokenLinks.checkedCount', { count: row.check_count })
-                    }}</span>
+                        }}</span>
                 </div>
             </template>
 

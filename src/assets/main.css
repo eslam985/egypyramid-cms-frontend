@@ -498,6 +498,9 @@ body[data-theme='dark'] {
         @apply min-h-28 resize-y;
     }
 
+    .form-input {
+        @apply w-full max-w-full
+    }
     .form-select {
         @apply max-w-[100px] md:max-w-[170px] p-fluid
     }

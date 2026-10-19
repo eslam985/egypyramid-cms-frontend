@@ -6,15 +6,10 @@ import { handleStoreAdd } from '@/utils/store'
 import { RolesList } from '@/utils/roles_list'
 import { decodeJwt } from '@/utils/decodeJwt'
 
+import type { UserDataResponse, RegisterDataResponse, JwtUserPayload } from '@/types/userType'
 import type { LoginUserInputsType, CreateUserInputsType } from '@/schemas/authSchema'
-
-import type {
-    UserDataResponse,
-    RegisterDataResponse,
-    JwtUserPayload,
-    BaseApiResponse,
-    AuthState
-} from '@/types/globalTypes'
+import type { BaseApiResponse } from '@/types/globalTypes'
+import type { AuthState } from '@/types/storeType'
 
 export const useAuthStore = defineStore('auth', {
     state: (): AuthState => ({

@@ -1,4 +1,7 @@
 import { defineStore } from 'pinia'
+
+import { handleStoreFetch, handleStoreExport } from '@/utils/store'
+import { useNotificationStore } from '@/stores/notificationStore'
 import {
     getSystemCounters,
     getTotalBrokenAndValidAndPendingLinks,
@@ -12,19 +15,18 @@ import {
     handleExportLockedTelegramLinks,
 } from '@/api/data/analytics'
 
-import { handleStoreFetch, handleStoreExport } from '@/utils/store'
-import { useNotificationStore } from '@/stores/notificationStore'
+import type { DownloadTasksResponse } from '@/types/downloadTasksType'
+import type { BaseQueryRequest } from '@/types/globalTypes'
+import type { AnalyticsState } from '@/types/storeType'
+import type { MediasResponse } from '@/types/mediaType'
+
 import type {
-    SystemCountersResponse,
-    StatusLinksRequest,
-    MediasResponse,
-    DownloadTasksResponse,
     TotalStatusLinksResponse,
-    BaseQueryRequest,
-    ServerNameRequest,
+    SystemCountersResponse,
     LockedTelegramResponse,
-    AnalyticsState
-} from '@/types/globalTypes'
+    ServerNameRequest,
+    StatusLinksRequest,
+} from '@/types/analyticsType'
 
 const useAnalyticsStore = defineStore('analytics', {
     state: (): AnalyticsState => ({
@@ -270,7 +272,7 @@ const useAnalyticsStore = defineStore('analytics', {
             params: ServerNameRequest,
             force = false,
         ): Promise<DownloadTasksResponse[] | null> {
-            if(!params.serverName) {
+            if (!params.serverName) {
                 this.notiStore.triggerNotification('server name is Requied!')
                 return null
             }

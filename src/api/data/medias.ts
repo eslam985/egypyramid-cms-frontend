@@ -5,7 +5,8 @@ import type {
     GetMediasQueryInputsType,
 } from '@/schemas/mediaSchema'
 
-import type { BaseApiResponse, MediasResponse } from '@/types/globalTypes'
+import type { BaseApiResponse } from '@/types/globalTypes'
+import type { MediasResponse } from '@/types/mediaType'
 
 const createMedia = async (
     data: CreateMediaInputsType,

@@ -10,8 +10,10 @@ import { utilsSubmit } from '@/composables/useUtilsSubmit'
 import { useMediaStore } from '@/stores/mediaStore'
 import { toNumber } from '@/utils/global'
 
-import type { EpisodeResponse, LinksResponse } from '@/types/globalTypes'
 import type { CreateLinkSchemaType } from '@/schemas/linkSchema'
+import type { EpisodeResponse } from '@/types/episodeType'
+import type { LinksResponse } from '@/types/linkType'
+
 
 const mediaContentStore = useMediaContentStore()
 const mediaStore = useMediaStore()

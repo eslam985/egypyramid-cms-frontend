@@ -22,7 +22,8 @@ const TelegramLockedTable = defineAsyncComponent(
     () => import('@/components/dashbord/tabs/TelegramLockedTable.vue'),
 )
 
-import type { BaseQueryRequest, ServerNameRequest } from '@/types/globalTypes'
+import type { ServerNameRequest } from '@/types/analyticsType'
+import type { BaseQueryRequest } from '@/types/globalTypes'
 
 const analyticsStore = useAnalyticsStore()
 const router = useRouter()
@@ -100,7 +101,7 @@ const switchTab = async (tab: string | null): Promise<void | null | undefined> =
                     ">
                 <span class="text-fluid-xs md:text-fluid-p">{{
                     t('dashboard.tabs.broken', { count: brokenLinksList.length })
-                    }}</span>
+                }}</span>
                 <BoneFracture class="size-4 shrink-0" />
             </button>
 
@@ -113,7 +114,7 @@ const switchTab = async (tab: string | null): Promise<void | null | undefined> =
                     ">
                 <span class="text-fluid-xs md:text-fluid-p">{{
                     t('dashboard.tabs.telegram', { count: telegramLocked.length })
-                    }}</span>
+                }}</span>
                 <Lock class="size-4 shrink-0" />
             </button>
 

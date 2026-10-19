@@ -25,8 +25,10 @@ import type {
     GetMediasQueryInputsType,
 } from '@/schemas/mediaSchema'
 
+import type { MediasResponse } from '@/types/mediaType'
+import type { MediaState } from "@/types/storeType"
 import { OrderingEnum } from '@/types/globalTypes'
-import type { MediasResponse, MediaState } from '@/types/globalTypes'
+
 
 const useMediaStore = defineStore('media', {
     state: (): MediaState => ({

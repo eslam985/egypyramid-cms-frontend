@@ -12,7 +12,7 @@ const route = useRoute()
 const mediaStore = useMediaStore()
 const notiStore = useNotificationStore()
 
-import type { SearchResultData } from '@/types/globalTypes'
+import type { SearchResultData } from '@/types/utilsType'
 
 let searchInput = ref<string | number>('')
 
@@ -28,12 +28,11 @@ const sreach = async (): Promise<void> => {
         defaultErrorMsg: mediaStore.errorMessage,
     })
 
-    const targetMedia: string | number | null | undefined =
-        mediaStore.currentMedia ? mediaStore.currentMedia.media_id : null
+    const targetMedia = mediaStore.currentMedia ? mediaStore.currentMedia.media_id : null
 
     // if Search By Id
     if (data && targetMedia) {
-        if(!targetMedia) return
+        if (!targetMedia) return
         if (route.name !== 'mediaDetails') {
             router.push(`/media/${targetMedia}/details`)
         } else {
@@ -61,14 +60,9 @@ const sreach = async (): Promise<void> => {
 <template>
     <!-- حقل البحث -->
     <div class="col-span-4 flex self-center relative">
-        <input
-            placeholder="search by ID or name and press Enter..."
-            id="media-search"
-            type="search"
-            v-model="searchInput"
-            class="form-input pl-8 bg-line/10 border border-accent/20 border-linerounded-xl"
-            @keyup.enter="sreach"
-        />
+        <input placeholder="search by ID or name and press Enter..." id="media-search" type="search"
+            v-model="searchInput" class="form-input pl-8 bg-line/10 border border-accent/20 border-linerounded-xl"
+            @keyup.enter="sreach" />
         <Search @click="sreach" class="self-center absolute left-2 text-accent w-3 md:w-5" />
     </div>
 </template>

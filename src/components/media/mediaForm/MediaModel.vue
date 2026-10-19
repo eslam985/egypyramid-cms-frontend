@@ -12,8 +12,10 @@ import { useMediaStore } from '@/stores/mediaStore'
 import { toNumber } from '@/utils/global'
 
 
-import type { MediasResponse, GenresResponse } from '@/types/globalTypes'
 import type { CreateMediaInputsType } from '@/schemas/mediaSchema'
+import type { MediasResponse } from '@/types/mediaType'
+import type { GenresResponse } from '@/types/genreType'
+
 
 
 const mediaContentStore = useMediaContentStore()
@@ -150,7 +152,7 @@ onMounted(async () => {
                     <div>
                         <label for="tmdb_id" class="form-label">{{
                             t('media.form.tmdbIdLabel')
-                            }}</label>
+                        }}</label>
                         <input type="text" id="tmdb_id" name="tmdb_id" class="form-input"
                             placeholder="196322 أو tt39741670" autocomplete="tmdb_id" v-model="formData.tmdb_id" />
                         <p v-if="errors.tmdb_id" class="form-error">{{ errors.tmdb_id }}</p>
@@ -159,7 +161,7 @@ onMounted(async () => {
                     <div>
                         <label for="poster_url" class="form-label">{{
                             t('media.form.posterUrlLabel')
-                            }}</label>
+                        }}</label>
                         <input type="text" id="poster_url" name="poster_url" class="form-input"
                             placeholder="https://res.cloudinary.com/..." autocomplete="poster_url"
                             v-model="formData.poster_url" />
@@ -169,7 +171,7 @@ onMounted(async () => {
                     <div>
                         <label for="story" class="form-label">{{
                             t('media.form.storyLabel')
-                            }}</label>
+                        }}</label>
                         <textarea dir="rtl" id="story" name="story" rows="4" class="form-textarea resize-none"
                             :placeholder="t('media.form.storyPlaceholder')" autocomplete="story"
                             v-model="formData.story"></textarea>
@@ -179,7 +181,7 @@ onMounted(async () => {
                     <div>
                         <label for="rating" class="form-label">{{
                             t('media.form.ratingLabel')
-                            }}</label>
+                        }}</label>
                         <input type="text" step="0.1" id="rating" name="rating" class="form-input" placeholder="7.3"
                             autocomplete="rating" v-model="formData.rating" />
                         <p v-if="errors.rating" class="form-error">{{ errors.rating }}</p>
@@ -205,7 +207,7 @@ onMounted(async () => {
                     <div>
                         <label for="runtime" class="form-label">{{
                             t('media.form.runtimeLabel')
-                            }}</label>
+                        }}</label>
                         <input type="text" id="runtime" name="runtime" class="form-input"
                             :placeholder="t('media.form.runtimePlaceholder')" autocomplete="runtime"
                             v-model="formData.runtime" />
@@ -215,7 +217,7 @@ onMounted(async () => {
                     <div>
                         <label for="duration_iso" class="form-label">{{
                             t('media.form.durationIsoLabel')
-                            }}</label>
+                        }}</label>
                         <input type="text" id="duration_iso" name="duration_iso" class="form-input"
                             placeholder="PT01H57M" autocomplete="duration_iso" v-model="formData.duration_iso" />
                         <p v-if="errors.duration_iso" class="form-error">
@@ -226,7 +228,7 @@ onMounted(async () => {
                     <div>
                         <label for="labels" class="form-label">{{
                             t('media.form.labelsLabel')
-                            }}</label>
+                        }}</label>
                         <input type="text" id="labels" name="labels" class="form-input text-right"
                             :placeholder="t('media.form.labelsPlaceholder')" autocomplete="labels"
                             v-model="formData.labels" />
@@ -281,7 +283,7 @@ onMounted(async () => {
                             class="flex items-center justify-between p-3 bg-card-hover rounded-xl border border-line cursor-pointer hover:bg-card transition-colors">
                             <span class="text-fluid-xs font-semibold text-title">{{
                                 t('media.form.isReadyLabel')
-                                }}</span>
+                            }}</span>
                             <input type="checkbox" id="is_ready" name="is_ready"
                                 class="accent-accent size-5 rounded cursor-pointer" v-model="formData.is_ready" />
                         </label>
@@ -294,7 +296,7 @@ onMounted(async () => {
                             class="flex items-center justify-between p-3 bg-card-hover rounded-xl border border-line cursor-pointer hover:bg-card transition-colors">
                             <span class="text-fluid-xs font-semibold text-title">{{
                                 t('media.form.isFacebookPostedLabel')
-                                }}</span>
+                            }}</span>
                             <input type="checkbox" id="is_facebook_posted" name="is_facebook_posted"
                                 class="accent-accent size-5 rounded cursor-pointer"
                                 v-model="formData.is_facebook_posted" />
@@ -319,7 +321,7 @@ onMounted(async () => {
                     </span>
                     <span v-else>{{
                         mediaId ? t('media.form.updateBtn') : t('media.form.addBtn')
-                        }}</span>
+                    }}</span>
                 </button>
             </div>
         </form>

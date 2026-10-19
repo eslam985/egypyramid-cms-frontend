@@ -68,12 +68,7 @@ const handleSubmit = async (): Promise<boolean | null> =>
 
                     <!-- حقل كلمة المرور -->
                     <div class="flex flex-col gap-1.5">
-                        <div class="flex justify-between items-center">
                             <label for="password" class="form-label mb-0">{{ t('auth.password') }}</label>
-                            <a href="#"
-                                class="text-fluid-xs font-semibold text-accent hover:text-accent-dark transition-colors">{{
-                                    t('auth.forgotPassword') }}</a>
-                        </div>
 
                         <div class="relative">
                             <input id="password" :type="showPassword ? 'text' : 'password'" placeholder="••••••••"
@@ -96,7 +91,7 @@ const handleSubmit = async (): Promise<boolean | null> =>
 
                     <!-- زر تسجيل الدخول -->
                     <button type="submit" class="btn-primary w-full mt-4 flex items-center justify-center gap-2"
-                        :disabled="authStore.isLoading">
+                        :disabled="authStore.isLoading || !formData.email || !formData.password ">
                         <span>{{ authStore.isLoading ? t('auth.signingIn') : t('auth.signIn') }}</span>
                     </button>
                 </form>

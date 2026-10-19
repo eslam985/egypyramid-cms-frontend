@@ -11,7 +11,7 @@ import { useMediaStore } from '@/stores/mediaStore'
 import { toNumber } from '@/utils/global'
 
 import type { CreateEpisodeSchemaType } from '@/schemas/episodeSchema'
-import type { MediasResponse } from '@/types/globalTypes'
+import type { MediasResponse } from '@/types/mediaType'
 
 const mediaContentStore = useMediaContentStore()
 const mediaStore = useMediaStore()
@@ -83,7 +83,7 @@ const handleSubmit = async (): Promise<void | null> => {
         ? utilsSubmit(mediaId, formData, validate, mediaContentStore.addEpisode, () => router.push(`/media/${mediaId}/details`)) : null
 
     route.name === 'editEpisode' && episodeId
-        ? utilsSubmit(episodeId, formData, validate, mediaContentStore.addEpisode,  () => router.push(`/media/${mediaId}/details`) ) : null
+        ? utilsSubmit(episodeId, formData, validate, mediaContentStore.addEpisode, () => router.push(`/media/${mediaId}/details`)) : null
 }
 
 onMounted(async () => {
@@ -131,7 +131,7 @@ onMounted(async () => {
                     <div v-if="isSeries">
                         <label for="season_id" class="form-label">{{
                             t('media.episodeForm.seasonLabel')
-                            }}</label>
+                        }}</label>
                         <select id="season_id" v-model="formData.season_id" class="form-select">
                             <option v-if="!mediaContentStore.seasons?.length" disabled :value="null">
                                 {{ t('media.episodeForm.noSeasons') }}

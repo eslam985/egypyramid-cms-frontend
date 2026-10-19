@@ -1,5 +1,7 @@
 import { defineStore } from 'pinia'
 import { useNotificationStore } from '@/stores/notificationStore'
+import { sortByProperty } from '@/utils/global'
+
 import {
     handleStoreDelete,
     handleStoreEdit,
@@ -35,21 +37,15 @@ import {
     deleteEpisodeById,
     handleFindAllEpisodes,
 } from '@/api/data/episodes'
-import { sortByProperty } from '@/utils/global'
-import type { CreateSeasonSchemaType, UpdateSeasonSchemaType } from '@/schemas/seasonSchema'
-import type { CreateEpisodeSchemaType, UpdateEpisodeSchemaType } from '@/schemas/episodeSchema'
-import type { CreateLinkSchemaType, UpdateLinkByIdSchemaType } from '@/schemas/linkSchema'
-import type {
-    SeasonsResponse,
-    SeasonQueryRequest,
-    EpisodeResponse,
-    BaseQueryRequest,
-    EpisodeQueryRequest,
-    LinksResponse,
-    LinksQueryRequest,
-    MediaContentState
-} from '@/types/globalTypes'
 
+import type { CreateEpisodeSchemaType, UpdateEpisodeSchemaType } from '@/schemas/episodeSchema'
+import type { CreateSeasonSchemaType, UpdateSeasonSchemaType } from '@/schemas/seasonSchema'
+import type { CreateLinkSchemaType, UpdateLinkByIdSchemaType } from '@/schemas/linkSchema'
+import type { EpisodeResponse, EpisodeQueryRequest } from '@/types/episodeType'
+import type { SeasonQueryRequest, SeasonsResponse } from '@/types/seasonType'
+import type { LinksResponse, LinksQueryRequest } from '@/types/linkType'
+import type { BaseQueryRequest } from '@/types/globalTypes'
+import type { MediaContentState } from '@/types/storeType'
 
 const useMediaContentStore = defineStore('mediaContent', {
     state: (): MediaContentState => ({

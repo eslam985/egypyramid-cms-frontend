@@ -3,11 +3,12 @@ import api from '@/api/auth/interceptors'
 import type { CreateTaskInputsType, UpdateTaskInputsType } from '@/schemas/downloadTaskSchema'
 
 import type {
-    BaseApiResponse,
     DownloadTasksResponse,
     TasksQueryRequest,
     DeleteTaskResponseData,
-} from '@/types/globalTypes'
+} from '@/types/downloadTasksType'
+
+import type { BaseApiResponse } from '@/types/globalTypes'
 
 const createTask = async (
     data: CreateTaskInputsType,

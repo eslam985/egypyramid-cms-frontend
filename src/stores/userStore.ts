@@ -1,6 +1,13 @@
 import { defineStore } from 'pinia'
+
 import { handleStoreDelete, handleStoreEdit, handleStoreFetch } from '@/utils/store'
 import { useNotificationStore } from '@/stores/notificationStore'
+
+import type { UpdateUserInputsType, ChangePasswordInputsType } from '@/schemas/authSchema'
+import type { UserDataResponse, UserSessionDataResponse } from '@/types/userType'
+import type { SortedSessionRequest } from '@/types/seasonType'
+import type { OrderingEnum } from '@/types/globalTypes'
+import type { UserState } from '@/types/storeType'
 
 import {
     handleFindUserById,
@@ -12,15 +19,6 @@ import {
     handleDeleteAvatar,
     handleSetAvatarFromHistory,
 } from '@/api/auth/userApi'
-
-import type { UpdateUserInputsType, ChangePasswordInputsType } from '@/schemas/authSchema'
-import type {
-    UserDataResponse,
-    UserSessionDataResponse,
-    SortedSessionRequest,
-    OrderingEnum,
-    UserState,
-} from '@/types/globalTypes'
 
 export const useUserStore = defineStore('user', {
     state: (): UserState => ({
@@ -219,7 +217,6 @@ export const useUserStore = defineStore('user', {
         },
 
         async setSort(column: string): Promise<UserSessionDataResponse[] | null> {
-
             if (this.filters.sortBy === column) {
                 this.filters.sortOrder =
                     this.filters.sortOrder === 'ASC'

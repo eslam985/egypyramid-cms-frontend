@@ -6,12 +6,9 @@ import type {
     DeleteSessionInputsType,
 } from '@/schemas/authSchema'
 
-import type {
-    BaseApiResponse,
-    UserDataResponse,
-    UserSessionDataResponse,
-    SortedSessionRequest,
-} from '@/types/globalTypes'
+import type { UserDataResponse, UserSessionDataResponse } from '@/types/userType'
+import type { SortedSessionRequest } from '@/types/seasonType'
+import type { BaseApiResponse } from '@/types/globalTypes'
 
 const handleUpdateUserInfo = async (
     data: UpdateUserInputsType,
@@ -23,6 +20,7 @@ const handleUpdateUserInfo = async (
 const handleChangePassword = async (
     data: ChangePasswordInputsType,
 ): Promise<BaseApiResponse<null>> => {
+    ;``
     const result = await api.put('/user/update/password', data)
     return result.data
 }

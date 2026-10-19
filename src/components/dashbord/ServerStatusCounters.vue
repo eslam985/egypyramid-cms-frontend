@@ -6,7 +6,7 @@ import { useI18n } from 'vue-i18n'
 
 import { useAnalyticsStore } from '@/stores/analyticsStore'
 
-import type { StatusLinksRequest } from '@/types/globalTypes'
+import type { StatusLinksRequest } from '@/types/analyticsType'
 
 const analyticsStore = useAnalyticsStore()
 const { totalCountersStatusServeres } = storeToRefs(analyticsStore)

@@ -2,7 +2,8 @@ import api from '../auth/interceptors'
 
 import type { CreateGenreSchemaType, UpdateGenreByIdSchemaType } from '@/schemas/genreSchema'
 
-import type { BaseApiResponse, GenresResponse } from '@/types/globalTypes'
+import type { BaseApiResponse } from '@/types/globalTypes'
+import type { GenresResponse } from '@/types/genreType'
 
 const findGenreByName = async (name: string): Promise<BaseApiResponse<GenresResponse | null>> => {
     const result = await api.get('/genres/search', {

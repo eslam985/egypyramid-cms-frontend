@@ -1,25 +1,18 @@
 import api from '@/api/auth/interceptors'
+import type { DownloadTasksResponse, StatusTasksRequest } from '@/types/downloadTasksType'
+import type { BaseApiResponse, BaseQueryRequest } from '@/types/globalTypes'
+import type { MediasResponse } from '@/types/mediaType'
 import type {
-    BaseApiResponse,
     SystemCountersResponse,
-    StatusTasksRequest,
-    DownloadTasksResponse,
-    MediasResponse,
-    BaseQueryRequest,
     ServerNameRequest,
     LockedTelegramResponse,
     TotalStatusLinksResponse,
-} from '@/types/globalTypes'
+} from '@/types/analyticsType'
 
 const getSystemCounters = async (): Promise<BaseApiResponse<SystemCountersResponse | null>> => {
     const result = await api.get('/analytics/system-counters')
     return result.data
 }
-/*
-"server_name": "streamtape",
-"last_check_status": "broken",
-"total": 70
-*/
 
 const getTotalBrokenAndValidAndPendingLinks = async (
     status?: StatusTasksRequest,

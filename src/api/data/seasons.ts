@@ -1,8 +1,8 @@
 import api from '../auth/interceptors'
 
 import type { CreateSeasonSchemaType, UpdateSeasonSchemaType } from '@/schemas/seasonSchema'
-
-import type { BaseApiResponse, SeasonsResponse, SeasonQueryRequest } from '@/types/globalTypes'
+import type { SeasonsResponse, SeasonQueryRequest } from '@/types/seasonType'
+import type { BaseApiResponse } from '@/types/globalTypes'
 
 const findSeasonsByMediaId = async (
     media_id: number,

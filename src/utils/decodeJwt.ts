@@ -1,4 +1,4 @@
-import type { JwtUserPayload } from '@/types/globalTypes'
+import type { JwtUserPayload } from '@/types/userType'
 
 // 2. الدالة أصبحت محمية ومخرجاتها واضحة ومقروءة للمشروع بالكامل
 export function decodeJwt(token: string | undefined): JwtUserPayload | null {
