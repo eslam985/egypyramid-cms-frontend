@@ -98,12 +98,8 @@ export const useUserStore = defineStore('user', {
                 force,
             })
 
-            if (isSuccess && Object.keys(isSuccess).length > 0) {
-                this.notiStore.triggerNotification(
-                    this.successMessage || `found user ${isSuccess.username}`,
-                )
-            } else {
-                this.notiStore.triggerNotification(this.errorMessage || 'Not Found')
+            if (!isSuccess) {
+                this.notiStore.triggerNotification(this.errorMessage)
             }
 
             return isSuccess

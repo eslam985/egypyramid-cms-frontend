@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { onMounted } from 'vue'
 import { useMediaStore } from '@/stores/mediaStore'
 
 import HeaderMedia from '@/components/media/mediaList/HeaderMedia.vue'
@@ -10,23 +9,20 @@ import { useRouter, useRoute } from 'vue-router'
 const mediaStore = useMediaStore()
 const router = useRouter()
 const route = useRoute()
-
-// جلب بيانات الصفحة الأولى عند الفتح
-onMounted(async () => {
-    router.push({
-        name: 'mediaList',
-        query: {
-            ...route.query,
-            page: 1,
-            limit: 20,
-        },
-    })
-    await mediaStore.fetchMedias({ page: 1, limit: 20 })
-})
+const loadData = async (): Promise<void> => {
+    await mediaStore.fetchMedias(route.query)
+}
+loadData()
 
 const handlePageChange = async (newPage: number): Promise<void> => {
-    await mediaStore.setPage(newPage)
-    window.scrollTo({ top: 0, behavior: 'smooth' })
+    await router.push({
+        query: {
+            ...route.query,
+            page: newPage,
+        },
+    })
+    // بعد ما الرابط يتحدث، بننادي الدالة تجيب بيانات الصفحة الجديدة
+    loadData()
 }
 </script>
 
@@ -35,11 +31,8 @@ const handlePageChange = async (newPage: number): Promise<void> => {
         <div>
             <HeaderMedia />
             <MainMedia />
-            <AppPagination
-                :pagination="mediaStore.pagination"
-                :is-loading="mediaStore.isLoading"
-                @change-page="handlePageChange"
-            />
+            <AppPagination :pagination="mediaStore.pagination" :is-loading="mediaStore.isLoading"
+                @change-page="handlePageChange" />
         </div>
     </main>
 </template>

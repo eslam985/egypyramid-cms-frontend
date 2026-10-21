@@ -35,7 +35,7 @@ const handleSubmit = async (): Promise<boolean | null> =>
         <!-- القسم الأيسر: فورم تسجيل الدخول -->
         <div class="w-full lg:w-1/2 flex items-center justify-center p-6 sm:p-12 ">
             <!-- صندوق تسجيل الدخول -->
-            <div class="card p-fluid-section flex flex-col gap-4 bg-card/80">
+            <div class="card w-full sm:max-w-[340px] p-fluid-section flex flex-col gap-4 bg-card/80">
                 <!-- شعار ومقدمة ترحيبية -->
                 <div class="text-center space-y-2">
                     <div
@@ -68,7 +68,7 @@ const handleSubmit = async (): Promise<boolean | null> =>
 
                     <!-- حقل كلمة المرور -->
                     <div class="flex flex-col gap-1.5">
-                            <label for="password" class="form-label mb-0">{{ t('auth.password') }}</label>
+                        <label for="password" class="form-label mb-0">{{ t('auth.password') }}</label>
 
                         <div class="relative">
                             <input id="password" :type="showPassword ? 'text' : 'password'" placeholder="••••••••"
@@ -91,7 +91,7 @@ const handleSubmit = async (): Promise<boolean | null> =>
 
                     <!-- زر تسجيل الدخول -->
                     <button type="submit" class="btn-primary w-full mt-4 flex items-center justify-center gap-2"
-                        :disabled="authStore.isLoading || !formData.email || !formData.password ">
+                        :disabled="authStore.isLoading || !formData.email || !formData.password">
                         <span>{{ authStore.isLoading ? t('auth.signingIn') : t('auth.signIn') }}</span>
                     </button>
                 </form>

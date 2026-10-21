@@ -1,13 +1,11 @@
 <script setup lang="ts">
 import { CircleOff, BoneFracture, Lock, FileX } from '@lucide/vue'
-import { useRouter, useRoute } from 'vue-router'
 import { defineAsyncComponent, ref } from 'vue'
+import { useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { useI18n } from 'vue-i18n'
 
 import { useAnalyticsStore } from '@/stores/analyticsStore'
-import { fromRouteQuery } from '@/utils/routerHelpers'
-
 
 const BrokenLinksTable = defineAsyncComponent(
     () => import('@/components/dashbord/tabs/BrokenLinksTable.vue'),
@@ -21,13 +19,10 @@ const NotReadyMediasTable = defineAsyncComponent(
 const TelegramLockedTable = defineAsyncComponent(
     () => import('@/components/dashbord/tabs/TelegramLockedTable.vue'),
 )
-
-import type { ServerNameRequest } from '@/types/analyticsType'
 import type { BaseQueryRequest } from '@/types/globalTypes'
 
 const analyticsStore = useAnalyticsStore()
 const router = useRouter()
-const route = useRoute()
 const { t } = useI18n()
 
 const { mediasNotReadyList, brokenLinksList, telegramLocked, missingLinksByServer } =
@@ -43,30 +38,26 @@ const resetRouterQuery = (): void => {
 }
 
 // 2. جلب بيانات التبويب فقط لحظة الضغط عليه
-const switchTab = async (tab: string | null): Promise<void | null | undefined> => {
-    if (!tab) return null
+const switchTab = async (tab: string | null): Promise<void> => {
+    if (!tab) return
 
     activeTab.value = tab
-
-    const paramsWithServerName: ServerNameRequest = {
-        page: 1,
-        limit: 20,
-        serverName: fromRouteQuery(route.query.serverName)
-    }
+    resetRouterQuery()
 
     const params: BaseQueryRequest = {
         page: 1,
         limit: 20,
     }
 
+    router.push({
+        query: { ...params }
+    })
 
     if (tab === 'notReady' && !mediasNotReadyList.value.length) {
-        resetRouterQuery()
         await analyticsStore.fetchNotReadyMedias(params)
     } else if (tab === 'broken' && !brokenLinksList.value.length) {
-        await analyticsStore.fetchBrokenLinks(paramsWithServerName)
+        // الكومبوننت سيقوم بالجلب بنفسه مع تحديد السيرفر
     } else if (tab === 'telegram' && !telegramLocked.value.length) {
-        resetRouterQuery()
         await analyticsStore.fetchLockedTelegramLinks(params)
     } else if (tab === 'missing') {
         // الكومبوننت سيقوم بالجلب بنفسه مع تحديد السيرفر
@@ -74,7 +65,7 @@ const switchTab = async (tab: string | null): Promise<void | null | undefined> =
 }
 </script>
 <template>
-    <div class="rounded-2xl space-y-4 shadow-soft">
+    <div class="rounded-2xl space-y-6 shadow-soft">
         <!-- أزرار التبويبات -->
         <div class="flex flex-wrap items-center gap-fluid-gap">
             <!-- الأعمال غير الجاهزة -->

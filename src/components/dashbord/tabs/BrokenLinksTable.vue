@@ -70,6 +70,7 @@ const loadBrokenLinks = (page = 1): void => {
         serverName: selectedServer.value,
         page: page,
     })
+
     query({ serverName: selectedServer.value })
 }
 

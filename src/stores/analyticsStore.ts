@@ -165,13 +165,7 @@ const useAnalyticsStore = defineStore('analytics', {
             })
 
             if (!isSuccess) {
-                this.notiStore.triggerNotification(
-                    this.errorMessage || 'حدث خطأ اثناء تحميل البيانات!',
-                )
-            } else {
-                this.notiStore.triggerNotification(
-                    this.successMessage || 'تم تحميل البيانات بنجاح!',
-                )
+                this.notiStore.triggerNotification(this.errorMessage)
             }
 
             return isSuccess
@@ -193,14 +187,8 @@ const useAnalyticsStore = defineStore('analytics', {
                 force,
             })
 
-            if (isSuccess && isSuccess?.length > 0) {
-                this.notiStore.triggerNotification(
-                    this.successMessage || 'تم تحميل البيانات بنجاح!',
-                )
-            } else {
-                this.notiStore.triggerNotification(
-                    this.errorMessage || 'حدث خطأ اثناء تحميل البيانات!',
-                )
+            if (!isSuccess) {
+                this.notiStore.triggerNotification(this.errorMessage)
             }
 
             return isSuccess
@@ -223,13 +211,7 @@ const useAnalyticsStore = defineStore('analytics', {
             })
 
             if (!isSuccess) {
-                this.notiStore.triggerNotification(
-                    this.errorMessage || 'حدث خطأ اثناء تحميل البيانات!',
-                )
-            } else {
-                this.notiStore.triggerNotification(
-                    this.successMessage || 'تم تحميل البيانات بنجاح!',
-                )
+                this.notiStore.triggerNotification(this.errorMessage)
             }
 
             return isSuccess
@@ -256,14 +238,8 @@ const useAnalyticsStore = defineStore('analytics', {
                 force,
             })
 
-            if (isSuccess && isSuccess?.length > 0) {
-                this.notiStore.triggerNotification(
-                    this.successMessage || 'تم تحميل البيانات بنجاح!',
-                )
-            } else {
-                this.notiStore.triggerNotification(
-                    this.errorMessage || 'حدث خطأ اثناء تحميل البيانات!',
-                )
+            if (!isSuccess) {
+                this.notiStore.triggerNotification(this.errorMessage)
             }
 
             return isSuccess
@@ -273,6 +249,8 @@ const useAnalyticsStore = defineStore('analytics', {
             force = false,
         ): Promise<DownloadTasksResponse[] | null> {
             if (!params.serverName) {
+                console.log(params.serverName)
+                console.log(params)
                 this.notiStore.triggerNotification('server name is Requied!')
                 return null
             }
@@ -296,13 +274,7 @@ const useAnalyticsStore = defineStore('analytics', {
             })
 
             if (!isSuccess) {
-                this.notiStore.triggerNotification(
-                    this.errorMessage || 'حدث خطأ اثناء تحميل البيانات!',
-                )
-            } else {
-                this.notiStore.triggerNotification(
-                    this.successMessage || 'تم تحميل البيانات بنجاح!',
-                )
+                this.notiStore.triggerNotification(this.errorMessage)
             }
 
             return isSuccess
@@ -329,14 +301,8 @@ const useAnalyticsStore = defineStore('analytics', {
                 force,
             })
 
-            if (isSuccess && isSuccess?.length > 0) {
-                this.notiStore.triggerNotification(
-                    this.successMessage || 'تم تحميل البيانات بنجاح!',
-                )
-            } else {
-                this.notiStore.triggerNotification(
-                    this.errorMessage || 'حدث خطأ اثناء تحميل البيانات!',
-                )
+            if (!isSuccess) {
+                this.notiStore.triggerNotification(this.errorMessage)
             }
 
             return isSuccess

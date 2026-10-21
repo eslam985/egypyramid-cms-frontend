@@ -106,12 +106,7 @@ const useMediaStore = defineStore('media', {
             })
 
             if (!isSuccess) {
-                this.notiStore.triggerNotification(this.errorMessage || 'Not Found')
-            } else {
-                this.notiStore.triggerNotification(
-                    this.successMessage || `Found Media ID ${id} successfuly `,
-                )
-                this.medias = [isSuccess]
+                this.notiStore.triggerNotification(this.errorMessage)
             }
 
             return isSuccess
@@ -257,11 +252,7 @@ const useMediaStore = defineStore('media', {
             })
 
             if (!isSuccess) {
-                this.notiStore.triggerNotification(this.errorMessage || 'Not Found')
-            } else {
-                this.notiStore.triggerNotification(
-                    this.successMessage || `Found ${isSuccess?.length} Media successfuly `,
-                )
+                this.notiStore.triggerNotification(this.errorMessage)
             }
 
             return isSuccess

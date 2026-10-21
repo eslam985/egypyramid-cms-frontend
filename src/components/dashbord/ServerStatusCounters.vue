@@ -32,7 +32,7 @@ onMounted(() => {
 })
 </script>
 <template>
-    <div class="mt-8 space-y-4">
+    <div class="space-y-6">
         <!-- الهيدر وفلتر الحالة -->
         <div class="flex items-center justify-between gap-2">
             <h3 class="text-fluid-p font-bold text-main">

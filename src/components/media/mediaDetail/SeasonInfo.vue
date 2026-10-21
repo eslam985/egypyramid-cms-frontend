@@ -87,7 +87,7 @@ const isSeries = computed(() => {
         <div v-else class="bg-card rounded-2xl border border-line p-fluid md:p-6 shadow-soft space-y-6">
             <!-- الهيدر: عنوان القائمة وزر الإضافة -->
             <div
-                class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-fluid pb-4 border-b border-line">
+                class="flex flex-wrap justify-between gap-fluid-gap pb-4 border-b border-line">
                 <div class="flex items-center gap-3">
                     <div class="p-2.5 rounded-xl bg-accent/10 text-accent border border-accent/20">
                         <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -105,7 +105,8 @@ const isSeries = computed(() => {
                     </div>
                 </div>
 
-                <button v-if="authStore.isEditorAndAbove" type="button" @click="handleAddSeason" class="btn-ghost">
+                <button v-if="authStore.isEditorAndAbove" type="button" @click="handleAddSeason"
+                class="btn-outline shadow-glow/10 text-fluid-xs lg:text-fluid-p text-accent-dark hover:text-slate-900 hover:bg-accent/70">
                     <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                     </svg>
@@ -132,7 +133,7 @@ const isSeries = computed(() => {
                         <div>
                             <span class="text-fluid-xs font-boldblock">{{
                                 t('media.seasonInfo.seasonLabel', { number: season.season_number })
-                                }}</span>
+                            }}</span>
                             <span class="text-[10px] text-sub/70 font-mono block">ID: {{ season.id }}</span>
                         </div>
                     </div>
@@ -146,7 +147,7 @@ const isSeries = computed(() => {
                         <template v-else>
                             <span class="text-danger text-fluid-xs">{{
                                 t('media.seasonInfo.noEpisodes')
-                                }}</span>
+                            }}</span>
                         </template>
                     </div>
                     <!-- تفاصيل إضافية -->

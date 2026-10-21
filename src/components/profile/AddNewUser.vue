@@ -39,7 +39,7 @@ const handleSubmitFormData = async (): Promise<UserDataResponse | null> =>
     <!-- left -->
     <div class="space-y-6 max-w-6xl mx-auto w-full min-w-0 overflow-x-hidden">
         <!-- form edit  -->
-        <form v-if="authStore.isAdmin" @submit.prevent="handleSubmitFormData" class="max-w-xs card space-y-5">
+        <form v-if="authStore.isAdmin" @submit.prevent="handleSubmitFormData" class="max-w-xl card space-y-5 px-2 lg:px-4">
             <!-- header h2 & P -->
             <div>
                 <div class="flex gap-2">

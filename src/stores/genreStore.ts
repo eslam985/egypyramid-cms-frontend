@@ -56,12 +56,8 @@ const useGenresStore = defineStore('genre', {
                 defaultError: 'حدث خطأ أثناء جلب التصنيفات',
             })
 
-            if (isSuccess && isSuccess?.length > 0) {
-                this.notiStore.triggerNotification(this.successMessage || 'تم جلب البيانات بنجاح')
-            } else {
-                this.notiStore.triggerNotification(
-                    this.errorMessage || 'حدث خطأ اثناء تحميل البيانات!',
-                )
+            if (!isSuccess) {
+                this.notiStore.triggerNotification(this.errorMessage)
             }
 
             return isSuccess
@@ -119,11 +115,10 @@ const useGenresStore = defineStore('genre', {
                 force,
             })
 
-            if (isSuccess && Object.keys(isSuccess).length > 0) {
-                this.notiStore.triggerNotification(this.successMessage || `found genre Id ${id}`)
+            if (!isSuccess) {
+                this.notiStore.triggerNotification(this.errorMessage)
+            }else {
                 this.allGenres = [isSuccess]
-            } else {
-                this.notiStore.triggerNotification(this.errorMessage || 'Not Found')
             }
 
             return isSuccess

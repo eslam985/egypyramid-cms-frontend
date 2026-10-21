@@ -58,7 +58,7 @@ const handleDeleteMedia = (): void => {
             <!-- العنوان والتراجع -->
             <div class="flex items-center gap-3 justify-between mb-4 border-b border-line pb-4">
                 <button type="button" @click="handleBack"
-                    class="p-2.5 rounded-xl bg-line/10 hover:bg-line/20 text-sub border border-line transition-all active:scale-95 cursor-pointer"
+                    class="max-w-20 btn-outline shadow-glow/10 text-fluid-xs lg:text-fluid-p text-accent-dark hover:text-slate-900 hover:bg-accent/70r"
                     :title="t('media.detail.backToList')">
                     <svg class="w-5 h-5 rtl:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -116,7 +116,7 @@ const handleDeleteMedia = (): void => {
 
                         <!-- Labels -->
                         <div v-if="mediaStore.currentMedia.labels"
-                            class="flex items-center gap-2 text-fluid-xs text-sub">
+                            class="flex flex-wrap items-center gap-2 text-fluid-xs text-sub">
                             <span class="text-main font-semibold">{{ t('media.detail.labels') }}:</span>
                             <span class="bg-line/10 px-2 py-0.5 rounded border border-line font-mono">{{
                                 mediaStore.currentMedia.labels }}</span>
@@ -128,12 +128,12 @@ const handleDeleteMedia = (): void => {
                             <span
                                 class="px-3 py-1 rounded-lg text-fluid-xs font-medium border flex items-center gap-1.5"
                                 :class="mediaStore.currentMedia.is_ready
-                                        ? 'bg-success/10 text-success border-success/20'
-                                        : 'bg-danger/10 text-danger border-danger/20'
+                                    ? 'bg-success/10 text-success border-success/20'
+                                    : 'bg-danger/10 text-danger border-danger/20'
                                     ">
                                 <span class="w-2 h-2 rounded-full" :class="mediaStore.currentMedia.is_ready
-                                        ? 'bg-success'
-                                        : 'bg-danger'
+                                    ? 'bg-success'
+                                    : 'bg-danger'
                                     "></span>
                                 {{
                                     mediaStore.currentMedia.is_ready
@@ -146,8 +146,8 @@ const handleDeleteMedia = (): void => {
                             <span
                                 class="px-3 py-1 rounded-lg text-fluid-xs font-medium border flex items-center gap-1.5"
                                 :class="mediaStore.currentMedia.is_notified
-                                        ? 'bg-accent/10 text-accent border-accent/20'
-                                        : 'bg-line/20 text-sub border-line'
+                                    ? 'bg-accent/10 text-accent border-accent/20'
+                                    : 'bg-line/20 text-sub border-line'
                                     ">
                                 {{
                                     mediaStore.currentMedia.is_notified
@@ -160,8 +160,8 @@ const handleDeleteMedia = (): void => {
                             <span
                                 class="px-3 py-1 rounded-lg text-fluid-xs font-medium border flex items-center gap-1.5"
                                 :class="mediaStore.currentMedia.is_facebook_posted
-                                        ? 'bg-accent/10 text-accent border-accent/20'
-                                        : 'bg-line/20 text-sub border-line'
+                                    ? 'bg-accent/10 text-accent border-accent/20'
+                                    : 'bg-line/20 text-sub border-line'
                                     ">
                                 {{
                                     mediaStore.currentMedia.is_facebook_posted
@@ -208,7 +208,7 @@ const handleDeleteMedia = (): void => {
             <!-- أزرار الإجراءات -->
             <div v-if="authStore.isEditorAndAbove"
                 class="flex items-center gap-fluid-gap self-end md:self-auto shrink-0">
-                <button type="button" @click="handleEditMedia" class="btn-secondary">
+                <button type="button" @click="handleEditMedia" class="btn-secondary max-w-30">
                     <svg class="w-4 h-4 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
@@ -217,7 +217,7 @@ const handleDeleteMedia = (): void => {
                 </button>
 
                 <button v-if="authStore.isAdmin" type="button" @click="handleDeleteMedia"
-                    class="flex gap-2 px-3 py-2 rounded-xl border border-danger/20 hover:bg-danger/10 font-medium transition-all active:scale-95 disabled:opacity-50 cursor-pointer">
+                    class="flex gap-2 px-3 py-2 max-w-30 rounded-xl border border-danger/20 hover:bg-danger/10 font-medium transition-all active:scale-95 disabled:opacity-50 cursor-pointer">
                     <svg class="w-4 h-4 text-danger" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />

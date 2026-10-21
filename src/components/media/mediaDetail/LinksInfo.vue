@@ -68,7 +68,7 @@ const handleDeleteLink = async (linkId: number): Promise<void> => {
 <template>
     <div v-if="mediaContentStore.currentEpisode"
         class="bg-card rounded-2xl border border-line p-fluid shadow-soft space-y-4 overflow-hidden">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-fluid pb-4 border-b border-line">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-fluid-gap pb-4 border-b border-line">
             <div class="flex items-center gap-3">
                 <div class="p-2.5 rounded-xl bg-accent/10 text-accent border border-accent/20">
                     <Link2 class="w-5 h-5" />

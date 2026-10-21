@@ -58,7 +58,7 @@ const handleExport = async () => {
 </script>
 <template>
     <!-- أدوات الفلترة والبحث والتحديث -->
-    <div class="flex flex-wrap justify-between md:justify-center gap-fluid-gap mb-6 mt-3">
+    <div class="flex flex-wrap md:justify-center gap-fluid-gap mb-6 mt-3">
 
         <!-- 1111 -->
         <!-- حقل البحث -->

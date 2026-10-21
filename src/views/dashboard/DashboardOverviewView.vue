@@ -24,7 +24,7 @@ onMounted(async () => {
 
 <template>
     <!-- حالة جاري التحميل -->
-    <div class="space-y-6 max-w-7xl mx-auto w-full min-w-0 overflow-x-hidden">
+    <div class="space-y-6 max-w-7xl mx-auto w-full min-w-0 overflow-x-hidden mb-6">
         <HeaderDashbord />
         <SystemCounters />
         <ServerStatusCounters />

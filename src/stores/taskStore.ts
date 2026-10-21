@@ -95,9 +95,7 @@ const useTaskStore = defineStore('task', {
             })
 
             if (!isSuccess) {
-                this.notiStore.triggerNotification(this.errorMessage || 'تعذر جلب البيانات')
-            } else {
-                this.notiStore.triggerNotification(this.successMessage || 'تم جلب البيانات بنجاح')
+                this.notiStore.triggerNotification(this.errorMessage)
             }
 
             return isSuccess
@@ -124,13 +122,10 @@ const useTaskStore = defineStore('task', {
                 force,
             })
 
-            if (isSuccess && Object.keys(isSuccess).length > 0) {
-                this.notiStore.triggerNotification(
-                    this.successMessage || `Found ${isSuccess.id} successfully!`,
-                )
+            if (!isSuccess) {
+                this.notiStore.triggerNotification(this.errorMessage)
+            }else {
                 this.allTasks = [isSuccess]
-            } else {
-                this.notiStore.triggerNotification(this.successMessage || 'Not Found')
             }
 
             return isSuccess

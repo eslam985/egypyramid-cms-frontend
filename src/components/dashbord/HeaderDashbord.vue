@@ -35,7 +35,7 @@ const loadDashboardData = async () => {
             </div>
 
             <button @click="loadDashboardData"
-                class=" btn-outline shadow-glow/10 text-fluid-xs lg:text-fluid-p text-accent-dark hover:text-slate-900 hover:bg-accent/70"
+                class="btn-outline max-w-42 shadow-glow/10 text-fluid-xs lg:text-fluid-p text-accent-dark hover:text-slate-900 hover:bg-accent/70"
                 :disabled="isLoading">
                 <Loader class="size-5 text-accent" :class="{ 'animate-spin': isLoading }" :stroke-width="2" />
                 <span>{{ t('dashboard.overview.refresh') }}</span>

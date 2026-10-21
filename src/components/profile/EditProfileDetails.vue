@@ -50,9 +50,9 @@ const handleSubmitFormData = async (): Promise<UserDataResponse | null> =>
     utilsSubmit(undefined, formData.value, validateProfile, userStore.updateUserInfo)
 
 const handleSubmitFormPasswordData = async (): Promise<void | null> => {
-    const isPassSame: boolean = formPasswordData.value.newPassword !== formPasswordData.value.confirmNewPassword
+    const isPassSame: boolean = formPasswordData.value.newPassword === formPasswordData.value.confirmNewPassword
 
-    if (isPassSame) {
+    if (!isPassSame) {
         userStore.notiStore.triggerNotification('The password does not match.')
         return null
     }
@@ -71,7 +71,7 @@ onMounted(async () => {
 <template>
     <!-- container -->
     <section :class="authStore.isEditorAndAbove ? 'md:grid-cols-3' : 'md:grid-cols-2'"
-        class="grid grid-cols-1 gap-3 space-y-6 max-w-6xl mx-auto mb-8 w-full min-w-0 overflow-x-hidden">
+        class="grid grid-cols-1 gap-fluid-gap space-y-6 max-w-6xl mx-auto mb-8 w-full min-w-0 overflow-x-hidden">
         <!-- left -->
         <div>
             <!-- form edit  -->

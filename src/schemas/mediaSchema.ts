@@ -47,8 +47,8 @@ export const updateMediaSchema = createMediaSchema
 
 // 1. تعريف الـ Inner Query Schema صراحة
 export const mediaQuerySchema = z.object({
-    page: z.coerce.number().int().positive().default(1),
-    limit: z.coerce.number().int().max(100).default(10),
+    page: z.coerce.number().int().positive().default(1).optional(),
+    limit: z.coerce.number().int().max(100).default(10).optional(),
     search: z.string().trim().optional(),
     category: z.enum(['movie', 'tv']).optional(),
     sortBy: z.enum(['title', 'category', 'year', 'is_ready', 'created_at']).optional(),

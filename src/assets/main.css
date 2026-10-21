@@ -455,7 +455,7 @@ body[data-theme='dark'] {
     .form-input,
     .form-select,
     .form-textarea {
-        @apply max-w-[100px] md:max-w-[170px] inline-flex items-center justify-center gap-2 font-semibold rounded-xl duration-200 active:scale-95 disabled:opacity-50 disabled:pointer-events-none text-fluid-xs md:text-fluid-p;
+        @apply w-full max-w-[200px] inline-flex items-center justify-center gap-2 font-semibold rounded-xl duration-200 active:scale-95 disabled:opacity-50 disabled:pointer-events-none text-fluid-xs md:text-fluid-p;
     }
 
     /* ===== الأزرار: الألوان والتخصيص ===== */
