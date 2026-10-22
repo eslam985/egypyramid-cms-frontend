@@ -7,7 +7,7 @@ const { t } = useI18n()
 </script>
 
 <template>
-    <nav class=" mb-4">
+    <nav class="">
         <div class="overflow-x-auto max-w-full flex flex-nowrap items-center justify-start md:justify-center gap-2 md:gap-fluid-gap p-fluid md:px-6 bg-card border border-line rounded-b-lg shadow-soft">
 
 

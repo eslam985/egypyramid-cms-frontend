@@ -6,12 +6,13 @@ import { useGenresStore } from '@/stores/genreStore'
 
 const genresStore = useGenresStore()
 
-onMounted(async () => {
-    await genresStore.fetchAllGenres()
-})
+const loadData = async () => await genresStore.fetchAllGenres()
+
+onMounted(loadData)
+
 </script>
 <template>
-    <main class="mx-auto w-full min-w-0 overflow-x-auto">
+    <main class="mx-auto w-full mb-6 min-w-0 overflow-x-auto">
         <HeaderGenre />
         <MainGenre />
     </main>

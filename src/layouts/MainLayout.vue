@@ -12,11 +12,8 @@ const notiStore = useNotificationStore()
 <template>
     <div class="flex h-screen overflow-hidden bg-background relative">
         <!-- Overlay Backdrop مع بلور للموبايل فقط -->
-        <div
-            v-if="notiStore.isShowSideBar"
-            @click="notiStore.openSide()"
-            class="fixed inset-0 z-20 bg-black/50 backdrop-blur-sm md:hidden transition-all duration-300"
-        ></div>
+        <div v-if="notiStore.isShowSideBar" @click="notiStore.openSide()"
+            class="fixed inset-0 z-20 bg-black/50 backdrop-blur-sm md:hidden transition-all duration-300"></div>
 
         <!-- السايد بار -->
         <Sidebar />
@@ -27,8 +24,7 @@ const notiStore = useNotificationStore()
             <HorizontalBar />
 
             <main
-                class="flex-1 overflow-y-auto flex flex-col gap-fluid px-fluid mx-auto w-full min-w-0 overflow-x-hidden"
-            >
+                class="flex-1 overflow-y-auto flex flex-col gap-fluid px-fluid mx-auto w-full min-w-0 overflow-x-hidden">
                 <router-view />
             </main>
 
