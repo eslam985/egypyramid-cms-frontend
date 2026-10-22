@@ -2,29 +2,28 @@
 <html lang="">
 
 <head>
-    <meta charset="UTF-8">
-    <link rel="icon" href="/favicon.ico">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard && Analytics</title>
-    <script>
-      (function() {
-        // 1- طبق الدارك قبل ما Vue يحمل عشان ميعملش فلاش ابيض
-        const theme = localStorage.getItem('theme');
-        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        if (theme === 'dark' || (!theme && prefersDark)) {
-          document.documentElement.classList.add('dark');
-        }
-        // 2- طبق اللغة والـ dir بدري برضه
-        const lang = localStorage.getItem('lang') || 'ar';
-        document.documentElement.lang = lang;
-        document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
-      })();
-    </script>
+  <meta charset="UTF-8">
+  <link rel="icon" href="/favicon.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard && Analytics</title>
+  <script>
+    (function () {
+      const savedTheme = localStorage.getItem('theme')
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+      const isDark = savedTheme ? savedTheme === 'dark' : prefersDark
+
+      document.documentElement.classList.toggle('dark', isDark)
+
+      const savedLang = localStorage.getItem('lang') || 'ar'
+      document.documentElement.lang = savedLang
+      document.documentElement.dir = savedLang === 'ar' ? 'rtl' : 'ltr'
+    })();
+  </script>
 </head>
 
 <body>
-    <div id="app"></div>
-    <script type="module" src="/src/main.js"></script>
+  <div id="app"></div>
+  <script type="module" src="/src/main.js"></script>
 </body>
 
 </html>

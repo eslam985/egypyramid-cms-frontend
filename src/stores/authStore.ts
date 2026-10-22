@@ -73,21 +73,12 @@ export const useAuthStore = defineStore('auth', {
                 }
 
                 return false
-            } catch (err: unknown  ) {
-                const status: number | undefined = isAxiosError(err) ? err.response?.status : undefined
-                const msg: string = isAxiosError(err) ? err.response?.data?.message || '' : ''
+            } catch (err: unknown) {
+                const msg: string = isAxiosError(err)
+                    ? err.response?.data?.message || 'حدث خطأ ما، يرجى المحاولة لاحقاً'
+                    : ''
 
-                if (msg.includes('getaddrinfo ENOTFOUND')) {
-                    this.errorMessage = 'حدث خطأ اثناء الاتصال بقاعدة البيانات!'
-                } else {
-                    this.errorMessage = msg || 'حدث خطأ ما، يرجى المحاولة لاحقاً'
-
-                    // الطريقة الأظطف والنظيفة بدون if فارغ
-                    if (!status || status >= 500) {
-                        this.isServerError = true
-                    }
-                }
-
+                this.errorMessage = msg
                 this.notiStore.triggerNotification(this.errorMessage)
                 console.error(err)
                 return false
@@ -129,10 +120,14 @@ export const useAuthStore = defineStore('auth', {
                 }
                 this.clearAccessToken()
                 return false
-            } catch (err: unknown  ) {
+            } catch (err: unknown) {
                 this.clearAccessToken()
-                const status: number | undefined = isAxiosError(err) ? err.response?.status : undefined
-                const msg: string = isAxiosError(err) ? err.response?.data?.message || 'حدث خطا اثناء استرجاع الجلسة' : ''
+                const status: number | undefined = isAxiosError(err)
+                    ? err.response?.status
+                    : undefined
+                const msg: string = isAxiosError(err)
+                    ? err.response?.data?.message || 'حدث خطا اثناء استرجاع الجلسة'
+                    : ''
                 const isStatusErr: boolean = status === 401
 
                 this.errorMessage = msg

@@ -9,35 +9,27 @@ import BackToTop from '@/components/utils/BackToTop.vue'
 
 const authStore = useAuthStore()
 
-// ✅ ده اللي كان ناقص - بيثبت الثيم واللغة لكل الصفحات
-onMounted(() => {
-    const savedTheme = localStorage.getItem('theme')
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
-    const isDark = savedTheme ? savedTheme === 'dark' : prefersDark
+const loadTheme = () => {
+    const savedTheme: string | null = localStorage.getItem('theme')
+    const prefersDark: boolean = window.matchMedia('(prefers-color-scheme: dark)').matches
+    const isDark: boolean = savedTheme ? savedTheme === 'dark' : prefersDark
+
     document.documentElement.classList.toggle('dark', isDark)
 
-    // وبتاع الـ dir اللي صلحناه المرة اللي فاتت
-    const savedLang = localStorage.getItem('lang') || 'ar'
+    const savedLang: string = localStorage.getItem('lang') || 'ar'
     document.documentElement.lang = savedLang
     document.documentElement.dir = savedLang === 'ar' ? 'rtl' : 'ltr'
-})
+}
+
+onMounted(loadTheme)
 </script>
 <template>
-    <div
-        v-if="!authStore.isInitialized && authStore.isLoading"
-        class="flex flex-col justify-center items-center h-screen bg-gray-50 font-sans"
-    >
-        <div
-            class="w-12 h-12 border-4 border-gray-200 border-t-blue-500 rounded-full animate-spin mb-5"
-        ></div>
+    <div v-if="!authStore.isInitialized && authStore.isLoading"
+        class="flex flex-col justify-center items-center h-screen">
+
+        <div class="w-12 h-12 border-4 border-card border-t-accent rounded-full animate-spin mb-5"></div>
+
         <p class="mb-4">Loading...</p>
-        <div class="flex items-center gap-2 shrink-0 h-10">
-            <img
-                alt="logo"
-                class="max-w-[200px] w-auto object-contain transition-transform duration-200 hover:scale-105"
-                src="https://res.cloudinary.com/dbahqgo8j/image/upload/f_auto,q_auto:best,dpr_2.0/v1/blogger/zihpfgs7eta0sffsz1ww"
-            />
-        </div>
     </div>
 
     <ServerError v-else-if="authStore.isServerError" />
@@ -47,7 +39,6 @@ onMounted(() => {
         <NotificationApp />
         <ConfirmModal />
 
-        <!-- زر العودة للأعلى -->
         <BackToTop />
     </div>
 </template>

@@ -85,6 +85,20 @@ const handleExport = async () => {
         </div>
 
         <!-- 3333 -->
+        <!-- refreshData -->
+        <button @click="handleRefresh" :disabled="genresStore.isLoading" type="button"
+            class="btn-outline gap-1 shadow-glow/10 text-fluid-xs lg:text-fluid-p text-accent-dark hover:text-slate-900 hover:bg-accent/70">
+            <Loader class="size-5 text-accent" :class="{ 'animate-spin': genresStore.isLoading }" :stroke-width="2" />
+            {{ t('common.refreshData') }}
+        </button>
+        <!-- 4444 -->
+        <!-- addNew -->
+        <router-link v-if="authStore.isEditorAndAbove" to="/new-genre"
+            class="btn-outline gap-1 shadow-glow/10 text-fluid-xs lg:text-fluid-p text-accent-dark hover:text-slate-900 hover:bg-accent/70">
+            {{ t('genres.addNew') }}
+        </router-link>
+
+        <!-- 5555 -->
         <!-- Export -->
         <div v-if="authStore.isEditorAndAbove" class="self-center">
             <button type="button"
@@ -94,20 +108,5 @@ const handleExport = async () => {
                 Export
             </button>
         </div>
-
-        <!-- 4444 -->
-        <!-- refreshData -->
-        <button @click="handleRefresh" :disabled="genresStore.isLoading" type="button"
-            class="btn-outline gap-1 shadow-glow/10 text-fluid-xs lg:text-fluid-p text-accent-dark hover:text-slate-900 hover:bg-accent/70">
-            <Loader class="size-5 text-accent" :class="{ 'animate-spin': genresStore.isLoading }" :stroke-width="2" />
-            {{ t('common.refreshData') }}
-        </button>
-
-        <!-- 5555 -->
-        <!-- addNew -->
-        <router-link v-if="authStore.isEditorAndAbove" to="/new-genre"
-            class="btn-outline gap-1 shadow-glow/10 text-fluid-xs lg:text-fluid-p text-accent-dark hover:text-slate-900 hover:bg-accent/70">
-            {{ t('genres.addNew') }}
-        </router-link>
     </div>
 </template>

@@ -104,7 +104,7 @@ const handleExport = async (): Promise<void> => {
 </script>
 <template>
     <!-- أدوات الفلترة والبحث والتحديث -->
-    <div class="flex flex-wrap justify-between md:justify-center gap-fluid-gap mb-6 mt-3">
+    <div class="flex flex-wrap md:justify-center gap-fluid-gap mb-6 mt-3">
         <!-- 1111 -->
         <!-- حقل البحث -->
         <div class="flex self-center relative text-fluid-xs">
@@ -137,13 +137,14 @@ const handleExport = async (): Promise<void> => {
             {{ t('common.refreshData') }}
         </button>
 
+
         <!-- 4444 -->
         <!-- addNew -->
         <router-link v-if="authStore.isEditorAndAbove" to="/new-task"
             class="btn-outline shadow-glow/10 text-fluid-xs lg:text-fluid-p text-accent-dark hover:text-slate-900 hover:bg-accent/70">
             {{ t('tasks.toolbar.addNew') }}
         </router-link>
-
+        
         <!-- 5555 -->
         <!-- Export -->
         <div v-if="authStore.isEditorAndAbove" class="md:col-span-5 self-center">

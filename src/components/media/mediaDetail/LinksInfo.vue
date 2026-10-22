@@ -68,7 +68,7 @@ const handleDeleteLink = async (linkId: number): Promise<void> => {
 <template>
     <div v-if="mediaContentStore.currentEpisode"
         class="bg-card rounded-2xl border border-line p-fluid shadow-soft space-y-4 overflow-hidden">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-fluid-gap pb-4 border-b border-line">
+        <div class="flex flex-wrap justify-between gap-fluid-gap pb-4 border-b border-line">
             <div class="flex items-center gap-3">
                 <div class="p-2.5 rounded-xl bg-accent/10 text-accent border border-accent/20">
                     <Link2 class="w-5 h-5" />
@@ -92,7 +92,7 @@ const handleDeleteLink = async (linkId: number): Promise<void> => {
                     Number(mediaContentStore.links[0]?.episode_id),
                 )
                 "
-                class="btn-primary w-full sm:w-auto px-4 py-2 text-fluid-xs font-bold rounded-xl flex items-center justify-center gap-2 active:scale-95 cursor-pointer">
+                class="btn-outline max-w-[200px] shadow-glow/10 text-fluid-xs lg:text-fluid-p text-accent-dark hover:text-slate-900 hover:bg-accent/70">
                 <Plus class="w-4 h-4" />
                 <span>{{ t('media.linksInfo.addNewServer') }}</span>
             </button>
