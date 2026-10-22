@@ -52,9 +52,9 @@ api.interceptors.response.use(
     async (err) => {
         const authStore = useAuthStore()
         const originalRequest = err.config as RetriedRequestConfig | undefined
-
         const status = err.response?.status
         const notiStore = useNotificationStore()
+
         // if response status 429
         if (status === 429) {
             const h = err.response?.headers
@@ -73,6 +73,7 @@ api.interceptors.response.use(
         // if response status 404
         if (status === 404) {
             notiStore.triggerNotification("We couldn't find what you're looking for.")
+            return Promise.reject(err)
         }
 
         // 💡 التعديل الجديد: التقاظ خطأ الحجم الزائد 413 وعرض رسالة السيرفر المخصصة
@@ -82,6 +83,14 @@ api.interceptors.response.use(
             notiStore.triggerNotification(errorMessage)
 
             return Promise.reject(err) // نمرر الـ reject لكي ينتهي الطلب برمجياً بشكل صحيح
+        }
+
+        // 💡 التقاط خطأ انتهاء المهلة 504 (Gateway Timeout)
+        if (status === 504) {
+            notiStore.triggerNotification(
+                'انتهت مهلة الاتصال بالخادم (Gateway Timeout)، العملية استغرقت وقتاً طويلاً.',
+            )
+            return Promise.reject(err)
         }
 
         const isAuthEndpoint =
