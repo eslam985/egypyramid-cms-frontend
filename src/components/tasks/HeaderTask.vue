@@ -104,7 +104,7 @@ const handleExport = async (): Promise<void> => {
 </script>
 <template>
     <!-- أدوات الفلترة والبحث والتحديث -->
-    <div class="flex flex-wrap md:justify-center gap-fluid-gap my-6">
+    <div class="flex flex-wrap md:justify-center gap-fluid-gap my-3">
         <!-- 1111 -->
         <!-- حقل البحث -->
         <div class="flex self-center relative text-fluid-xs">

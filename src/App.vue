@@ -34,11 +34,13 @@ onMounted(loadTheme)
 
     <ServerError v-else-if="authStore.isServerError" />
 
-    <div v-else>
-        <RouterView />
-        <NotificationApp />
-        <ConfirmModal />
+<!-- أضفنا كلاسات flex و h-screen لمنع انكماش التخطيط الداخلي -->
+<div v-else class="flex flex-col h-screen w-full">
+    <RouterView />
+    <NotificationApp />
+    <ConfirmModal />
 
-        <BackToTop />
-    </div>
+    <BackToTop />
+</div>
+
 </template>

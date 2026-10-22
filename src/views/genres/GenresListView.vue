@@ -12,7 +12,7 @@ onMounted(loadData)
 
 </script>
 <template>
-    <main class="mx-auto w-full mb-6 min-w-0 overflow-x-auto">
+    <main class="mx-auto w-full min-w-0 overflow-x-auto">
         <HeaderGenre />
         <MainGenre />
     </main>
