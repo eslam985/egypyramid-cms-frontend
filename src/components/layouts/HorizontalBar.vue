@@ -8,7 +8,7 @@ const { t } = useI18n()
 
 <template>
     <nav class="">
-        <div class="overflow-x-auto max-w-full flex flex-nowrap items-center justify-start md:justify-center gap-2 md:gap-fluid-gap p-fluid md:px-6 bg-card border border-line rounded-b-lg shadow-soft">
+        <div class="overflow-x-auto max-w-full flex flex-nowrap items-center justify-start md:justify-center gap-2 md:gap-fluid-gap p-fluid md:px-6  border-b border-accent/10 shadow-soft">
 
 
             <!-- الرئيسية -->
