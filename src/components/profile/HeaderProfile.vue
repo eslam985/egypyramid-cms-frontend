@@ -80,7 +80,7 @@ const role = (): 'Admin' | 'Editor' | 'User' | 'N/A' =>
 <template>
     <section>
         <div @click.self="isDropdownOpen ? (isDropdownOpen = false) : isDropdownOpen"
-            class="space-y-6 max-w-6xl mx-auto w-full min-w-0 overflow-x-hidden mt-8">
+            class="space-y-6 max-w-6xl mx-auto w-full min-w-0 overflow-x-hidden">
             <h2 class="text-fluid-h2 mb-4">Profile Information</h2>
 
             <!-- container -->
