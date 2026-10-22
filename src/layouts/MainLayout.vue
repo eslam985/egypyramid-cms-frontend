@@ -73,7 +73,6 @@ onUnmounted(() => {
             <main
                 ref="mainElement"
                 class="flex-1 overflow-y-auto flex flex-col justify-between gap-fluid-gap mx-auto w-full min-w-0 overflow-x-hidden transition-all duration-300 ease-in-out"
-                :class="isHeaderVisible ? 'pt-[110px]' : 'pt-0'"
             >
                 <!-- 3. صفحة البيانات الخارجية -->
                 <div class="flex-1 flex flex-col px-fluid">
