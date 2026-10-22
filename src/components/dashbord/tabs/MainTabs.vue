@@ -65,7 +65,7 @@ const switchTab = async (tab: string | null): Promise<void> => {
 }
 </script>
 <template>
-    <div class="rounded-2xl space-y-6 shadow-soft">
+    <div class="rounded-2xl space-y-6 shadow-soft mt-8">
         <!-- أزرار التبويبات -->
         <div class="flex flex-wrap items-center gap-fluid-gap">
             <!-- الأعمال غير الجاهزة -->

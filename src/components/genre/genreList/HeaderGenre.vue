@@ -86,11 +86,13 @@ const handleExport = async () => {
 
         <!-- 3333 -->
         <!-- refreshData -->
-        <button @click="handleRefresh" :disabled="genresStore.isLoading" type="button"
-            class="btn-outline gap-1 shadow-glow/10 text-fluid-xs lg:text-fluid-p text-accent-dark hover:text-slate-900 hover:bg-accent/70">
-            <Loader class="size-5 text-accent" :class="{ 'animate-spin': genresStore.isLoading }" :stroke-width="2" />
-            {{ t('common.refreshData') }}
+        <button type="button"
+            class="btn-outline gap-1 shadow-glow/10 text-fluid-xs lg:text-fluid-p text-accent-dark hover:text-slate-900 hover:bg-accent/70"
+            @click="handleRefresh" :disabled="genresStore.isLoading">
+            <Loader class="size-4 text-accent" :class="{ 'animate-spin': genresStore.isLoading }" :stroke-width="2" />
+            <span class="text-fluid-xs">{{ t('media.toolbar.refreshData') }}</span>
         </button>
+
         <!-- 4444 -->
         <!-- addNew -->
         <router-link v-if="authStore.isEditorAndAbove" to="/new-genre"

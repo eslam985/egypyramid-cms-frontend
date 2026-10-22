@@ -65,7 +65,7 @@ const handleExport = async () => {
 }
 </script>
 <template>
-    <div class="flex flex-wrap md:justify-center gap-fluid-gap mt-6">
+    <div class="flex flex-wrap md:justify-center gap-fluid-gap mt-8">
 
         <!-- 1111 -->
         <!-- حقل البحث -->

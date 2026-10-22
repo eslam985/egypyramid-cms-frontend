@@ -108,12 +108,13 @@ onMounted(() => {
         <div class="flex flex-wrap gap-fluid-gap">
             <!-- 1111 -->
             <!-- refreshData -->
-            <button @click="handleRefresh" :disabled="isLoading" type="button"
-                class=" md:col-span-5 btn-outline gap-1 shadow-glow/10 text-fluid-xs lg:text-fluid-p text-accent-dark hover:text-slate-900 hover:bg-accent/70">
-                <Loader class="size-5 text-accent" :class="{ 'animate-spin': isLoading }" :stroke-width="2" />
-                {{ t('common.refreshData') }}
+            <button type="button"
+                class="btn-outline gap-1 shadow-glow/10 text-fluid-xs lg:text-fluid-p text-accent-dark hover:text-slate-900 hover:bg-accent/70"
+                @click="handleRefresh" :disabled="analyticsStore.isLoading">
+                <Loader class="size-4 text-accent" :class="{ 'animate-spin': analyticsStore.isLoading }" :stroke-width="2" />
+                <span class="text-fluid-xs">{{ t('media.toolbar.refreshData') }}</span>
             </button>
-
+            
             <!-- 2222 -->
             <!-- server-select -->
             <select id="server-select" v-model="selectedServer" @change="loadMissingEpisodes"

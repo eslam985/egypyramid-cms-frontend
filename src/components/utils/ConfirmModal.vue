@@ -35,7 +35,7 @@
             </div>
 
             <!-- شريط الأزرار -->
-            <div class="flex items-center justify-end gap-3 pt-4 border-t border-line mt-6">
+            <div class="flex items-center justify-end gap-3 pt-4 border-t border-line 8">
                 <button
                     type="button"
                     @click="notiStore.handleConfirmResult(false)"
