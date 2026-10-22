@@ -64,8 +64,10 @@ onUnmounted(() => {
                 <Header />
                 <HorizontalBar />
             </div>
-            <main ref="mainElement" class="flex-1 overflow-y-auto flex flex-col justify-between gap-fluid-gap mx-auto w-full min-w-0 overflow-x-hidden transition-all
-                duration-300 ease-in-out" :class="isHeaderVisible ? 'pt-[130px]' : 'pt-0'">
+            <!-- ✅ هذا هو السطر الصحيح والنهائي بدون أي تعقيدات ديناميكية -->
+            <main ref="mainElement"
+                class="flex-1 overflow-y-auto flex flex-col justify-between gap-fluid-gap mx-auto w-full min-w-0 overflow-x-hidden transition-all duration-300 ease-in-out pt-[130px]">
+
 
                 <div class="flex-1 flex flex-col px-fluid">
                     <router-view />
