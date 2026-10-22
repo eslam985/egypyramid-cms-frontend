@@ -26,7 +26,7 @@ const handleScroll = () => {
         return
     }
 
-    if (currentScrollTop > lastScrollTop && currentScrollTop > 50) {
+    if (currentScrollTop > lastScrollTop && currentScrollTop > 80) {
         isHeaderVisible.value = false
     } else {
         isHeaderVisible.value = true
