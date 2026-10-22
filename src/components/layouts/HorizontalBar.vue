@@ -9,10 +9,7 @@ const { t } = useI18n()
 <template>
     <!-- تم إضافة bg-transparent لضمان شفافية الخلفية تماماً -->
     <nav class="bg-transparent">
-        <div class="overflow-x-auto max-w-full flex flex-nowrap items-center justify-start md:justify-center gap-2 md:gap-fluid-gap py-2 md:px-6">
-
-
-
+        <div class="overflow-x-auto max-w-full flex flex-nowrap items-center justify-start md:justify-center gap-2 md:gap-fluid-gap p-2 md:px-6">
             <!-- الرئيسية -->
             <router-link :to="{ name: 'dashboard' }"
                 exact-active-class="btn-outline shadow-glow/10 text-accent hover:text-slate-900 hover:bg-accent/70"
