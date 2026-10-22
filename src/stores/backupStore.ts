@@ -4,8 +4,7 @@ import { useNotificationStore } from '@/stores/notificationStore'
 
 import type { AxiosProgressEvent } from 'axios'
 
-import type { BackupState } from "@/types/storeType"
-
+import type { BackupState } from '@/types/storeType'
 
 export const useBackupStore = defineStore('backup', {
     state: (): BackupState => ({
@@ -57,8 +56,24 @@ export const useBackupStore = defineStore('backup', {
                 return true
             } catch (err: any) {
                 console.error('Backup download error:', err)
+
+                let serverMessage = ''
+
+                // إذا كان الرد قادماً على هيئة Blob (بسبب responseType: 'blob')
+                if (err?.response?.data instanceof Blob) {
+                    try {
+                        const textData = await err.response.data.text()
+                        const errorJson = JSON.parse(textData)
+                        serverMessage = errorJson?.message
+                    } catch (parseError) {
+                        // لو فشل التحويل لأي سبب
+                    }
+                }
+
                 this.errorMessage =
-                    err?.response?.data?.message || 'حدثت مشكلة أثناء إنشاء النسخة الاحتياطية'
+                    serverMessage ||
+                    err?.response?.data?.message ||
+                    'حدثت مشكلة أثناء إنشاء النسخة الاحتياطية'
 
                 this.notiStore.triggerNotification(this.errorMessage)
                 return false
