@@ -60,7 +60,7 @@ onUnmounted(() => {
         <div class="flex-1 flex flex-col min-w-0 h-full relative overflow-hidden">
 
             <div class="absolute top-0 left-0 w-full transition-all duration-300 ease-in-out z-20"
-                :class="isHeaderVisible ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'">
+                :class="isHeaderVisible ? 'translate-y-0 opacity-100 bg-background' : '-translate-y-full opacity-0'">
                 <Header />
                 <HorizontalBar />
             </div>
