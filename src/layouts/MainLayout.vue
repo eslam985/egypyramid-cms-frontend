@@ -22,7 +22,7 @@ const handleScroll = () => {
     const currentScrollTop: number = mainElement.value.scrollTop
 
     // إذا كان السكرول لأسفل وتجاوز مسافة معينة (مثلاً 50 بكسل لمنع الحركات المفاجئة)
-    if (currentScrollTop > lastScrollTop && currentScrollTop > 50) {
+    if (currentScrollTop > lastScrollTop && currentScrollTop > 80) {
         isHeaderVisible.value = false // إخفاء
     } else {
         isHeaderVisible.value = true // إظهار
